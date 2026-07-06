@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Axels släkt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root{
+    --paper:#E7E1CF; --paper-deep:#DED7C2; --surface:#F4EFE1; --surface-2:#EFE8D6;
+    --ink:#2B3138; --ink-soft:#5E6158; --ink-faint:#8C887B; --thread:#5E7A55;
+    --thread-deep:#38583F; --blue:#42606E; --rule:#CDC4AC; --rule-soft:#D8D0BA;
+    --st-confirmed:#5C6E4F; --st-likely:#B0792B; --st-working:#6E7C82; --st-open:#9A8E76;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%}
+  body{
+    background:radial-gradient(120% 80% at 50% -10%, #EFE9D7 0%, var(--paper) 55%, var(--paper-deep) 100%) fixed;
+    color:var(--ink);font-family:"Spectral",Georgia,serif;font-size:17px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  ::selection{background:rgba(94,122,85,.22)}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+  header.masthead{padding:54px 0 26px;text-align:center}
+  .eyebrow{font-family:"Spline Sans Mono",monospace;font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--thread);margin:0 0 18px}
+  h1{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(2.3rem,5.4vw,3.8rem);line-height:1;letter-spacing:-.015em;margin:0}
+  h1 em{font-style:italic;color:var(--thread);font-weight:400}
+  .subtitle{font-size:1.06rem;color:var(--ink-soft);max-width:58ch;margin:16px auto 0;font-style:italic}
+
+  .stage-shell{margin:30px 0 8px}
+  .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .hint{font-family:"Spline Sans Mono",monospace;font-size:11.5px;color:var(--ink-faint);margin-left:auto}
+  .line-key{display:inline-flex;align-items:center;gap:10px;font-family:"Spline Sans Mono",monospace;font-size:11px;color:var(--ink-soft)}
+  .line-key span{display:inline-flex;align-items:center;gap:5px}
+  .line-sample{width:28px;height:0;border-top:3px solid var(--thread-deep)}
+  .line-sample.side{border-top:1.5px dashed var(--ink-faint);opacity:.65}
+  .btn{
+    font-family:"Spline Sans Mono",monospace;font-size:12px;letter-spacing:.04em;color:var(--ink-soft);
+    background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:7px 12px;
+    cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:7px;
+  }
+  .btn:hover{background:var(--surface-2);border-color:var(--ink-faint)}
+  .btn:focus-visible,.search-input:focus,.person:focus-visible,.relchip:focus-visible,.place-btn:focus-visible,.search-hit:focus-visible{outline:2px solid var(--thread);outline-offset:2px}
+
+  .search-shell{margin:0 0 14px;background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:12px}
+  .search-row{display:flex;align-items:center;gap:10px}
+  .search-label{font-family:"Spline Sans Mono",monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--thread);white-space:nowrap}
+  .search-input{width:100%;border:1px solid var(--rule);border-radius:3px;background:var(--paper);color:var(--ink);font:inherit;font-size:15px;line-height:1.2;padding:9px 11px}
+  .search-results{display:none;margin-top:10px;border-top:1px solid var(--rule-soft);padding-top:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+  .search-results.open{display:grid}
+  .search-hit{text-align:left;border:1px solid var(--rule);border-radius:3px;background:var(--paper);color:var(--ink);cursor:pointer;padding:10px 12px;font:inherit;min-height:74px}
+  .search-hit:hover{border-color:var(--thread);background:var(--surface-2)}
+  .search-hit-name{font-family:"Fraunces",serif;font-size:1.03rem;line-height:1.12;color:var(--thread-deep)}
+  .search-hit-meta{font-family:"Spline Sans Mono",monospace;font-size:10.5px;color:var(--ink-soft);margin-top:4px}
+  .search-hit-context{font-size:13px;color:var(--ink-faint);line-height:1.35;margin-top:5px}
+  .search-empty{font-size:14px;color:var(--ink-faint);font-style:italic;padding:4px 2px}
+
+  .viewport{position:relative;overflow:hidden;height:76vh;min-height:520px;background:var(--surface);border:1px solid var(--rule);border-radius:4px;cursor:grab;touch-action:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.4), inset 0 0 60px rgba(43,49,56,.05)}
+  .viewport.grabbing{cursor:grabbing}
+  .canvas{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform}
+  .links{position:absolute;top:0;left:0;overflow:visible;pointer-events:none}
+  .link{fill:none;stroke:var(--thread);stroke-width:2;opacity:.72;stroke-linejoin:round;stroke-linecap:round}
+  .link.direct{stroke:var(--thread-deep);stroke-width:3.4;opacity:.96}
+  .link.faint{stroke:var(--ink-faint);stroke-dasharray:4 6;opacity:.38;stroke-width:1.5}
+
+  .unit{position:absolute;display:grid;grid-auto-flow:column;grid-auto-columns:208px;gap:12px;align-items:stretch}
+  .person{
+    width:208px;text-align:left;background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--blue);
+    border-radius:4px;box-shadow:0 1px 0 rgba(43,49,56,.05),0 10px 24px -18px rgba(43,49,56,.5);
+    padding:11px 13px;cursor:pointer;font:inherit;color:inherit;min-height:92px;
+  }
+  .person:hover{background:var(--surface-2)}
+  .person.heir{border-left-color:var(--thread);border-color:rgba(94,122,85,.62);background:linear-gradient(180deg,#EEF3E7 0%,var(--surface) 100%);box-shadow:0 0 0 1px rgba(94,122,85,.16),0 14px 30px -22px rgba(56,88,63,.72)}
+  .person.heir .pname{color:var(--thread-deep)}
+  .person.ancestor{border-style:dashed;border-left-style:solid}
+  .prole{font-family:"Spline Sans Mono",monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);display:flex;align-items:center;gap:6px;margin-bottom:3px}
+  .person.heir .prole{color:var(--thread)}
+  .sdot{width:7px;height:7px;border-radius:50%;flex:none;box-shadow:0 0 0 1px rgba(43,49,56,.12) inset}
+  .sdot.confirmed{background:var(--st-confirmed)} .sdot.likely{background:var(--st-likely)}
+  .sdot.working{background:var(--st-working)} .sdot.open{background:var(--st-open)}
+  .pname{font-family:"Fraunces",serif;font-weight:500;font-size:1.04rem;line-height:1.12;letter-spacing:-.01em}
+  .pname .alt{display:block;font-size:.74rem;font-style:italic;color:var(--ink-faint);font-weight:400;letter-spacing:0}
+  .pdates{font-family:"Spline Sans Mono",monospace;font-size:10.5px;color:var(--ink-soft);margin-top:3px}
+
+  .scrim{position:fixed;inset:0;background:rgba(30,28,22,.34);opacity:0;visibility:hidden;transition:opacity .25s;z-index:40}
+  .scrim.open{opacity:1;visibility:visible}
+  .panel{position:fixed;top:0;right:0;height:100%;width:420px;max-width:92vw;z-index:50;background:var(--surface);border-left:1px solid var(--rule);box-shadow:-20px 0 50px -30px rgba(43,49,56,.6);transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+  .panel.open{transform:none}
+  .panel-head{padding:24px 26px 16px;border-bottom:1px solid var(--rule);position:relative}
+  .panel-close{position:absolute;top:18px;right:18px;width:32px;height:32px;border-radius:50%;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink-soft);cursor:pointer;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center}
+  .panel-role{font-family:"Spline Sans Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--thread);margin:0 0 8px}
+  .panel-name{font-family:"Fraunces",serif;font-weight:500;font-size:1.7rem;line-height:1.08;margin:0;letter-spacing:-.01em}
+  .panel-name .alt{font-size:.82rem;font-style:italic;color:var(--ink-faint);font-weight:400}
+  .panel-dates{font-family:"Spline Sans Mono",monospace;font-size:12.5px;color:var(--ink-soft);margin-top:8px}
+  .panel-status{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Spline Sans Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:100px;border:1px solid currentColor}
+  .panel-status .sd{width:7px;height:7px;border-radius:50%;background:currentColor}
+  .panel-status.confirmed{color:var(--st-confirmed)} .panel-status.likely{color:var(--st-likely)}
+  .panel-status.working{color:var(--st-working)} .panel-status.open{color:var(--st-open)}
+  .panel-body{padding:20px 26px 40px;overflow-y:auto;flex:1}
+  .facts{list-style:none;margin:0 0 22px;padding:0;font-size:14.5px}
+  .facts li{display:flex;gap:12px;padding:6px 0;border-top:1px solid var(--rule-soft)}
+  .facts li:first-child{border-top:0}
+  .facts .k{flex:none;width:94px;font-family:"Spline Sans Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);padding-top:3px}
+  .facts .v{color:var(--ink)}
+  .facts .v.open{color:var(--st-open);font-style:italic}
+  .panel-section-label{font-family:"Spline Sans Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--thread);margin:0 0 10px}
+  .story p{margin:0 0 12px;font-size:15px;line-height:1.62}
+  .timeline{list-style:none;margin:6px 0 8px;padding:0}
+  .timeline li{display:flex;gap:12px;padding:8px 0;border-top:1px solid var(--rule-soft)}
+  .timeline .tl-y{flex:none;width:96px;font-family:"Spline Sans Mono",monospace;font-size:11px;color:var(--thread-deep);padding-top:2px}
+  .timeline .tl-t{font-size:14.5px;color:var(--ink);line-height:1.5}
+  .relchips{display:flex;flex-wrap:wrap;gap:7px;margin:4px 0 22px}
+  .relchip{font-size:13px;padding:4px 11px;border-radius:100px;background:var(--paper);border:1px solid var(--rule);color:var(--ink-soft);cursor:pointer;display:inline-flex;align-items:baseline;gap:6px;font:inherit;font-size:13px}
+  .relchip:hover{border-color:var(--thread);color:var(--thread-deep)}
+  .relchip .yr{font-family:"Spline Sans Mono",monospace;font-size:10.5px;color:var(--ink-faint)}
+  .person-link{color:var(--thread-deep);background:none;border:0;border-bottom:1px dotted currentColor;padding:0;cursor:pointer;font:inherit;text-align:inherit}
+
+  section.block{padding:46px 0;border-top:1px solid var(--rule)}
+  .sec-kicker{font-family:"Spline Sans Mono",monospace;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--thread);margin:0 0 10px}
+  h2{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(1.6rem,3.2vw,2.1rem);letter-spacing:-.01em;margin:0;line-height:1.05}
+  .sec-lead{color:var(--ink-soft);max-width:68ch;margin:14px 0 0}
+  .geo{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .geo span{font-family:"Spline Sans Mono",monospace;font-size:13px;padding:7px 14px;border:1px solid var(--rule);border-radius:3px;background:var(--surface);color:var(--ink-soft)}
+  .map-shell{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px;margin-top:24px;align-items:stretch}
+  .place-map{min-height:430px;border:1px solid var(--rule);border-radius:4px;background:var(--surface);overflow:hidden;position:relative}
+  .map-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);padding:24px;text-align:center;font-style:italic}
+  .place-panel{border:1px solid var(--rule);border-radius:4px;background:var(--surface);padding:16px}
+  .place-list{display:flex;flex-direction:column;gap:7px;margin-top:12px;max-height:315px;overflow:auto;padding-right:3px}
+  .place-btn{width:100%;text-align:left;border:1px solid var(--rule);border-radius:3px;background:var(--paper);color:var(--ink-soft);cursor:pointer;padding:8px 10px;font:inherit;font-size:14px;line-height:1.25}
+  .place-btn:hover,.place-btn.active{border-color:var(--thread);color:var(--thread-deep);background:var(--surface-2)}
+  .place-name{font-family:"Fraunces",serif;font-size:1.25rem;font-weight:500;line-height:1.1;margin:0}
+  .place-meta{font-family:"Spline Sans Mono",monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--thread);margin:6px 0 0}
+  .place-note{font-size:14.5px;color:var(--ink-soft);line-height:1.55;margin:12px 0 0}
+  .place-people{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+  .leads{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:24px}
+  .lead{background:var(--surface);border:1px solid var(--rule);border-top:2px solid var(--st-open);border-radius:3px;padding:18px 20px}
+  .lead h3{font-family:"Fraunces",serif;font-weight:500;font-size:1.18rem;margin:0 0 8px}
+  .lead p{margin:0;font-size:14.5px;color:var(--ink-soft);line-height:1.55}
+  .steps{display:grid;gap:14px;margin-top:24px;counter-reset:step}
+  .step{display:flex;gap:18px;align-items:flex-start;background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:18px 22px}
+  .step::before{counter-increment:step;content:counter(step);font-family:"Fraunces",serif;font-size:1.7rem;color:var(--thread);line-height:1;flex:none;width:30px}
+  .step h3{font-family:"Fraunces",serif;font-weight:500;font-size:1.16rem;margin:0 0 6px}
+  .step p{margin:0;font-size:14.5px;color:var(--ink-soft);line-height:1.55}
+  footer{text-align:center;padding:40px 24px 60px;border-top:1px solid var(--rule);color:var(--ink-faint);font-size:13px}
+  @media (max-width:640px){
+    body{font-size:16px}.viewport{height:68vh}.unit{grid-auto-columns:188px}.person{width:188px}.hint{display:none}
+    .search-row{align-items:stretch;flex-direction:column}.search-label{white-space:normal}
+    .map-shell{grid-template-columns:1fr}.place-map{min-height:340px}
+  }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">Släktforskning · Tvååker–Morup, Halland</p>
+    <h1>Axels <em>släkt</em></h1>
+    <p class="subtitle">Ett levande släktträd över Axel Nilssons familj, byggt av namn, platser, kyrkboksnotiser, familjeuppgifter och öppna forskningsspår. Här växer den röda tråden fram person för person, från nutidens Klastorp bakåt genom Halland.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="stage-shell">
+    <div class="search-shell" role="search">
+      <div class="search-row">
+        <label class="search-label" for="personSearch">Sök person</label>
+        <input class="search-input" id="personSearch" type="search" autocomplete="off" placeholder="Sök på namn, födelsedatum, plats eller notering">
+        <button class="btn search-clear" id="searchClear" type="button">Rensa</button>
+      </div>
+      <div class="search-results" id="searchResults" aria-live="polite"></div>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="zoomIn"><span class="ico">+</span> Zooma in</button>
+      <button class="btn" id="zoomOut"><span class="ico">-</span> Zooma ut</button>
+      <button class="btn" id="fit"><span class="ico">⤢</span> Anpassa</button>
+      <button class="btn" id="mapJump"><span class="ico">⌖</span> Karta</button>
+      <span class="line-key" aria-label="Linjetyper"><span><i class="line-sample"></i>Direkt led</span><span><i class="line-sample side"></i>Sidogren</span></span>
+      <span class="hint">Klicka på en person · dra för att flytta · skrolla för att zooma</span>
+    </div>
+    <div class="viewport" id="viewport">
+      <div class="canvas" id="canvas"><svg class="links" id="links"></svg></div>
+    </div>
+  </div>
+
+  <section class="block">
+    <p class="sec-kicker">Stödjande indicium</p>
+    <h2>Ett tätt geografiskt kluster</h2>
+    <p class="sec-lead">Flera centrala platser ligger mycket nära varandra i Tvååker-området. När samma namn, datum och hushållsmiljö återkommer inom ett så begränsat område fungerar platsmönstret som stöd utan att ensamt ersätta en direkt källkedja.</p>
+    <div class="geo">
+      <span>Rönås</span><span>Wråen / Vråen / Wräen</span><span>Munkaskog</span><span>Munkagård</span>
+      <span>Smedsgård</span><span>Ågård</span><span>Galtabäck</span><span>Tagebo</span>
+      <span>Ledsgård</span><span>Hermanslycka</span><span>Sven Börges gård</span>
+    </div>
+  </section>
+
+  <section class="block" id="platskarta">
+    <p class="sec-kicker">Platskarta</p>
+    <h2>Gårdarna och socknarna i kartbild</h2>
+    <p class="sec-lead">Klicka på en plats för att zooma in på kartan och se vilka personer i trädet som är kopplade dit. Markörerna är ungefärliga för de små gårds- och bylägena och kan justeras när vi hittar exaktare källor.</p>
+    <div class="map-shell">
+      <div class="place-map" id="placeMap"><div class="map-empty" id="mapEmpty">Kartan laddas när sidan har tillgång till kartbiblioteket.</div></div>
+      <aside class="place-panel" aria-label="Platser i släktträdet">
+        <p class="panel-section-label">Vald plats</p>
+        <h3 class="place-name" id="placeName">Välj en plats</h3>
+        <p class="place-meta" id="placeMeta">Tvååker-Morup, Halland</p>
+        <p class="place-note" id="placeNote">Platslistan växer i takt med att fler personer och källor läggs in.</p>
+        <div class="place-people" id="placePeople"></div>
+        <p class="panel-section-label" style="margin-top:18px">Platser</p>
+        <div class="place-list" id="placeList"></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="sec-kicker">Ännu inte låsta</p>
+    <h2>Öppna sidospår</h2>
+    <div class="leads">
+      <div class="lead"><h3>Nils Arfvidsson</h3><p>Nils-spåret har fått starkare kontext genom bouppteckningen efter Arfvid/Arvid Svensson 1785, där Nils anges som 14-årig son och Bengta som 10-årig dotter i samma familj.</p></div>
+      <div class="lead"><h3>Hans, Anders, Inger och Bengt</h3><p>Syskonen från bouppteckningen är viktiga kontrollspår. Deras födelsenotiser kan hjälpa oss hitta faddrar, släktnätverk och Elins ursprung.</p></div>
+      <div class="lead"><h3>Johanna Svensdotter</h3><p>Bekräftad hustru till Anders, men hennes äldre föräldralinje är inte klar. Kartläggs separat via födelsenotis och husförhör före vigseln.</p></div>
+      <div class="lead"><h3>Kierstin / Kjerstin</h3><p>Förekommer i flera sammanhang och kan röra Elin Bengtsdotter- eller fadderspåret. Kopplingen är ännu osäker.</p></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="sec-kicker">Vägen vidare</p>
+    <h2>Prioriterad fortsättning</h2>
+    <div class="steps">
+      <div class="step"><div><h3>Leta upp födelsenotiser för Bengtas syskon</h3><p>Bouppteckningen ger Hans, Anders, Inger, Bengt, Nils och Bengta. Syskonens födelsenotiser kan ge faddrar och platsangivelser som hjälper oss vidare bakåt.</p></div></div>
+      <div class="step"><div><h3>Sök vigsel mellan Arfvid och Elin</h3><p>Vigseln bör ligga före eller omkring Hans födelse cirka 1755. Den kan vara nyckeln till Elin Bengtsdotters ursprung.</p></div></div>
+      <div class="step"><div><h3>Håll Carl-spåret vilande</h3><p>Carl Larssons födelse- och föräldraspår är tillräckligt starkt för arbetsfilen: han är född 1777-11-26 och döpt 1777-11-27 i Tjärby, Grimeton.</p></div></div>
+      <div class="step"><div><h3>Bevara hela kedjan</h3><p>Framtida arbete ska behålla hela kedjan från Axel och Karin bakåt genom Carl, Bengta, Lars/Inger och Arfvid/Elin.</p></div></div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  Axels släkt · byggd från masterfilen 2026-07-06 · bevisstatus: bekräftat, starkt sannolikt, arbetsantagande och öppet spår
+</footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="panel" id="panel" aria-hidden="true" role="dialog" aria-label="Livshistoria">
+  <div class="panel-head">
+    <button class="panel-close" id="panelClose" aria-label="Stäng">×</button>
+    <p class="panel-role" id="pRole"></p>
+    <h2 class="panel-name" id="pName"></h2>
+    <p class="panel-dates" id="pDates"></p>
+    <span class="panel-status" id="pStatus"></span>
+  </div>
+  <div class="panel-body">
+    <ul class="facts" id="pFacts"></ul>
+    <div id="pParentsWrap" style="display:none"><p class="panel-section-label">Föräldrar</p><div class="relchips" id="pParents"></div></div>
+    <div id="pSpouseWrap" style="display:none"><p class="panel-section-label">Make / maka</p><div class="relchips" id="pSpouse"></div></div>
+    <div id="pChildrenWrap" style="display:none"><p class="panel-section-label">Barn</p><div class="relchips" id="pChildren"></div></div>
+    <p class="panel-section-label">Livshistoria</p>
+    <div class="story" id="pStory"></div>
+    <div id="pTimelineWrap" style="display:none"><p class="panel-section-label" style="margin-top:22px">Livslinje</p><ol class="timeline" id="pTimeline"></ol></div>
+  </div>
+</aside>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
