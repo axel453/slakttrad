@@ -37,6 +37,9 @@
   .line-key span{display:inline-flex;align-items:center;gap:5px}
   .line-sample{width:28px;height:0;border-top:3px solid var(--thread-deep)}
   .line-sample.side{border-top:1.5px dashed var(--ink-faint);opacity:.65}
+  .branch-filters{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .branch-toggle{display:inline-flex;align-items:center;gap:7px;font-family:"Spline Sans Mono",monospace;font-size:11px;color:var(--ink-soft);background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:6px 9px;cursor:pointer;user-select:none}
+  .branch-toggle input{accent-color:var(--thread);margin:0}
   .btn{
     font-family:"Spline Sans Mono",monospace;font-size:12px;letter-spacing:.04em;color:var(--ink-soft);
     background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:7px 12px;
@@ -48,6 +51,10 @@
   .search-shell{margin:0 0 14px;background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:12px}
   .search-row{display:flex;align-items:center;gap:10px}
   .search-label{font-family:"Spline Sans Mono",monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--thread);white-space:nowrap}
+  .search-mode{display:inline-flex;border:1px solid var(--rule);border-radius:3px;overflow:hidden;background:var(--paper);flex:none}
+  .search-mode label{font-family:"Spline Sans Mono",monospace;font-size:11px;color:var(--ink-soft);padding:8px 10px;cursor:pointer;line-height:1}
+  .search-mode input{position:absolute;opacity:0;pointer-events:none}
+  .search-mode label:has(input:checked){background:var(--thread);color:var(--surface)}
   .search-input{width:100%;border:1px solid var(--rule);border-radius:3px;background:var(--paper);color:var(--ink);font:inherit;font-size:15px;line-height:1.2;padding:9px 11px}
   .search-results{display:none;margin-top:10px;border-top:1px solid var(--rule-soft);padding-top:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
   .search-results.open{display:grid}
@@ -66,28 +73,29 @@
   .link.direct{stroke:var(--thread-deep);stroke-width:3.4;opacity:.96}
   .link.faint{stroke:var(--ink-faint);stroke-dasharray:4 6;opacity:.38;stroke-width:1.5}
 
-  .unit{position:absolute;display:grid;grid-auto-flow:column;grid-auto-columns:208px;gap:12px;align-items:stretch}
+  .unit{position:absolute;display:flex;gap:12px;align-items:stretch}
   .person{
     width:208px;text-align:left;background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--blue);
     border-radius:4px;box-shadow:0 1px 0 rgba(43,49,56,.05),0 10px 24px -18px rgba(43,49,56,.5);
     padding:11px 13px;cursor:pointer;font:inherit;color:inherit;min-height:92px;
   }
   .person:hover{background:var(--surface-2)}
-  .person.heir{border-left-color:var(--thread);border-color:rgba(94,122,85,.62);background:linear-gradient(180deg,#EEF3E7 0%,var(--surface) 100%);box-shadow:0 0 0 1px rgba(94,122,85,.16),0 14px 30px -22px rgba(56,88,63,.72)}
+  .person.heir{width:246px;min-height:112px;border-left-width:5px;border-left-color:var(--thread);border-color:rgba(94,122,85,.62);background:linear-gradient(180deg,#EEF3E7 0%,var(--surface) 100%);box-shadow:0 0 0 1px rgba(94,122,85,.16),0 18px 34px -23px rgba(56,88,63,.78)}
   .person.heir .pname{color:var(--thread-deep)}
   .person.ancestor{border-style:dashed;border-left-style:solid}
   .prole{font-family:"Spline Sans Mono",monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);display:flex;align-items:center;gap:6px;margin-bottom:3px}
-  .person.heir .prole{color:var(--thread)}
+  .person.heir .prole{color:var(--thread);font-size:9.5px}
   .sdot{width:7px;height:7px;border-radius:50%;flex:none;box-shadow:0 0 0 1px rgba(43,49,56,.12) inset}
   .sdot.confirmed{background:var(--st-confirmed)} .sdot.likely{background:var(--st-likely)}
   .sdot.working{background:var(--st-working)} .sdot.open{background:var(--st-open)}
   .pname{font-family:"Fraunces",serif;font-weight:500;font-size:1.04rem;line-height:1.12;letter-spacing:-.01em}
+  .person.heir .pname{font-size:1.17rem}
   .pname .alt{display:block;font-size:.74rem;font-style:italic;color:var(--ink-faint);font-weight:400;letter-spacing:0}
   .pdates{font-family:"Spline Sans Mono",monospace;font-size:10.5px;color:var(--ink-soft);margin-top:3px}
 
-  .scrim{position:fixed;inset:0;background:rgba(30,28,22,.34);opacity:0;visibility:hidden;transition:opacity .25s;z-index:40}
+  .scrim{position:fixed;inset:0;background:rgba(30,28,22,.34);opacity:0;visibility:hidden;transition:opacity .25s;z-index:9000}
   .scrim.open{opacity:1;visibility:visible}
-  .panel{position:fixed;top:0;right:0;height:100%;width:420px;max-width:92vw;z-index:50;background:var(--surface);border-left:1px solid var(--rule);box-shadow:-20px 0 50px -30px rgba(43,49,56,.6);transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+  .panel{position:fixed;top:0;right:0;height:100%;width:420px;max-width:92vw;z-index:9010;background:var(--surface);border-left:1px solid var(--rule);box-shadow:-20px 0 50px -30px rgba(43,49,56,.6);transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
   .panel.open{transform:none}
   .panel-head{padding:24px 26px 16px;border-bottom:1px solid var(--rule);position:relative}
   .panel-close{position:absolute;top:18px;right:18px;width:32px;height:32px;border-radius:50%;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink-soft);cursor:pointer;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center}
@@ -122,19 +130,26 @@
   .sec-kicker{font-family:"Spline Sans Mono",monospace;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--thread);margin:0 0 10px}
   h2{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(1.6rem,3.2vw,2.1rem);letter-spacing:-.01em;margin:0;line-height:1.05}
   .sec-lead{color:var(--ink-soft);max-width:68ch;margin:14px 0 0}
-  .geo{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
-  .geo span{font-family:"Spline Sans Mono",monospace;font-size:13px;padding:7px 14px;border:1px solid var(--rule);border-radius:3px;background:var(--surface);color:var(--ink-soft)}
   .map-shell{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px;margin-top:24px;align-items:stretch}
   .place-map{min-height:430px;border:1px solid var(--rule);border-radius:4px;background:var(--surface);overflow:hidden;position:relative}
+  .place-map .leaflet-pane,.place-map .leaflet-top,.place-map .leaflet-bottom{z-index:1}
   .map-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);padding:24px;text-align:center;font-style:italic}
   .place-panel{border:1px solid var(--rule);border-radius:4px;background:var(--surface);padding:16px}
   .place-list{display:flex;flex-direction:column;gap:7px;margin-top:12px;max-height:315px;overflow:auto;padding-right:3px}
   .place-btn{width:100%;text-align:left;border:1px solid var(--rule);border-radius:3px;background:var(--paper);color:var(--ink-soft);cursor:pointer;padding:8px 10px;font:inherit;font-size:14px;line-height:1.25}
   .place-btn:hover,.place-btn.active{border-color:var(--thread);color:var(--thread-deep);background:var(--surface-2)}
+  .place-btn-name{display:block;color:var(--ink)}
+  .place-btn-meta{display:block;font-family:"Spline Sans Mono",monospace;font-size:10px;color:var(--ink-faint);margin-top:2px}
   .place-name{font-family:"Fraunces",serif;font-size:1.25rem;font-weight:500;line-height:1.1;margin:0}
   .place-meta{font-family:"Spline Sans Mono",monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--thread);margin:6px 0 0}
   .place-note{font-size:14.5px;color:var(--ink-soft);line-height:1.55;margin:12px 0 0}
-  .place-people{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+  .place-evidence{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px;max-height:250px;overflow:auto}
+  .place-evidence li{border-top:1px solid var(--rule-soft);padding-top:8px;font-size:13.5px;line-height:1.42}
+  .place-evidence-person{display:block;background:none;border:0;padding:0;color:var(--thread-deep);font:inherit;font-weight:600;cursor:pointer;text-align:left}
+  .place-evidence-person:hover{text-decoration:underline}
+  .place-evidence-label{display:block;font-family:"Spline Sans Mono",monospace;font-size:10px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em}
+  .place-evidence-text{display:block;color:var(--ink-soft)}
+  .place-empty-row{color:var(--ink-faint);font-style:italic}
   .leads{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:24px}
   .lead{background:var(--surface);border:1px solid var(--rule);border-top:2px solid var(--st-open);border-radius:3px;padding:18px 20px}
   .lead h3{font-family:"Fraunces",serif;font-weight:500;font-size:1.18rem;margin:0 0 8px}
@@ -146,7 +161,7 @@
   .step p{margin:0;font-size:14.5px;color:var(--ink-soft);line-height:1.55}
   footer{text-align:center;padding:40px 24px 60px;border-top:1px solid var(--rule);color:var(--ink-faint);font-size:13px}
   @media (max-width:640px){
-    body{font-size:16px}.viewport{height:68vh}.unit{grid-auto-columns:188px}.person{width:188px}.hint{display:none}
+    body{font-size:16px}.viewport{height:68vh}.person{width:188px}.person.heir{width:216px;min-height:106px}.hint{display:none}
     .search-row{align-items:stretch;flex-direction:column}.search-label{white-space:normal}
     .map-shell{grid-template-columns:1fr}.place-map{min-height:340px}
   }
@@ -165,8 +180,12 @@
   <div class="stage-shell">
     <div class="search-shell" role="search">
       <div class="search-row">
-        <label class="search-label" for="personSearch">Sök person</label>
-        <input class="search-input" id="personSearch" type="search" autocomplete="off" placeholder="Sök på namn, födelsedatum, plats eller notering">
+        <label class="search-label" for="personSearch">Sök</label>
+        <span class="search-mode" aria-label="Välj söktyp">
+          <label><input type="radio" name="searchMode" value="person" checked> Person</label>
+          <label><input type="radio" name="searchMode" value="place"> Plats</label>
+        </span>
+        <input class="search-input" id="personSearch" type="search" autocomplete="off" placeholder="Sök person på namn, födelsedatum, plats eller notering">
         <button class="btn search-clear" id="searchClear" type="button">Rensa</button>
       </div>
       <div class="search-results" id="searchResults" aria-live="polite"></div>
@@ -176,6 +195,10 @@
       <button class="btn" id="zoomOut"><span class="ico">-</span> Zooma ut</button>
       <button class="btn" id="fit"><span class="ico">⤢</span> Anpassa</button>
       <button class="btn" id="mapJump"><span class="ico">⌖</span> Karta</button>
+      <span class="branch-filters" aria-label="Grenfilter">
+        <label class="branch-toggle"><input id="toggleMother" data-branch-toggle="mother" type="checkbox" checked> Mammas sida</label>
+        <label class="branch-toggle"><input id="toggleFather" data-branch-toggle="father" type="checkbox" checked> Pappas sida</label>
+      </span>
       <span class="line-key" aria-label="Linjetyper"><span><i class="line-sample"></i>Direkt led</span><span><i class="line-sample side"></i>Sidogren</span></span>
       <span class="hint">Klicka på en person · dra för att flytta · skrolla för att zooma</span>
     </div>
@@ -184,21 +207,14 @@
     </div>
   </div>
 
-  <section class="block">
-    <p class="sec-kicker">Stödjande indicium</p>
-    <h2>Ett tätt geografiskt kluster</h2>
-    <p class="sec-lead">Flera centrala platser ligger mycket nära varandra i Tvååker-området. När samma namn, datum och hushållsmiljö återkommer inom ett så begränsat område fungerar platsmönstret som stöd utan att ensamt ersätta en direkt källkedja.</p>
-    <div class="geo">
-      <span>Rönås</span><span>Wråen / Vråen / Wräen</span><span>Munkaskog</span><span>Munkagård</span>
-      <span>Smedsgård</span><span>Ågård</span><span>Galtabäck</span><span>Tagebo</span>
-      <span>Ledsgård</span><span>Hermanslycka</span><span>Sven Börges gård</span>
-    </div>
-  </section>
-
   <section class="block" id="platskarta">
-    <p class="sec-kicker">Platskarta</p>
-    <h2>Gårdarna och socknarna i kartbild</h2>
-    <p class="sec-lead">Klicka på en plats för att zooma in på kartan och se vilka personer i trädet som är kopplade dit. Markörerna är ungefärliga för de små gårds- och bylägena och kan justeras när vi hittar exaktare källor.</p>
+    <p class="sec-kicker">Platsregister</p>
+    <h2>Alla orter, gårdar och socknar</h2>
+    <p class="sec-lead">Klicka på en plats för att se alla personer och textnotiser som är kopplade dit. Platser med kartpunkt zoomar in på kartan; platser utan exakt läge ligger ändå kvar i samma lista tills vi hittar bättre koordinater.</p>
+    <div class="branch-filters" style="margin-top:16px" aria-label="Grenfilter för platser">
+      <label class="branch-toggle"><input id="togglePlaceMother" data-branch-toggle="mother" type="checkbox" checked> Mammas sida</label>
+      <label class="branch-toggle"><input id="togglePlaceFather" data-branch-toggle="father" type="checkbox" checked> Pappas sida</label>
+    </div>
     <div class="map-shell">
       <div class="place-map" id="placeMap"><div class="map-empty" id="mapEmpty">Kartan laddas när sidan har tillgång till kartbiblioteket.</div></div>
       <aside class="place-panel" aria-label="Platser i släktträdet">
@@ -206,7 +222,7 @@
         <h3 class="place-name" id="placeName">Välj en plats</h3>
         <p class="place-meta" id="placeMeta">Tvååker-Morup, Halland</p>
         <p class="place-note" id="placeNote">Platslistan växer i takt med att fler personer och källor läggs in.</p>
-        <div class="place-people" id="placePeople"></div>
+        <ol class="place-evidence" id="placeEvidence"></ol>
         <p class="panel-section-label" style="margin-top:18px">Platser</p>
         <div class="place-list" id="placeList"></div>
       </aside>

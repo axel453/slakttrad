@@ -24,18 +24,41 @@ function personHTML(id, unit){
 }
 
 const CARD_W = window.innerWidth <= 640 ? 188 : 208;
+const DIRECT_CARD_W = window.innerWidth <= 640 ? 216 : 246;
 const CARD_GAP = 12;
 const UNIT_GAP = 64;
-const LEVEL_H = 245;
+const BRANCH_GAP = window.innerWidth <= 640 ? 180 : 360;
+const LEVEL_H = window.innerWidth <= 640 ? 255 : 265;
 const PAD = 80;
 const canvas = document.getElementById('canvas');
 const linksSvg = document.getElementById('links');
 const viewport = document.getElementById('viewport');
+const branchState = { mother:true, father:true };
+let currentPlaceId = null;
 
-function unitWidth(unit){ return unit.persons.length * CARD_W + (unit.persons.length - 1) * CARD_GAP; }
-function layoutUnits(){
+function personWidth(id){ return DIRECT_HEIRS.has(id) ? DIRECT_CARD_W : CARD_W; }
+function unitWidth(unit){ return unit.persons.reduce((sum,id)=>sum + personWidth(id), 0) + (unit.persons.length - 1) * CARD_GAP; }
+function shouldShowUnit(unit){
+  if(MOTHER_UNITS.has(unit.id) && !branchState.mother) return false;
+  if(FATHER_UNITS.has(unit.id) && !branchState.father) return false;
+  return true;
+}
+function activeUnits(){ return UNITS.filter(shouldShowUnit); }
+function unitBranch(unit){
+  if(MOTHER_UNITS.has(unit.id)) return "mother";
+  if(FATHER_UNITS.has(unit.id)) return "father";
+  return "shared";
+}
+function personMatchesActiveBranches(id){
+  const unitId = PERSON_TO_UNIT[id];
+  if(MOTHER_UNITS.has(unitId)) return branchState.mother;
+  if(FATHER_UNITS.has(unitId)) return branchState.father;
+  return true;
+}
+function layoutUnits(units){
   const rows = new Map();
-  UNITS.forEach(u=>{ if(!rows.has(u.gen)) rows.set(u.gen, []); rows.get(u.gen).push(u); });
+  units.forEach(u=>{ if(!rows.has(u.gen)) rows.set(u.gen, []); rows.get(u.gen).push(u); });
+  if(branchState.mother && branchState.father) return layoutSplitBranches(rows, units);
   let worldW = 0;
   [...rows.entries()].forEach(([gen, units])=>{
     const rowW = units.reduce((sum,u)=>sum + unitWidth(u), 0) + Math.max(0, units.length-1) * UNIT_GAP;
@@ -49,18 +72,59 @@ function layoutUnits(){
       x += u._w + UNIT_GAP;
     });
   });
-  return {worldW: worldW + PAD*2, worldH: PAD*2 + (Math.max(...UNITS.map(u=>u.gen)) + 1) * LEVEL_H};
+  const maxGen = units.length ? Math.max(...units.map(u=>u.gen)) : 0;
+  return {worldW: Math.max(worldW + PAD*2, viewport.clientWidth || 0), worldH: PAD*2 + (maxGen + 1) * LEVEL_H};
+}
+function rowWidth(units){
+  return units.reduce((sum,u)=>sum + unitWidth(u), 0) + Math.max(0, units.length-1) * UNIT_GAP;
+}
+function placeRow(units, startX, gen){
+  let x = startX;
+  units.forEach(u=>{
+    u._x = x; u._y = PAD + gen * LEVEL_H; u._w = unitWidth(u); u._h = 0;
+    x += u._w + UNIT_GAP;
+  });
+}
+function layoutSplitBranches(rows, units){
+  let leftW = 0, rightW = 0, sharedW = 0;
+  [...rows.entries()].forEach(([, row])=>{
+    leftW = Math.max(leftW, rowWidth(row.filter(u=>unitBranch(u)==="mother")));
+    rightW = Math.max(rightW, rowWidth(row.filter(u=>unitBranch(u)==="father")));
+    sharedW = Math.max(sharedW, rowWidth(row.filter(u=>unitBranch(u)==="shared")));
+  });
+  const centerGap = Math.max(BRANCH_GAP, sharedW + UNIT_GAP * 2);
+  const worldW = Math.max(PAD*2 + leftW + centerGap + rightW, viewport.clientWidth || 0);
+  const centerX = PAD + leftW + centerGap / 2;
+  [...rows.entries()].forEach(([gen, row])=>{
+    const mother = row.filter(u=>unitBranch(u)==="mother");
+    const shared = row.filter(u=>unitBranch(u)==="shared");
+    const father = row.filter(u=>unitBranch(u)==="father");
+    const motherW = rowWidth(mother);
+    const sharedRowW = rowWidth(shared);
+    placeRow(mother, PAD + leftW - motherW, gen);
+    placeRow(shared, centerX - sharedRowW / 2, gen);
+    placeRow(father, PAD + leftW + centerGap, gen);
+  });
+  const maxGen = units.length ? Math.max(...units.map(u=>u.gen)) : 0;
+  return {worldW, worldH: PAD*2 + (maxGen + 1) * LEVEL_H};
 }
 
-const world = layoutUnits();
-canvas.style.width = world.worldW + "px";
-canvas.style.height = world.worldH + "px";
-linksSvg.setAttribute('width', world.worldW);
-linksSvg.setAttribute('height', world.worldH);
-linksSvg.setAttribute('viewBox', `0 0 ${world.worldW} ${world.worldH}`);
+let world = {worldW:0, worldH:0};
+let visibleUnitIds = new Set();
+function applyWorld(nextWorld){
+  world = nextWorld;
+  canvas.style.width = world.worldW + "px";
+  canvas.style.height = world.worldH + "px";
+  linksSvg.setAttribute('width', world.worldW);
+  linksSvg.setAttribute('height', world.worldH);
+  linksSvg.setAttribute('viewBox', `0 0 ${world.worldW} ${world.worldH}`);
+}
 
-function renderUnits(){
-  UNITS.forEach(u=>{
+function renderUnits(units){
+  canvas.querySelectorAll('.unit').forEach(el=>el.remove());
+  UNITS.forEach(u=>{ u._el = null; });
+  visibleUnitIds = new Set(units.map(u=>u.id));
+  units.forEach(u=>{
     const div = document.createElement('div');
     div.className = "unit" + (DIRECT_UNITS.has(u.id) ? " direct-unit" : "");
     div.dataset.unit = u.id;
@@ -80,14 +144,15 @@ function renderUnits(){
     });
   });
 }
-renderUnits();
 
 function unitCenter(u){ return {x:u._el.offsetLeft + u._el.offsetWidth/2, y:u._el.offsetTop + u._el.offsetHeight}; }
 function unitTop(u){ return {x:u._el.offsetLeft + u._el.offsetWidth/2, y:u._el.offsetTop}; }
 function drawLinks(){
   let paths = "";
   EDGES.forEach(edge=>{
+    if(!visibleUnitIds.has(edge.from) || !visibleUnitIds.has(edge.to)) return;
     const from = UNIT_BY_ID[edge.from], to = UNIT_BY_ID[edge.to];
+    if(!from._el || !to._el) return;
     const a = unitCenter(from), b = unitTop(to);
     const busY = a.y + (b.y - a.y) * 0.5;
     const direct = DIRECT_EDGES.has(`${edge.from}>${edge.to}`);
@@ -95,7 +160,13 @@ function drawLinks(){
   });
   linksSvg.innerHTML = paths;
 }
-drawLinks();
+function renderTree({preserveView=false}={}){
+  const units = activeUnits();
+  applyWorld(layoutUnits(units));
+  renderUnits(units);
+  drawLinks();
+  if(!preserveView) fit();
+}
 
 let scale = 1, tx = 0, ty = 0;
 const MIN_S = 0.15, MAX_S = 2.4;
@@ -245,6 +316,24 @@ function focusPerson(id){
   scale = clampScale(Math.max(scale,0.72));
   tx = viewport.clientWidth/2 - cx*scale; ty = viewport.clientHeight/2 - cy*scale; applyTransform();
 }
+function initBranchFilters(){
+  const motherInputs = [...document.querySelectorAll('[data-branch-toggle="mother"]')];
+  const fatherInputs = [...document.querySelectorAll('[data-branch-toggle="father"]')];
+  if(!motherInputs.length || !fatherInputs.length) return;
+  function setAll(inputs, checked){ inputs.forEach(input=>{ input.checked = checked; }); }
+  function sync(source){
+    if(source?.dataset.branchToggle === "mother") branchState.mother = source.checked;
+    if(source?.dataset.branchToggle === "father") branchState.father = source.checked;
+    setAll(motherInputs, branchState.mother);
+    setAll(fatherInputs, branchState.father);
+    renderTree();
+    renderPlaceList();
+    refreshSelectedPlace();
+  }
+  [...motherInputs,...fatherInputs].forEach(input=>input.addEventListener('change',()=>sync(input)));
+  setAll(motherInputs, branchState.mother);
+  setAll(fatherInputs, branchState.father);
+}
 function personSearchText(id){
   const p = PEOPLE[id];
   return [p.name,p.alt,p.role,p.born,p.died,p.place,...(p.parents||[]).map(pid=>PEOPLE[pid]?.name),PARTNER[id]&&PEOPLE[PARTNER[id]]?.name,...(p.children||[]).map(pid=>PEOPLE[pid]?.name),...(p.facts||[]).flat(),...(p.story||[]),...(p.timeline||[]).flat()].filter(Boolean).join(" ").toLowerCase();
@@ -257,10 +346,20 @@ function personSearchContext(id){
   if(PARTNER[id]) parts.push(`make/maka: ${PEOPLE[PARTNER[id]].name}`);
   return parts.slice(0,3).join(" · ");
 }
-function runPersonSearch(query){
+function currentSearchMode(){
+  return document.querySelector('input[name="searchMode"]:checked')?.value || "person";
+}
+function placeSearchText(place){
+  return [place.name,place.area,place.note,...(place.aliases||[])].filter(Boolean).join(" ").toLocaleLowerCase('sv');
+}
+function runSearch(query){
   const results = document.getElementById('searchResults');
   const q = query.trim().toLowerCase();
   if(!q){ results.classList.remove('open'); results.innerHTML=""; return; }
+  if(currentSearchMode() === "place"){ runPlaceSearch(q, results); return; }
+  runPersonSearch(q, results);
+}
+function runPersonSearch(q, results){
   const hits = Object.keys(PEOPLE).filter(id=>personSearchText(id).includes(q)).sort((a,b)=>{
     const an = PEOPLE[a].name.toLowerCase().startsWith(q) ? 0 : 1;
     const bn = PEOPLE[b].name.toLowerCase().startsWith(q) ? 0 : 1;
@@ -270,37 +369,101 @@ function runPersonSearch(query){
   if(!hits.length){ results.innerHTML = '<div class="search-empty">Ingen person matchar sökningen.</div>'; return; }
   results.innerHTML = hits.map(id=>{
     const p = PEOPLE[id];
-    return `<button class="search-hit" type="button" data-id="${id}">
+    return `<button class="search-hit" type="button" data-type="person" data-id="${id}">
       <div class="search-hit-name">${escapeHtml(p.name)}${p.alt ? ` / ${escapeHtml(p.alt)}` : ""}</div>
       <div class="search-hit-meta">${escapeHtml(p.role || "Person")}</div>
       <div class="search-hit-context">${escapeHtml(personSearchContext(id) || "Mer information finns i personrutan.")}</div>
     </button>`;
   }).join("");
 }
+function runPlaceSearch(q, results){
+  const hits = visiblePlaces().filter(place=>placeSearchText(place).includes(q)).sort((a,b)=>{
+    const an = a.name.toLocaleLowerCase('sv').startsWith(q) ? 0 : 1;
+    const bn = b.name.toLocaleLowerCase('sv').startsWith(q) ? 0 : 1;
+    return an-bn || a.name.localeCompare(b.name,'sv');
+  }).slice(0,12);
+  results.classList.add('open');
+  if(!hits.length){ results.innerHTML = '<div class="search-empty">Ingen plats matchar sökningen.</div>'; return; }
+  results.innerHTML = hits.map(place=>{
+    const related = placePeople(place).length;
+    return `<button class="search-hit" type="button" data-type="place" data-place="${place.id}">
+      <div class="search-hit-name">${escapeHtml(place.name)}</div>
+      <div class="search-hit-meta">${escapeHtml(place.area)}${hasCoords(place) ? "" : " · ingen exakt kartpunkt"}</div>
+      <div class="search-hit-context">${related ? `${related} person${related === 1 ? "" : "er"} kopplade` : "Inga personer kopplade i aktivt filter"}</div>
+    </button>`;
+  }).join("");
+}
 function initPersonSearch(){
   const input = document.getElementById('personSearch'), clear = document.getElementById('searchClear'), results = document.getElementById('searchResults');
-  input.addEventListener('input',()=>runPersonSearch(input.value));
-  input.addEventListener('keydown', e=>{ if(e.key==="Escape"){ input.value=""; runPersonSearch(""); } });
-  clear.addEventListener('click',()=>{ input.value=""; runPersonSearch(""); input.focus(); });
+  const modes = [...document.querySelectorAll('input[name="searchMode"]')];
+  input.addEventListener('input',()=>runSearch(input.value));
+  input.addEventListener('keydown', e=>{ if(e.key==="Escape"){ input.value=""; runSearch(""); } });
+  modes.forEach(mode=>mode.addEventListener('change',()=>{
+    input.placeholder = currentSearchMode() === "place" ? "Sök plats, gård, socken eller ort" : "Sök person på namn, födelsedatum, plats eller notering";
+    runSearch(input.value);
+  }));
+  clear.addEventListener('click',()=>{ input.value=""; runSearch(""); input.focus(); });
   results.addEventListener('click', e=>{
     const hit = e.target.closest('.search-hit'); if(!hit) return;
+    if(hit.dataset.type === "place"){
+      document.getElementById('platskarta').scrollIntoView({behavior:'smooth',block:'start'});
+      selectPlace(hit.dataset.place);
+      return;
+    }
     focusPerson(hit.dataset.id); openPerson(hit.dataset.id);
   });
 }
 
 let placeMap = null;
 const placeMarkers = {};
-function peopleForPlace(place){
-  return Object.entries(PEOPLE).filter(([,p])=>{
-    const hay = [p.place,...(p.facts||[]).flat(),...(p.story||[]),...(p.timeline||[]).flat()].filter(Boolean).join(" ");
-    return place.aliases.some(alias=>hay.includes(alias));
-  }).map(([id])=>id);
+function hasCoords(place){ return Number.isFinite(place.lat) && Number.isFinite(place.lng); }
+function placeHaystack(p){
+  return [p.place,...(p.facts||[]).flat(),...(p.story||[]),...(p.timeline||[]).flat()].filter(Boolean).join(" ");
+}
+function placeMatchesText(place, text){
+  const hay = String(text || "").toLocaleLowerCase('sv');
+  return (place.aliases || [place.name]).some(alias=>hay.includes(String(alias).toLocaleLowerCase('sv')));
+}
+function placePeople(place){
+  const byPerson = new Map();
+  Object.entries(PEOPLE).forEach(([id,p])=>{
+    if(!personMatchesActiveBranches(id)) return;
+    const chunks = [];
+    if(p.place) chunks.push(["Plats", p.place]);
+    (p.facts||[]).forEach(([k,v])=>chunks.push([k, v]));
+    (p.story||[]).forEach(v=>chunks.push(["Livshistoria", v]));
+    (p.timeline||[]).forEach(([k,v])=>chunks.push([k, v]));
+    chunks.forEach(([label,text])=>{
+      if(!placeMatchesText(place, text)) return;
+      if(!byPerson.has(id)) byPerson.set(id, {id, labels:new Set(), texts:[]});
+      const row = byPerson.get(id);
+      row.labels.add(label);
+      if(row.texts.length < 3) row.texts.push(text);
+    });
+  });
+  return [...byPerson.values()].sort((a,b)=>{
+    const direct = Number(DIRECT_HEIRS.has(b.id)) - Number(DIRECT_HEIRS.has(a.id));
+    return direct || PEOPLE[a.id].name.localeCompare(PEOPLE[b.id].name,'sv');
+  });
+}
+function visiblePlaces(){
+  if(branchState.mother && branchState.father) return PLACES;
+  return PLACES.filter(place=>placePeople(place).length > 0);
+}
+function renderPlaceList(){
+  const listEl = document.getElementById('placeList');
+  if(!listEl) return;
+  const places = visiblePlaces();
+  listEl.innerHTML = places.length ? places.map(p=>`<button class="place-btn" type="button" data-place="${p.id}">
+    <span class="place-btn-name">${escapeHtml(p.name)}</span>
+    <span class="place-btn-meta">${escapeHtml(p.area)}${hasCoords(p) ? "" : " · ej kartlagd"}</span>
+  </button>`).join("") : '<div class="place-empty-row">Inga platser matchar valt filter.</div>';
 }
 function initPlaceMap(){
   const mapEl = document.getElementById('placeMap'), listEl = document.getElementById('placeList');
-  listEl.innerHTML = PLACES.map(p=>`<button class="place-btn" type="button" data-place="${p.id}">${escapeHtml(p.name)}</button>`).join("");
+  renderPlaceList();
   listEl.addEventListener('click', e=>{ const btn=e.target.closest('.place-btn'); if(btn) selectPlace(btn.dataset.place); });
-  document.getElementById('placePeople').addEventListener('click', e=>{ const chip=e.target.closest('.relchip'); if(chip) openPerson(chip.dataset.id); });
+  document.getElementById('placeEvidence').addEventListener('click', e=>{ const btn=e.target.closest('.place-evidence-person'); if(btn) openPerson(btn.dataset.id); });
   if(!window.L){
     document.getElementById('mapEmpty').textContent = "Kartan kunde inte laddas. Platslistan fungerar ändå, och kartan visas när sidan har nätåtkomst.";
     selectPlace(PLACES[0].id,{skipMap:true}); return;
@@ -309,26 +472,54 @@ function initPlaceMap(){
   placeMap = L.map(mapEl,{scrollWheelZoom:false}).setView([57.04,12.40],11);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap'}).addTo(placeMap);
   PLACES.forEach(place=>{
-    const marker = L.circleMarker([place.lat,place.lng],{radius:7,color:'#7A2C22',weight:2,fillColor:'#9C3B2E',fillOpacity:.78}).addTo(placeMap);
+    if(!hasCoords(place)) return;
+    const marker = L.circleMarker([place.lat,place.lng],{radius:7,color:'#38583F',weight:2,fillColor:'#5E7A55',fillOpacity:.78}).addTo(placeMap);
     marker.bindPopup(`<strong>${escapeHtml(place.name)}</strong><br>${escapeHtml(place.area)}`);
     marker.on('click',()=>selectPlace(place.id));
     placeMarkers[place.id]=marker;
   });
-  placeMap.fitBounds(L.latLngBounds(PLACES.map(p=>[p.lat,p.lng])),{padding:[24,24]});
+  const mappedPlaces = PLACES.filter(hasCoords);
+  if(mappedPlaces.length) placeMap.fitBounds(L.latLngBounds(mappedPlaces.map(p=>[p.lat,p.lng])),{padding:[24,24]});
   selectPlace('munkaskog');
+}
+function refreshSelectedPlace(){
+  const places = visiblePlaces();
+  if(!places.length){
+    document.getElementById('placeName').textContent = "Inga platser";
+    document.getElementById('placeMeta').textContent = "Välj minst en släktgren";
+    document.getElementById('placeNote').textContent = "Platsregistret filtreras efter de grenar som är aktiva i trädet.";
+    document.getElementById('placeEvidence').innerHTML = '<li class="place-empty-row">Inga platser matchar valt filter.</li>';
+    return;
+  }
+  const next = places.some(p=>p.id===currentPlaceId) ? currentPlaceId : places[0].id;
+  selectPlace(next,{skipMap:true});
 }
 function selectPlace(id, opts={}){
   const place = PLACES.find(p=>p.id===id) || PLACES[0];
+  currentPlaceId = place.id;
   document.querySelectorAll('.place-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.place===place.id));
   document.getElementById('placeName').textContent = place.name;
-  document.getElementById('placeMeta').textContent = place.area;
+  document.getElementById('placeMeta').textContent = hasCoords(place) ? place.area : `${place.area} · ingen exakt kartpunkt ännu`;
   document.getElementById('placeNote').textContent = place.note;
-  const related = peopleForPlace(place);
-  document.getElementById('placePeople').innerHTML = related.length ? related.map(relChip).join("") : '<span class="place-note">Inga personer kopplade ännu.</span>';
-  if(placeMap && !opts.skipMap){ placeMap.setView([place.lat,place.lng],place.zoom); placeMarkers[place.id]?.openPopup(); }
+  const relatedPeople = placePeople(place);
+  document.getElementById('placeEvidence').innerHTML = relatedPeople.length ? relatedPeople.map(row=>`
+    <li>
+      <button class="place-evidence-person" type="button" data-id="${row.id}">${escapeHtml(PEOPLE[row.id].name)}</button>
+      <span class="place-evidence-label">${escapeHtml([...row.labels].join(", "))}${row.texts.length > 1 ? ` · ${row.texts.length} kopplingar` : ""}</span>
+      <span class="place-evidence-text">${escapeHtml(row.texts[0])}</span>
+    </li>`).join("") : '<li class="place-empty-row">Inga textkopplingar inlagda ännu.</li>';
+  if(placeMap && !opts.skipMap && hasCoords(place)){
+    document.getElementById('mapEmpty').style.display = "none";
+    placeMap.setView([place.lat,place.lng],place.zoom);
+    placeMarkers[place.id]?.openPopup();
+  } else if(placeMap && !opts.skipMap && !hasCoords(place)){
+    document.getElementById('mapEmpty').style.display = "flex";
+    document.getElementById('mapEmpty').textContent = "Den här platsen finns i platsregistret men saknar exakt kartpunkt ännu.";
+  }
 }
 
-fit();
+renderTree();
+initBranchFilters();
 initPersonSearch();
 initPlaceMap();
 document.getElementById('mapJump').onclick = ()=>document.getElementById('platskarta').scrollIntoView({behavior:'smooth',block:'start'});
