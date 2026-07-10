@@ -46,7 +46,7 @@
     cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:7px;
   }
   .btn:hover{background:var(--surface-2);border-color:var(--ink-faint)}
-  .btn:focus-visible,.search-input:focus,.person:focus-visible,.relchip:focus-visible,.place-btn:focus-visible,.search-hit:focus-visible{outline:2px solid var(--thread);outline-offset:2px}
+  .btn:focus-visible,.search-input:focus,.person:focus-visible,.relchip:focus-visible,.place-btn:focus-visible,.place-open:focus-visible,.search-hit:focus-visible{outline:2px solid var(--thread);outline-offset:2px}
 
   .search-shell{margin:0 0 14px;background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:12px}
   .search-row{display:flex;align-items:center;gap:10px}
@@ -77,7 +77,7 @@
   .person{
     width:208px;text-align:left;background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--blue);
     border-radius:4px;box-shadow:0 1px 0 rgba(43,49,56,.05),0 10px 24px -18px rgba(43,49,56,.5);
-    padding:11px 13px;cursor:pointer;font:inherit;color:inherit;min-height:92px;
+    padding:11px 13px;cursor:pointer;font:inherit;color:inherit;min-height:92px;display:grid;grid-template-columns:46px minmax(0,1fr);gap:10px;align-items:start;
   }
   .person:hover{background:var(--surface-2)}
   .person.heir{width:246px;min-height:112px;border-left-width:5px;border-left-color:var(--thread);border-color:rgba(94,122,85,.62);background:linear-gradient(180deg,#EEF3E7 0%,var(--surface) 100%);box-shadow:0 0 0 1px rgba(94,122,85,.16),0 18px 34px -23px rgba(56,88,63,.78)}
@@ -85,6 +85,9 @@
   .person.ancestor{border-style:dashed;border-left-style:solid}
   .prole{font-family:"Spline Sans Mono",monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);display:flex;align-items:center;gap:6px;margin-bottom:3px}
   .person.heir .prole{color:var(--thread);font-size:9.5px}
+  .pcard-photo{width:46px;height:46px;border-radius:50%;object-fit:cover;border:1px solid var(--rule);background:var(--paper);box-shadow:0 1px 0 rgba(43,49,56,.08)}
+  .person.heir .pcard-photo{width:54px;height:54px;border-color:rgba(94,122,85,.55)}
+  .pcard-text{min-width:0}
   .sdot{width:7px;height:7px;border-radius:50%;flex:none;box-shadow:0 0 0 1px rgba(43,49,56,.12) inset}
   .sdot.confirmed{background:var(--st-confirmed)} .sdot.likely{background:var(--st-likely)}
   .sdot.working{background:var(--st-working)} .sdot.open{background:var(--st-open)}
@@ -98,6 +101,10 @@
   .panel{position:fixed;top:0;right:0;height:100%;width:420px;max-width:92vw;z-index:9010;background:var(--surface);border-left:1px solid var(--rule);box-shadow:-20px 0 50px -30px rgba(43,49,56,.6);transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
   .panel.open{transform:none}
   .panel-head{padding:24px 26px 16px;border-bottom:1px solid var(--rule);position:relative}
+  .panel-person-top{display:grid;grid-template-columns:84px minmax(0,1fr);gap:16px;align-items:center;padding-right:34px}
+  .panel.place-mode .panel-person-top{grid-template-columns:minmax(0,1fr)}
+  .panel-photo{width:84px;height:84px;border-radius:50%;object-fit:cover;border:1px solid var(--rule);background:var(--paper);box-shadow:0 10px 26px -20px rgba(43,49,56,.65)}
+  .panel-title{min-width:0}
   .panel-close{position:absolute;top:18px;right:18px;width:32px;height:32px;border-radius:50%;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink-soft);cursor:pointer;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center}
   .panel-role{font-family:"Spline Sans Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--thread);margin:0 0 8px}
   .panel-name{font-family:"Fraunces",serif;font-weight:500;font-size:1.7rem;line-height:1.08;margin:0;letter-spacing:-.01em}
@@ -143,6 +150,7 @@
   .place-name{font-family:"Fraunces",serif;font-size:1.25rem;font-weight:500;line-height:1.1;margin:0}
   .place-meta{font-family:"Spline Sans Mono",monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--thread);margin:6px 0 0}
   .place-note{font-size:14.5px;color:var(--ink-soft);line-height:1.55;margin:12px 0 0}
+  .place-open{margin-top:12px;width:100%;justify-content:center}
   .place-evidence{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px;max-height:250px;overflow:auto}
   .place-evidence li{border-top:1px solid var(--rule-soft);padding-top:8px;font-size:13.5px;line-height:1.42}
   .place-evidence-person{display:block;background:none;border:0;padding:0;color:var(--thread-deep);font:inherit;font-weight:600;cursor:pointer;text-align:left}
@@ -161,7 +169,7 @@
   .step p{margin:0;font-size:14.5px;color:var(--ink-soft);line-height:1.55}
   footer{text-align:center;padding:40px 24px 60px;border-top:1px solid var(--rule);color:var(--ink-faint);font-size:13px}
   @media (max-width:640px){
-    body{font-size:16px}.viewport{height:68vh}.person{width:188px}.person.heir{width:216px;min-height:106px}.hint{display:none}
+    body{font-size:16px}.viewport{height:68vh}.person{width:188px;grid-template-columns:42px minmax(0,1fr)}.person.heir{width:216px;min-height:106px}.person.heir .pcard-photo{width:48px;height:48px}.hint{display:none}
     .search-row{align-items:stretch;flex-direction:column}.search-label{white-space:normal}
     .map-shell{grid-template-columns:1fr}.place-map{min-height:340px}
   }
@@ -222,6 +230,7 @@
         <h3 class="place-name" id="placeName">Välj en plats</h3>
         <p class="place-meta" id="placeMeta">Tvååker-Morup, Halland</p>
         <p class="place-note" id="placeNote">Platslistan växer i takt med att fler personer och källor läggs in.</p>
+        <button class="btn place-open" id="placeOpen" type="button">Öppna platskort</button>
         <ol class="place-evidence" id="placeEvidence"></ol>
         <p class="panel-section-label" style="margin-top:18px">Platser</p>
         <div class="place-list" id="placeList"></div>
@@ -260,19 +269,25 @@
 <aside class="panel" id="panel" aria-hidden="true" role="dialog" aria-label="Livshistoria">
   <div class="panel-head">
     <button class="panel-close" id="panelClose" aria-label="Stäng">×</button>
-    <p class="panel-role" id="pRole"></p>
-    <h2 class="panel-name" id="pName"></h2>
-    <p class="panel-dates" id="pDates"></p>
-    <span class="panel-status" id="pStatus"></span>
+    <div class="panel-person-top">
+      <img class="panel-photo" id="pPhoto" src="assets/person-placeholder.svg" alt="" loading="lazy">
+      <div class="panel-title">
+        <p class="panel-role" id="pRole"></p>
+        <h2 class="panel-name" id="pName"></h2>
+        <p class="panel-dates" id="pDates"></p>
+        <span class="panel-status" id="pStatus"></span>
+      </div>
+    </div>
   </div>
   <div class="panel-body">
     <ul class="facts" id="pFacts"></ul>
     <div id="pParentsWrap" style="display:none"><p class="panel-section-label">Föräldrar</p><div class="relchips" id="pParents"></div></div>
     <div id="pSpouseWrap" style="display:none"><p class="panel-section-label">Make / maka</p><div class="relchips" id="pSpouse"></div></div>
     <div id="pChildrenWrap" style="display:none"><p class="panel-section-label">Barn</p><div class="relchips" id="pChildren"></div></div>
-    <p class="panel-section-label">Livshistoria</p>
+    <div id="pPlacePeopleWrap" style="display:none"><p class="panel-section-label">Kopplade personer</p><div class="relchips" id="pPlacePeople"></div></div>
+    <p class="panel-section-label" id="pStoryLabel">Livshistoria</p>
     <div class="story" id="pStory"></div>
-    <div id="pTimelineWrap" style="display:none"><p class="panel-section-label" style="margin-top:22px">Livslinje</p><ol class="timeline" id="pTimeline"></ol></div>
+    <div id="pTimelineWrap" style="display:none"><p class="panel-section-label" id="pTimelineLabel" style="margin-top:22px">Livslinje</p><ol class="timeline" id="pTimeline"></ol></div>
   </div>
 </aside>
 

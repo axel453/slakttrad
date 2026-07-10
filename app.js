@@ -5,6 +5,8 @@ function escapeHtml(value){
   return String(value ?? "").replace(/[&<>"']/g, ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
 }
 function escapeRegExp(value){ return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+const PERSON_PLACEHOLDER = "assets/person-placeholder.svg";
+function personPhoto(p){ return p.photo || p.image || PERSON_PLACEHOLDER; }
 function formatDates(p){
   const b = p.born ? "★ "+p.born : "";
   const d = p.died ? "† "+p.died : "";
@@ -17,9 +19,12 @@ function personHTML(id, unit){
   const alt = p.alt ? `<span class="alt">/ ${escapeHtml(p.alt)}</span>` : "";
   const dates = formatDates(p);
   return `<button class="person${heir ? " heir" : ""}${unit?.ancestor ? " ancestor" : ""}" data-id="${id}" title="Öppna livshistoria">
-    <span class="prole"><span class="sdot ${p.status || 'open'}"></span>${escapeHtml(role)}</span>
-    <span class="pname">${escapeHtml(p.name)}${alt}</span>
-    ${dates ? `<span class="pdates">${escapeHtml(dates)}</span>` : ""}
+    <img class="pcard-photo" src="${escapeHtml(personPhoto(p))}" alt="" loading="lazy" onerror="this.src='${PERSON_PLACEHOLDER}'">
+    <span class="pcard-text">
+      <span class="prole"><span class="sdot ${p.status || 'open'}"></span>${escapeHtml(role)}</span>
+      <span class="pname">${escapeHtml(p.name)}${alt}</span>
+      ${dates ? `<span class="pdates">${escapeHtml(dates)}</span>` : ""}
+    </span>
   </button>`;
 }
 
@@ -270,6 +275,13 @@ function buildTimeline(p){
 }
 function openPerson(id){
   const p = PEOPLE[id]; if(!p) return;
+  panel.setAttribute('aria-label','Livshistoria');
+  panel.classList.remove('place-mode');
+  const photo = document.getElementById('pPhoto');
+  photo.style.display = "";
+  photo.src = personPhoto(p);
+  photo.alt = `Porträttbild för ${p.name}`;
+  photo.onerror = ()=>{ photo.src = PERSON_PLACEHOLDER; };
   document.getElementById('pRole').textContent = p.role || "Person";
   document.getElementById('pName').innerHTML = escapeHtml(p.name) + (p.alt ? ` <span class="alt">/ ${escapeHtml(p.alt)}</span>` : "");
   document.getElementById('pDates').textContent = [p.born ? "Född "+p.born : "", p.died ? "Avliden "+p.died : ""].filter(Boolean).join("  ·  ");
@@ -293,10 +305,54 @@ function openPerson(id){
   const children = p.children || [];
   document.getElementById('pChildren').innerHTML = children.map(relChip).join("");
   document.getElementById('pChildrenWrap').style.display = children.length ? "" : "none";
+  document.getElementById('pPlacePeopleWrap').style.display = "none";
+  document.getElementById('pStoryLabel').textContent = "Livshistoria";
   document.getElementById('pStory').innerHTML = (p.story||["Ännu inte utforskad."]).map(s=>`<p>${linkPersonNames(s)}</p>`).join("");
   const timeline = buildTimeline(p);
+  document.getElementById('pTimelineLabel').textContent = "Livslinje";
   document.getElementById('pTimeline').innerHTML = timeline.map(([y,t])=>`<li><span class="tl-y">${escapeHtml(y)}</span><span class="tl-t">${linkPersonNames(t)}</span></li>`).join("");
   document.getElementById('pTimelineWrap').style.display = timeline.length ? "" : "none";
+  panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); scrim.classList.add('open');
+  document.getElementById('panelClose').focus();
+}
+function openPlace(id){
+  const place = PLACES.find(p=>p.id===id); if(!place) return;
+  selectPlace(place.id,{skipMap:true});
+  const relatedPeople = placePeople(place);
+  panel.setAttribute('aria-label','Platskort');
+  panel.classList.add('place-mode');
+  document.getElementById('pPhoto').style.display = "none";
+  document.getElementById('pRole').textContent = "Platskort";
+  document.getElementById('pName').textContent = place.name;
+  document.getElementById('pDates').textContent = [place.area, hasCoords(place) ? "Kartpunkt finns" : "Ingen exakt kartpunkt ännu"].filter(Boolean).join("  ·  ");
+  const statusEl = document.getElementById('pStatus');
+  statusEl.className = "panel-status " + (hasCoords(place) ? "confirmed" : "working");
+  statusEl.innerHTML = `<span class="sd"></span>${hasCoords(place) ? "Kartlagd plats" : "Plats utan exakt punkt"}`;
+  const facts = [
+    ["Område", place.area || "Ej angivet"],
+    ["Kartstatus", hasCoords(place) ? `${place.lat.toFixed(3)}, ${place.lng.toFixed(3)}` : "Exakt kartpunkt saknas"],
+    ["Kopplade personer", String(relatedPeople.length)]
+  ];
+  if(place.aliases?.length) facts.push(["Namnvarianter", place.aliases.join(", ")]);
+  document.getElementById('pFacts').innerHTML = facts.map(([k,v])=>`<li><span class="k">${escapeHtml(k)}</span><span class="v">${escapeHtml(v)}</span></li>`).join("");
+  document.getElementById('pParentsWrap').style.display = "none";
+  document.getElementById('pSpouseWrap').style.display = "none";
+  document.getElementById('pChildrenWrap').style.display = "none";
+  document.getElementById('pPlacePeople').innerHTML = relatedPeople.map(row=>relChip(row.id)).join("");
+  document.getElementById('pPlacePeopleWrap').style.display = relatedPeople.length ? "" : "none";
+  document.getElementById('pStoryLabel').textContent = "Om platsen";
+  const placeStory = [place.note || "Ingen längre platsbeskrivning är inlagd ännu."];
+  if(relatedPeople.length){
+    const direct = relatedPeople.filter(row=>DIRECT_HEIRS.has(row.id)).map(row=>PEOPLE[row.id].name);
+    if(direct.length) placeStory.push(`Direkta ledet har koppling hit genom ${direct.slice(0,5).join(", ")}${direct.length > 5 ? " med flera" : ""}.`);
+  }
+  document.getElementById('pStory').innerHTML = placeStory.map(s=>`<p>${linkPersonNames(s)}</p>`).join("");
+  document.getElementById('pTimelineLabel').textContent = "Platsens historia";
+  document.getElementById('pTimeline').innerHTML = relatedPeople.flatMap(row=>row.texts.map((text,index)=>[
+    index === 0 ? PEOPLE[row.id].name : "Fler spår",
+    text
+  ])).slice(0,12).map(([y,t])=>`<li><span class="tl-y">${escapeHtml(y)}</span><span class="tl-t">${linkPersonNames(t)}</span></li>`).join("");
+  document.getElementById('pTimelineWrap').style.display = relatedPeople.length ? "" : "none";
   panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); scrim.classList.add('open');
   document.getElementById('panelClose').focus();
 }
@@ -408,6 +464,7 @@ function initPersonSearch(){
     if(hit.dataset.type === "place"){
       document.getElementById('platskarta').scrollIntoView({behavior:'smooth',block:'start'});
       selectPlace(hit.dataset.place);
+      openPlace(hit.dataset.place);
       return;
     }
     focusPerson(hit.dataset.id); openPerson(hit.dataset.id);
@@ -464,6 +521,7 @@ function initPlaceMap(){
   renderPlaceList();
   listEl.addEventListener('click', e=>{ const btn=e.target.closest('.place-btn'); if(btn) selectPlace(btn.dataset.place); });
   document.getElementById('placeEvidence').addEventListener('click', e=>{ const btn=e.target.closest('.place-evidence-person'); if(btn) openPerson(btn.dataset.id); });
+  document.getElementById('placeOpen').addEventListener('click',()=>{ if(currentPlaceId) openPlace(currentPlaceId); });
   if(!window.L){
     document.getElementById('mapEmpty').textContent = "Kartan kunde inte laddas. Platslistan fungerar ändå, och kartan visas när sidan har nätåtkomst.";
     selectPlace(PLACES[0].id,{skipMap:true}); return;
@@ -474,7 +532,7 @@ function initPlaceMap(){
   PLACES.forEach(place=>{
     if(!hasCoords(place)) return;
     const marker = L.circleMarker([place.lat,place.lng],{radius:7,color:'#38583F',weight:2,fillColor:'#5E7A55',fillOpacity:.78}).addTo(placeMap);
-    marker.bindPopup(`<strong>${escapeHtml(place.name)}</strong><br>${escapeHtml(place.area)}`);
+    marker.bindPopup(`<strong>${escapeHtml(place.name)}</strong><br>${escapeHtml(place.area)}<br><button type="button" data-place-card="${escapeHtml(place.id)}">Öppna platskort</button>`);
     marker.on('click',()=>selectPlace(place.id));
     placeMarkers[place.id]=marker;
   });
@@ -517,6 +575,10 @@ function selectPlace(id, opts={}){
     document.getElementById('mapEmpty').textContent = "Den här platsen finns i platsregistret men saknar exakt kartpunkt ännu.";
   }
 }
+document.addEventListener('click', e=>{
+  const placeCardBtn = e.target.closest('[data-place-card]');
+  if(placeCardBtn) openPlace(placeCardBtn.dataset.placeCard);
+});
 
 renderTree();
 initBranchFilters();
