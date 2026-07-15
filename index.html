@@ -131,6 +131,12 @@
   .relchip{font-size:13px;padding:4px 11px;border-radius:100px;background:var(--paper);border:1px solid var(--rule);color:var(--ink-soft);cursor:pointer;display:inline-flex;align-items:baseline;gap:6px;font:inherit;font-size:13px}
   .relchip:hover{border-color:var(--thread);color:var(--thread-deep)}
   .relchip .yr{font-family:"Spline Sans Mono",monospace;font-size:10.5px;color:var(--ink-faint)}
+  .branch-list{display:grid;gap:8px;margin:4px 0 22px}
+  .branch-item{width:100%;text-align:left;border:1px solid var(--rule);border-radius:4px;background:var(--paper);color:var(--ink);cursor:pointer;padding:9px 11px;font:inherit;display:grid;gap:3px}
+  .branch-item:hover{border-color:var(--thread);background:var(--surface-2)}
+  .branch-name{font-family:"Fraunces",serif;font-size:1rem;line-height:1.1}
+  .branch-meta{font-family:"Spline Sans Mono",monospace;font-size:10.5px;color:var(--ink-faint);line-height:1.35}
+  .branch-note{font-size:13px;color:var(--ink-soft);line-height:1.4}
   .person-link{color:var(--thread-deep);background:none;border:0;border-bottom:1px dotted currentColor;padding:0;cursor:pointer;font:inherit;text-align:inherit}
 
   section.block{padding:46px 0;border-top:1px solid var(--rule)}
@@ -284,6 +290,7 @@
     <div id="pParentsWrap" style="display:none"><p class="panel-section-label">Föräldrar</p><div class="relchips" id="pParents"></div></div>
     <div id="pSpouseWrap" style="display:none"><p class="panel-section-label">Make / maka</p><div class="relchips" id="pSpouse"></div></div>
     <div id="pChildrenWrap" style="display:none"><p class="panel-section-label">Barn</p><div class="relchips" id="pChildren"></div></div>
+    <div id="pSideBranchesWrap" style="display:none"><p class="panel-section-label">Syskon och sidogrenar</p><div class="branch-list" id="pSideBranches"></div></div>
     <div id="pPlacePeopleWrap" style="display:none"><p class="panel-section-label">Kopplade personer</p><div class="relchips" id="pPlacePeople"></div></div>
     <p class="panel-section-label" id="pStoryLabel">Livshistoria</p>
     <div class="story" id="pStory"></div>

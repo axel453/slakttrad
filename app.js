@@ -33,6 +33,7 @@ const DIRECT_CARD_W = window.innerWidth <= 640 ? 216 : 246;
 const CARD_GAP = 12;
 const UNIT_GAP = 64;
 const BRANCH_GAP = window.innerWidth <= 640 ? 180 : 360;
+const FATHER_SIDE_GAP = window.innerWidth <= 640 ? 180 : 300;
 const LEVEL_H = window.innerWidth <= 640 ? 255 : 265;
 const PAD = 80;
 const canvas = document.getElementById('canvas');
@@ -54,6 +55,12 @@ function unitBranch(unit){
   if(FATHER_UNITS.has(unit.id)) return "father";
   return "shared";
 }
+function fatherLane(unit){
+  if(unit.id === "u_elsa_nils_stig") return "father-couple";
+  if(typeof FATHER_MOTHER_UNITS !== "undefined" && FATHER_MOTHER_UNITS.has(unit.id)) return "father-mother";
+  if(typeof FATHER_FATHER_UNITS !== "undefined" && FATHER_FATHER_UNITS.has(unit.id)) return "father-father";
+  return "father-other";
+}
 function personMatchesActiveBranches(id){
   const unitId = PERSON_TO_UNIT[id];
   if(MOTHER_UNITS.has(unitId)) return branchState.mother;
@@ -64,6 +71,7 @@ function layoutUnits(units){
   const rows = new Map();
   units.forEach(u=>{ if(!rows.has(u.gen)) rows.set(u.gen, []); rows.get(u.gen).push(u); });
   if(branchState.mother && branchState.father) return layoutSplitBranches(rows, units);
+  if(!branchState.mother && branchState.father) return layoutFatherOnly(rows, units);
   let worldW = 0;
   [...rows.entries()].forEach(([gen, units])=>{
     const rowW = units.reduce((sum,u)=>sum + unitWidth(u), 0) + Math.max(0, units.length-1) * UNIT_GAP;
@@ -90,13 +98,52 @@ function placeRow(units, startX, gen){
     x += u._w + UNIT_GAP;
   });
 }
+function fatherLaneWidths(rows){
+  let motherW = 0, fatherW = 0, coupleW = 0, otherW = 0;
+  [...rows.values()].forEach(row=>{
+    const fatherRow = row.filter(u=>unitBranch(u)==="father");
+    motherW = Math.max(motherW, rowWidth(fatherRow.filter(u=>fatherLane(u)==="father-mother")));
+    fatherW = Math.max(fatherW, rowWidth(fatherRow.filter(u=>fatherLane(u)==="father-father")));
+    coupleW = Math.max(coupleW, rowWidth(fatherRow.filter(u=>fatherLane(u)==="father-couple")));
+    otherW = Math.max(otherW, rowWidth(fatherRow.filter(u=>fatherLane(u)==="father-other")));
+  });
+  const centerGap = Math.max(FATHER_SIDE_GAP, coupleW + UNIT_GAP);
+  return {motherW, fatherW, coupleW, otherW, centerGap, totalW: motherW + centerGap + fatherW + otherW};
+}
+function placeFatherLanes(row, startX, gen, widths){
+  const mother = row.filter(u=>fatherLane(u)==="father-mother");
+  const father = row.filter(u=>fatherLane(u)==="father-father");
+  const couple = row.filter(u=>fatherLane(u)==="father-couple");
+  const other = row.filter(u=>fatherLane(u)==="father-other");
+  const motherW = rowWidth(mother);
+  const fatherStart = startX + widths.motherW + widths.centerGap;
+  placeRow(mother, startX + widths.motherW - motherW, gen);
+  placeRow(couple, startX + widths.motherW + widths.centerGap / 2 - rowWidth(couple) / 2, gen);
+  placeRow(father, fatherStart, gen);
+  placeRow(other, fatherStart + widths.fatherW + UNIT_GAP, gen);
+}
+function layoutFatherOnly(rows, units){
+  const widths = fatherLaneWidths(rows);
+  const sharedW = Math.max(...[...rows.values()].map(row=>rowWidth(row.filter(u=>unitBranch(u)!=="father"))), 0);
+  const worldW = Math.max(PAD*2 + Math.max(widths.totalW, sharedW), viewport.clientWidth || 0);
+  const fatherStartX = PAD + (worldW - PAD*2 - widths.totalW) / 2;
+  [...rows.entries()].forEach(([gen, row])=>{
+    const father = row.filter(u=>unitBranch(u)==="father");
+    const shared = row.filter(u=>unitBranch(u)!=="father");
+    placeFatherLanes(father, fatherStartX, gen, widths);
+    placeRow(shared, PAD + (worldW - PAD*2 - rowWidth(shared)) / 2, gen);
+  });
+  const maxGen = units.length ? Math.max(...units.map(u=>u.gen)) : 0;
+  return {worldW, worldH: PAD*2 + (maxGen + 1) * LEVEL_H};
+}
 function layoutSplitBranches(rows, units){
-  let leftW = 0, rightW = 0, sharedW = 0;
+  let leftW = 0, sharedW = 0;
+  const fatherWidths = fatherLaneWidths(rows);
   [...rows.entries()].forEach(([, row])=>{
     leftW = Math.max(leftW, rowWidth(row.filter(u=>unitBranch(u)==="mother")));
-    rightW = Math.max(rightW, rowWidth(row.filter(u=>unitBranch(u)==="father")));
     sharedW = Math.max(sharedW, rowWidth(row.filter(u=>unitBranch(u)==="shared")));
   });
+  const rightW = fatherWidths.totalW;
   const centerGap = Math.max(BRANCH_GAP, sharedW + UNIT_GAP * 2);
   const worldW = Math.max(PAD*2 + leftW + centerGap + rightW, viewport.clientWidth || 0);
   const centerX = PAD + leftW + centerGap / 2;
@@ -108,7 +155,7 @@ function layoutSplitBranches(rows, units){
     const sharedRowW = rowWidth(shared);
     placeRow(mother, PAD + leftW - motherW, gen);
     placeRow(shared, centerX - sharedRowW / 2, gen);
-    placeRow(father, PAD + leftW + centerGap, gen);
+    placeFatherLanes(father, PAD + leftW + centerGap, gen, fatherWidths);
   });
   const maxGen = units.length ? Math.max(...units.map(u=>u.gen)) : 0;
   return {worldW, worldH: PAD*2 + (maxGen + 1) * LEVEL_H};
@@ -262,6 +309,36 @@ function relChip(id){
   const yr = p.born ? `<span class="yr">${String(p.born).slice(0,4)}</span>` : "";
   return `<button class="relchip" data-id="${id}">${escapeHtml(p.name)} ${yr}</button>`;
 }
+function siblingIds(id){
+  const p = PEOPLE[id]; if(!p?.parents?.length) return [];
+  const ids = new Set();
+  p.parents.forEach(parentId=>{
+    (PEOPLE[parentId]?.children || []).forEach(childId=>{
+      if(childId !== id && PEOPLE[childId]) ids.add(childId);
+    });
+  });
+  return [...ids].sort((a,b)=>String(PEOPLE[a].born || "9999").localeCompare(String(PEOPLE[b].born || "9999")));
+}
+function descendantCount(id, seen=new Set()){
+  if(seen.has(id)) return 0;
+  seen.add(id);
+  return (PEOPLE[id]?.children || []).reduce((sum, childId)=>sum + 1 + descendantCount(childId, seen), 0);
+}
+function sideBranchHTML(id){
+  const p = PEOPLE[id]; if(!p) return "";
+  const born = p.born ? `Född ${p.born}` : "Födelseuppgift saknas";
+  const children = (p.children || []).filter(childId=>PEOPLE[childId]).length;
+  const descendants = descendantCount(id);
+  const status = STATUS_LABEL[p.status || "open"] || "Status saknas";
+  const branchNote = descendants
+    ? `${children} kända barn · ${descendants} kända personer i sidogrenen`
+    : "Sidogrenen är inte utforskad ännu";
+  return `<button class="branch-item" type="button" data-id="${id}">
+    <span class="branch-name">${escapeHtml(p.name)}</span>
+    <span class="branch-meta">${escapeHtml(born)} · ${escapeHtml(status)}</span>
+    <span class="branch-note">${escapeHtml(branchNote)}</span>
+  </button>`;
+}
 function buildTimeline(p){
   if(p.timeline?.length) return p.timeline;
   const rows = [];
@@ -305,6 +382,9 @@ function openPerson(id){
   const children = p.children || [];
   document.getElementById('pChildren').innerHTML = children.map(relChip).join("");
   document.getElementById('pChildrenWrap').style.display = children.length ? "" : "none";
+  const siblings = siblingIds(id);
+  document.getElementById('pSideBranches').innerHTML = siblings.map(sideBranchHTML).join("");
+  document.getElementById('pSideBranchesWrap').style.display = siblings.length ? "" : "none";
   document.getElementById('pPlacePeopleWrap').style.display = "none";
   document.getElementById('pStoryLabel').textContent = "Livshistoria";
   document.getElementById('pStory').innerHTML = (p.story||["Ännu inte utforskad."]).map(s=>`<p>${linkPersonNames(s)}</p>`).join("");
@@ -338,6 +418,7 @@ function openPlace(id){
   document.getElementById('pParentsWrap').style.display = "none";
   document.getElementById('pSpouseWrap').style.display = "none";
   document.getElementById('pChildrenWrap').style.display = "none";
+  document.getElementById('pSideBranchesWrap').style.display = "none";
   document.getElementById('pPlacePeople').innerHTML = relatedPeople.map(row=>relChip(row.id)).join("");
   document.getElementById('pPlacePeopleWrap').style.display = relatedPeople.length ? "" : "none";
   document.getElementById('pStoryLabel').textContent = "Om platsen";
@@ -361,7 +442,7 @@ document.getElementById('panelClose').onclick = closePanel;
 scrim.onclick = closePanel;
 document.addEventListener('keydown', e=>{ if(e.key==="Escape") closePanel(); });
 panel.addEventListener('click', e=>{
-  const target = e.target.closest('.relchip,.person-link'); if(!target) return;
+  const target = e.target.closest('.relchip,.person-link,.branch-item'); if(!target) return;
   openPerson(target.dataset.id);
 });
 
