@@ -1126,6 +1126,7 @@ Sida 425 bekräftar fortsättningen från Fjellalunda-sidan. Familjen flyttas/ö
 - Den senaste hushållsöversikten anger modern som Alma Sofia f. Nilsson, född 1900-04-04.
 - Detta korrigerar tidigare preliminär avläsning 1900-07-04.
 - Födelsenotis 1900-04-04 bör kontrolleras.
+- Detta är nu aktivt huvudspår efter att Ivar/Britta-spåret pausats/lagts åt sidan.
 
 **Källor:**  
 - K2.
@@ -1257,6 +1258,676 @@ Nils Birger Gustafsson och Alma Sofia Nilsson finns i **1924 års lysnings- och 
 
 ---
 
+## 4.2 Nytt aktivt huvudspår: Alma Sofia Nilsson
+
+Arbetet flyttas nu över till farfars mors sida: **Alma Sofia Nilsson**, mor till **Nils Stig Henning Nilsson**.
+
+| Fält | Känd uppgift |
+|---|---|
+| Namn | Alma Sofia Nilsson |
+| Senare namn i källa | Alma Sofia f. Nilsson |
+| Född | 1900-04-04 |
+| Make | Nils Birger Gustafsson |
+| Vigsel | 1924-02-16 i Årstad |
+| Barn i hushållsöversikt | Nils Stig Henning, Ingrid Linnéa, Karl Rune Ingvar, Sonja Gunnel, Sven Erik Gustaf, Lars Olof Bertil, Nils Ove Sjunne |
+| Viktig hänvisning | Vigselnotisen hänvisar både Nils Birger och Alma till sida 393 i församlingsboken |
+| Nuvarande lucka | Alma Sofias födelsenotis är hittad; nästa lucka är att följa föräldrarna Nils Månsson och Johanna Johansdotter/Johansdr bakåt |
+
+**Arbetsmål:**  
+Följa Alma Sofia Nilsson bakåt från vigseln och hushållet med Nils Birger för att fastställa hennes födelseförsamling, födelsenotis och föräldrar.
+
+**Bästa första kontroll:**  
+Öppna församlingsbokens **sida 393**, som anges i vigselnotisen 1924. Den bör kunna ge Alma Sofias födelseförsamling, flyttuppgifter och eventuellt hänvisning bakåt.
+
+**Alternativt snabbspår i ArkivDigital:**  
+Ta fram ArkivDigitals personpost/lista över alla poster för **Alma Sofia Nilsson, född 1900-04-04**. En sådan lista kan användas som rörelseöversikt på samma sätt som för Nils Birger Gustafsson.
+
+**Prioriterad ordning:**
+
+1. Kontrollera sida 393 i församlingsboken efter vigseln 1924.
+2. Ta fram ArkivDigital-lista/personpost för Alma Sofia Nilsson.
+3. Födelseorten läses nu som Åryd, troligen Blekinge län.
+4. Almas födelsenotis 1900-04-04 i Åryd är hittad.
+5. Först därefter följa hennes föräldrar bakåt.
+
+---
+
+
+### Alma Sofia Nilsson på Årstad sida 393
+
+Sida 393 i församlingsboken är nu kontrollerad. Den ger en stark nyckel för Alma Sofia Nilssons ursprung.
+
+| Fält | Uppgift |
+|---|---|
+| Källa | Årstad församlingsbok, sida 393 |
+| Plats/rubrik | N:o 10 Årstad |
+| Person | Alma Sofia Nilsson |
+| Rad som hustru | Rad 10 |
+| Född | 1900-04-04 |
+| Födelseort | Åryd, troligen Blekinge län, läst som “Åryd Bl.l.” |
+| Make | Nils Birger Gustafsson, född 1896-07-03 i Årstad |
+| Vigsel | 1924-02-16 |
+| Hänvisning | Rad 10 verkar hänvisa från rad 23 år 1924 |
+| Källa i filen | K57 |
+
+**Tolkning:**  
+Alma Sofia Nilsson förekommer på sidan både som **hustru till Nils Birger Gustafsson** och sannolikt tidigare som ogift/inneboende på **rad 23**. Det passar mycket bra med vigseln 1924. På rad 10 anges hon som född **1900-04-04** i **Åryd**, vilket jag läser som **Åryd i Blekinge län**.
+
+**Barn som syns i hushållet:**  
+
+| Barn | Född | Födelseort |
+|---|---|---|
+| Nils Stig Henning | 1924-09-01 | Årstad |
+| Ingrid Linnea | 1926-02-01 | Årstad |
+
+**Viktig slutsats:**  
+Nästa huvudspår är nu inte längre Årstad utan **Åryd i Blekinge län**. Där bör Alma Sofias födelsenotis 1900-04-04 kontrolleras för att få hennes föräldrar.
+
+**Nästa kontroll:**  
+- Öppna Åryd födelsebok för 1900-04-04.
+- Kontrollera Alma Sofia Nilssons födelsenotis.
+- Bekräfta föräldrar, boställe och eventuella dopvittnen.
+- Kontrollera om ArkivDigitals renskrivning har alla poster för Alma Sofia Nilsson.
+
+**Källor:**  
+- K57.
+
+---
+
+
+### Årstad sida 393, rad 10: Alma Sofia som hustru till Nils Birger
+
+Den första tydliga Årstad-posten där Alma Sofia står i Nils Birger Gustafssons hushåll är nu inlagd.
+
+| Rad | Person | Född | Födelseort | Relation/status |
+|---:|---|---|---|---|
+| 9 | Nils Birger Gustafsson | 1896-07-03 | Årstad | make |
+| 10 | Alma Sofia Nilsson | 1900-04-04 | Åryd, Blekinge län | hustru |
+| 11 | Nils Stig Henning | 1924-09-01 | Årstad | son |
+| 12 | Ingrid Linnea | 1926-02-01 | Årstad | dotter |
+
+**Vigsel:**  
+Nils Birger och Alma Sofia är noterade som vigda **1924-02-16**.
+
+**Viktig läsning av flytthänvisningen:**  
+Alma Sofia på rad 10 är inte en extern inflyttning från annan församling i denna rad, utan ser ut att vara **överförd från rad 23 år 1924** på samma sida. Nils Birger verkar på motsvarande sätt vara överförd från **rad 4 år 1924**.
+
+Det betyder att denna post visar när de bildar hushåll efter vigseln. För att kartlägga Almas liv före detta måste vi därför läsa **rad 23** på samma sida och följa den bakåt.
+
+**Nästa kontroll:**  
+- Läs rad 23 på Årstad sida 393 i detalj.
+- Notera yrke/titel, inflyttad från och datum för Alma på rad 23.
+- Följ den posten bakåt till föregående församling/post.
+
+**Källor:**  
+- K63.
+
+---
+
+
+### Förtydligad detalj: Årstad sida 393, rad 8–12
+
+En mer inzoomad detalj av Årstad sida 393 bekräftar läsningen av Alma Sofia Nilssons första hushållspost tillsammans med Nils Birger Gustafsson.
+
+| Rad | Person | Född | Födelseort | Notering |
+|---:|---|---|---|---|
+| 9 | Nils Birger Gustafsson | 1896-07-03 | Årstad | gift 1924-02-16, överförd från rad 4 år 1924 |
+| 10 | Alma Sofia Nilsson | 1900-04-04 | Åryd, Blekinge län | gift 1924-02-16, överförd från rad 23 år 1924 |
+| 11 | Nils Stig Henning | 1924-09-01 | Årstad | son |
+| 12 | Ingrid Linnea | 1926-02-01 | Årstad | dotter |
+
+**Förtydligande:**  
+Den här raden visar inte Almas externa inflyttning till Årstad. Den visar att Alma förs in i Nils Birgers hushåll efter vigseln, från **rad 23** på samma sida. Det röda på högersidan verkar vara en hänvisning till **ny bok**, troligen **n.b. 259**, för hushållets fortsättning.
+
+**Nästa kontroll:**  
+Läs **rad 23** på samma sida för att få Almas post före giftermålet. Det är där vi bör hitta hennes verkliga föregående post, inflyttningsuppgift eller flytthänvisning.
+
+**Källor:**  
+- K64.
+
+---
+
+
+### Årstad sida 393, rad 23: Alma Sofia före vigseln
+
+Rad 23 på Årstad sida 393 är nu kontrollerad. Det är posten som förklarar var Alma Sofia Nilsson fanns precis före hon förs in i Nils Birger Gustafssons hushåll.
+
+| Fält | Avläsning |
+|---|---|
+| Person | Alma Sofia Nilsson |
+| Född | 1900-04-04 |
+| Födelseort | Åryd, Blekinge län |
+| Inflyttad/överförd från | Ränneslöv |
+| År | 1924 |
+| Datum | 1924-01-24 |
+| Utflyttad/överförd till | rad 10 |
+| År | 1924 |
+
+**Tolkning:**  
+Det här bekräftar att Almas omedelbara föregående post före hushållet med Nils Birger var **Ränneslöv**. Hon står först på rad 23 i Årstad, och förs därefter till **rad 10 år 1924**, där hon står som hustru till Nils Birger Gustafsson efter vigseln 1924-02-16.
+
+**Rörelsekedjan i Årstad blir därför:**
+
+```text
+Ränneslöv → Årstad sida 393 rad 23 → Årstad sida 393 rad 10
+```
+
+**Viktig slutsats:**  
+Nu är nästa huvudpost bakåt **Ränneslöv/Vallberga**. Den posten bör visa vad Alma gjorde före flytten till Årstad och kan ge vidare hänvisning bakåt, troligen mot Landskrona eller annan tidigare plats.
+
+**Nästa kontroll:**  
+- Öppna Ränneslöv-posten för Alma Sofia Nilsson, sannolikt Vallberga.
+- Kontrollera yrke/titel i Ränneslöv.
+- Läs inflyttad från och utflyttad till i Ränneslöv-posten.
+- Se om utflyttningen från Ränneslöv stämmer med inflyttningen till Årstad 1924.
+
+**Källor:**  
+- K65.
+
+---
+
+
+### Korrigering: datumet från Ränneslöv till Årstad
+
+Datumet i Årstad sida 393 rad 23 läses nu som **24/1 1924**.
+
+| Uppgift | Korrigerad läsning |
+|---|---|
+| Person | Alma Sofia Nilsson |
+| Från | Ränneslöv |
+| Till | Årstad sida 393, rad 23 |
+| Datum | 1924-01-24 |
+| Därefter | överförd till rad 10 år 1924 efter vigseln |
+
+**Korrigerad rörelsekedja:**
+
+```text
+Ränneslöv 1924-01-24 → Årstad sida 393 rad 23 → Årstad sida 393 rad 10
+```
+
+Detta passar bra med vigseln med Nils Birger Gustafsson den **1924-02-16**, eftersom Alma först kommer till Årstad i januari och sedan förs till makens hushåll efter vigseln.
+
+**Källor:**  
+- K65.
+
+---
+
+
+### Ränneslöv/Vallberga: Alma Sofia före Årstad
+
+Ränneslöv-posten är nu kontrollerad och ger nästa länk bakåt i Alma Sofias rörelsekedja.
+
+| Fält | Avläsning |
+|---|---|
+| Församling | Ränneslöv |
+| Plats | Vallberga |
+| Rad | 25 |
+| Person | Alma Sofia Nilsson |
+| Född | 1900-04-04 |
+| Födelseort | Åryd |
+| Yrke/titel | troligen mejeriarb./mejeriarbeterska, överstruket |
+| Inflyttad från | Landskrona stadsförsamling |
+| Inflyttningsår/datum | 1923, sannolikt 23/4 |
+| Utflyttad till | Årstad |
+| Utflyttningsdatum | 1924-01-24 |
+| Källa i filen | K66 |
+
+**Tolkning:**  
+Det här binder ihop Årstad-posten med föregående plats. Alma Sofia kommer från **Landskrona stadsförsamling** till **Ränneslöv/Vallberga** under 1923, och flyttar sedan vidare till **Årstad 1924-01-24**. Yrket/titeln ser ut att vara något i stil med **mejeriarb.**, vilket skulle passa en ung kvinna i tjänst/arbete före giftermålet.
+
+**Rörelsekedjan kan nu skrivas:**
+
+```text
+Landskrona stadsförsamling → Ränneslöv/Vallberga 1923 → Årstad 1924-01-24
+```
+
+**Källkritisk notering:**  
+Inflyttningsdatumet från Landskrona ser ut som **23/4 1923**, men bör kontrolleras mot originalets kolumnrubriker och/eller Landskrona-posten. Yrket/titeln är också något svårläst och bör föras preliminärt som **troligen mejeriarbeterska**.
+
+**Nästa kontroll:**  
+- Öppna Landskrona stadsförsamlings post före Ränneslöv.
+- Kontrollera om den motsvarar Tärnan, Sten Sture eller annan Landskrona-post.
+- Läs utflyttningen från Landskrona till Ränneslöv och se om datumet bekräftas som 1923-04-23.
+- Notera yrke/titel i Landskrona.
+
+**Källor:**  
+- K66.
+
+---
+
+
+### Landskrona stadsförsamling, Tärnan N:o 16: Alma Sofia som mejerielev
+
+Landskrona-posten i **Tärnan N:o 16, sida 383** är nu kontrollerad. Den ger ett viktigt steg i Alma Sofias liv före Årstad.
+
+| Fält | Avläsning |
+|---|---|
+| Församling | Landskrona stadsförsamling |
+| Plats | Tärnan N:o 16 |
+| Sida | 383 |
+| Rad | 23 |
+| Person | Alma Sofia Nilsson |
+| Född | 1900-04-04 |
+| Födelseort | Åryd |
+| Yrke/titel | mejerielev |
+| Civilstånd | ogift |
+| Inflyttad/överförd från | Årstad |
+| Inflyttningsår | 1922 |
+| Inflyttningsdatum | svårläst |
+| Utflyttad/överförd till | Ränneslöv |
+| Utflyttningsår | 1923 |
+| Utflyttningsdatum | ser ut som 9/4 eller möjligen 23/4; bör kontrolleras mot Ränneslöv/flyttlängd |
+| Källa i filen | K67 |
+
+**Tolkning:**  
+Det här är ett väldigt intressant fynd eftersom Alma står som **mejerielev**. Det förklarar också varför Ränneslöv-posten kunde ha en mejerirelaterad titel. Hon verkar alltså ha varit i Landskrona i ett mejerisammanhang innan hon flyttade vidare till Ränneslöv/Vallberga.
+
+**Viktig ny rörelsebild:**  
+Posten tyder också på att Alma kom till Landskrona från **Årstad** redan år 1922. Det innebär att hon sannolikt hade en tidigare Årstad-vistelse före Tärnan, innan hon senare återvänder till Årstad 1924 och gifter sig med Nils Birger Gustafsson.
+
+**Preliminär kedja:**
+
+```text
+Årstad → Landskrona/Tärnan → Ränneslöv/Vallberga → Årstad
+```
+
+**Källkritisk notering:**  
+Datumet för flytten till Ränneslöv är inte helt tydligt i bilden. Det ser ut som **1923-04-09** eller möjligen **1923-04-23**. Eftersom Ränneslöv-posten tidigare lästes som omkring 23/4 bör detta dubbelkontrolleras i flyttlängd eller med tydligare originalbild.
+
+**Nästa kontroll:**  
+- Hitta den tidigare Årstad-posten som Tärnan hänvisar till som inflyttning från Årstad 1922.
+- Kontrollera Landskronas utflyttningslängd 1923 till Ränneslöv.
+- Kontrollera Ränneslövs inflyttningslängd 1923 från Landskrona.
+- Se om mejeriet/hushållet på Tärnan N:o 16 kan förklara hennes yrkesväg.
+
+**Källor:**  
+- K67.
+
+---
+
+
+### Landskrona stadsförsamling, Sten Sture N:o 3: Alma Sofia 1916–1917
+
+Posten i **Landskrona stadsförsamling AIIa:78 (1915–1921), Bild 1220 / Sida 342** är nu kontrollerad.
+
+| Fält | Avläsning |
+|---|---|
+| Församling | Landskrona stadsförsamling |
+| Plats | Sten Sture N:o 3 |
+| Källa | AIIa:78 (1915–1921), Bild 1220 / Sida 342 |
+| Person | Alma Sofia Nilsson |
+| Rad | sannolikt rad 7 |
+| Född | 1900-04-04 |
+| Födelseort | Åryd, Blekinge län |
+| Civilstånd | ogift |
+| Inflyttad från | Bräkne-Hoby, Blekinge län |
+| Inflyttningsdatum | 1916-12-15 |
+| Utflyttad/överförd till | inom Landskrona, läst som “VI fol. 383” |
+| Utflyttningsdatum | 1917-11-02 |
+| Källa i filen | K68 |
+
+**Tolkning:**  
+Det här är en viktig tidigare Landskrona-post. Alma Sofia kommer från **Bräkne-Hoby** till **Landskrona/Sten Sture** i december 1916. Hon är då 16 år. Året därpå, **1917-11-02**, verkar hon flyttas vidare inom Landskrona till en hänvisning som ser ut som **“VI fol. 383”**.
+
+**Viktig slutsats:**  
+Detta ligger före mejerielev-posten i Tärnan. Det visar att Alma hade en tidigare period i Landskrona redan från 1916, innan den senare kedjan mot Ränneslöv och Årstad.
+
+**Preliminär kedja med denna post inlagd:**
+
+```text
+Bräkne-Hoby → Landskrona/Sten Sture 1916-12-15
+→ Landskrona, VI fol. 383 1917-11-02
+→ [ännu ej helt kartlagd mellanpost]
+→ Årstad
+→ Landskrona/Tärnan som mejerielev
+→ Ränneslöv/Vallberga
+→ Årstad 1924
+```
+
+**Källkritisk notering:**  
+Hänvisningen **“VI fol. 383”** bör följas i originalet innan vi tolkar platsen. Den kan motsvara en annan Landskrona-post i samma period, möjligen den post som i ArkivDigitals lista visas som **Norra Fäladsmarken** eller annan intern Landskrona-förflyttning.
+
+**Nästa kontroll:**  
+- Öppna hänvisningen **VI fol. 383** från Sten Sture-posten.
+- Kontrollera om det är samma som en annan Landskrona-post i listan.
+- Följ posten vidare till eventuell Årstad-flytt före 1922.
+- Kontrollera om Alma har titel/yrke i mellanposten.
+
+**Källor:**  
+- K68.
+
+---
+
+
+### Landskrona stadsförsamling, Norra Fäladsmarken: Alma Sofia 1917–1918
+
+Posten i **Landskrona stadsförsamling AIIa:74 (1915–1921), Bild 1690 / Sida 383** är nu kontrollerad. Detta verkar vara den post som Sten Sture-hänvisningen leder vidare till.
+
+| Fält | Avläsning |
+|---|---|
+| Församling | Landskrona stadsförsamling |
+| Plats | Norra Fäladsmarken |
+| Källa | AIIa:74 (1915–1921), Bild 1690 / Sida 383 |
+| Person | Alma Sofia Nilsson |
+| Rad | 11 |
+| Född | 1900-04-04 |
+| Födelseort | Åryd, Blekinge län |
+| Yrke/titel | tjänarinna |
+| Civilstånd | ogift |
+| Inflyttad/överförd från | VI fol. 342 |
+| Inflyttningsdatum | 1917-11-15 |
+| Utflyttad/överförd till | Karlshamn, troligen Karlshamns stadsförsamling |
+| Utflyttningsdatum | 1918-07-10 |
+| Källa i filen | K69 |
+
+**Tolkning:**  
+Det här binder ihop Sten Sture-posten med nästa steg. Alma Sofia kom från **VI fol. 342**, vilket motsvarar den tidigare posten på **Sten Sture N:o 3, sida 342**. Hon står här som **tjänarinna**, alltså i tjänst, innan hon flyttar vidare till **Karlshamn** 1918.
+
+**Kedjan blir nu:**
+
+```text
+Bräkne-Hoby → Landskrona/Sten Sture 1916-12-15
+→ Landskrona/Norra Fäladsmarken 1917-11-15
+→ Karlshamn 1918-07-10
+```
+
+**Källkritisk notering:**  
+Utflyttningsorten ser ut att vara **Karlshamn** och kan avse Karlshamns stadsförsamling. Detta bör kontrolleras i nästa originalpost i Karlshamn, särskilt eftersom ArkivDigitals lista visar en Karlshamn-post för Alma Sofia.
+
+**Nästa kontroll:**  
+- Öppna Karlshamn-posten för Alma Sofia Nilsson efter 1918-07-10.
+- Kontrollera om platsen är **Uppala** enligt ArkivDigital-listan.
+- Läs yrke/titel och vidare flyttuppgifter i Karlshamn.
+- Kontrollera om Karlshamn-posten senare leder mot Årstad före Tärnan/Ränneslöv-kedjan.
+
+**Källor:**  
+- K69.
+
+---
+
+
+### Bräkne-Hoby/Efvaryd N:o 7: familjehemmet och Almas flyttar
+
+Posten i **Bräkne-Hoby/Efvaryd N:o 7, sida 87** är nu kontrollerad. Den är viktig eftersom den visar Alma Sofia i familjehushållet och knyter ihop Bräkne-Hoby, Landskrona och Karlshamn.
+
+| Fält | Avläsning |
+|---|---|
+| Församling | Bräkne-Hoby |
+| Plats | Efvaryd N:o 7 |
+| Sida | 87 |
+| Far | Nils Månsson, född 1860-06-18 i Åryd |
+| Mor | Johanna Johansdotter, född 1868-06-02 i Åryd |
+| Alma Sofia | rad 20, född 1900-04-04 i Åryd |
+| Utflyttning från familjehemmet | Landskrona, 1916-12-15 |
+| Senare åter-/inflyttning | från Karlshamn, 1918-10-21 |
+| Källa i filen | K70 |
+
+**Tolkning:**  
+Det här är en central familjepost. Den bekräftar att Alma Sofia flyttar från familjehemmet i **Efvaryd/Bräkne-Hoby** till **Landskrona 1916-12-15**, vilket passar den tidigare Sten Sture-posten i Landskrona.
+
+Posten verkar också visa att Alma senare kommer tillbaka/överförs från **Karlshamn 1918-10-21**. Det passar ihop med kedjan från Landskrona/Norra Fäladsmarken, där hon flyttar till Karlshamn 1918-07-10. Här behöver vi vara lite försiktiga, eftersom flyttnoteringarna ligger tätt och flera rader är överstrukna.
+
+**Kedjan stärks så här:**
+
+```text
+Bräkne-Hoby/Efvaryd → Landskrona/Sten Sture 1916-12-15
+→ Landskrona/Norra Fäladsmarken 1917-11-15
+→ Karlshamn 1918-07-10
+→ Bräkne-Hoby/Efvaryd, åter/överförd från Karlshamn 1918-10-21
+```
+
+**Källkritisk notering:**  
+Läsningen av vissa kolumner är svår eftersom flera flyttnoteringar står tätt vid samma familjegrupp. Huvudtolkningen är ändå stark: posten binder ihop familjehemmet i Efvaryd med Landskrona och Karlshamn.
+
+**Nästa kontroll:**  
+- Öppna Karlshamn/Uppala-posten för att se vad som hände mellan Landskrona och återkomsten/överföringen till Efvaryd.
+- Kontrollera om Karlshamn-posten visar Alma som piga, tjänarinna eller mejerielev.
+- Kontrollera om Alma sedan flyttar vidare från Efvaryd mot Årstad eller annan mellanpost.
+
+**Källor:**  
+- K70.
+
+---
+
+
+### Karlshamn/Uppsala: Alma Sofia 1918
+
+Karlshamn-posten i **Karlshamn AIIa:8 (1906–1924), Bild 980 / Sida 87** är nu kontrollerad. Den låser kedjan mellan Landskrona och återkomsten till Bräkne-Hoby/Efvaryd.
+
+| Fält | Avläsning |
+|---|---|
+| Församling | Karlshamn |
+| Plats | Uppsala |
+| Källa | Karlshamn AIIa:8 (1906–1924), Bild 980 / Sida 87 |
+| Rad | 5 |
+| Person | Alma Sofia Nilsson |
+| Yrke/titel | tjänarinna |
+| Född | 1900-04-04 |
+| Födelseort | Åryd, Blekinge län |
+| Civilstånd | ogift |
+| Inflyttad från | Landskrona |
+| Inflyttningsdatum | 1918-07-10 |
+| Utflyttad till | Bräkne-Hoby |
+| Utflyttningsdatum | 1918-10-21 |
+| Källa i filen | K71 |
+
+**Tolkning:**  
+Detta bekräftar att Alma Sofia kom från **Landskrona till Karlshamn/Uppsala 1918-07-10** och att hon sedan flyttade vidare till **Bräkne-Hoby 1918-10-21**. Därmed kan den tidigare osäkra återkopplingen i Bräkne-Hoby/Efvaryd-posten låsas till **1918-10-21**.
+
+**Kedjan är nu låst så här:**
+
+```text
+Bräkne-Hoby/Efvaryd
+→ Landskrona/Sten Sture 1916-12-15
+→ Landskrona/Norra Fäladsmarken 1917-11-15
+→ Karlshamn/Uppsala 1918-07-10
+→ Bräkne-Hoby/Efvaryd 1918-10-21
+```
+
+**Källkritisk notering:**  
+Alma-raden är överstruken, vilket är normalt när personen flyttat vidare. Yrket/titeln läses tydligt nog som **tjänarinna**, och flyttkedjan stämmer med både Landskrona- och Bräkne-Hoby-posterna.
+
+**Nästa kontroll:**  
+- Följ Alma vidare från Bräkne-Hoby/Efvaryd efter återkomsten 1918-10-21.
+- Leta efter den Årstad-post som senare leder till Landskrona/Tärnan år 1922.
+- Kontrollera om hon flyttar från Bräkne-Hoby direkt till Årstad eller via annan plats.
+
+**Källor:**  
+- K71.
+
+---
+
+
+### Alma Sofia Nilssons födelsenotis i Åryd 1900
+
+Alma Sofia Nilssons födelsenotis är nu hittad i Åryd.
+
+| Fält | Uppgift |
+|---|---|
+| Person | Alma Sofia |
+| Född | 1900-04-04 |
+| Döpt | 1900-04-06 |
+| Församling | Åryd |
+| Far | Nils Månsson |
+| Faderns titel/bostad | hemmansägare/hemmansbrukare, från Byga/Bygd |
+| Faderns födelsedatum enligt hushåll/renskrivning | 1860-06-18 |
+| Mor | Johanna Johansdotter/Johansdr |
+| Moderns födelsedatum enligt hushåll/renskrivning | 1868-06-02 |
+| Källa | Åryds födelse- och dopbok 1900, sida 66 enligt uppladdad bild |
+| Källa i filen | K58 |
+
+**Tolkning:**  
+Detta bekräftar Alma Sofia Nilssons födelseuppgift från Årstad församlingsbok sida 393. Hon föddes **1900-04-04** och döptes **1900-04-06** i **Åryd**. Föräldrarna kan nu föras som **Nils Månsson** och **Johanna Johansdotter/Johansdr**.
+
+**Källkritisk notering:**  
+Faderns namn och moderns förnamn/patronymikon är starka, men platsnamnet läses med viss försiktighet som **Byga/Bygd**. Föräldrafödelsedatumen verkar anges i notisen som **Nils 1860-06-18** och **Johanna 1868-06-02**, vilket bör kontrolleras i husförhör/församlingsbok.
+
+**Kedjan på Alma-linjen blir nu:**  
+
+```text
+Nils Månsson + Johanna Johansdotter/Johansdr
+→ Alma Sofia Nilsson, född 1900-04-04 i Åryd
+→ Nils Stig Henning Nilsson, född 1924-09-01 i Årstad
+```
+
+**Nästa kontroll:**  
+- Öppna Åryd församlingsbok runt 1900 för hushållet i Byga/Bygd.
+- Kontrollera Nils Månsson född 1860-06-18.
+- Kontrollera Johanna Johansdotter/Johansdr född 1868-06-02.
+- Läs platsnamnet i hushållsboken för att avgöra om det är Byga, Bygd eller annan form.
+
+**Källor:**  
+- K58.
+
+---
+
+
+### Hushållet för Nils Månsson och Johanna Johansdotter i Åryd
+
+Hushållet där Alma Sofia Nilsson växer upp är nu identifierat genom originalbild och ArkivDigital-renskrivning.
+
+| Person | Relation | Född | Födelseort enligt bilden/renskrivningen |
+|---|---:|---|---|
+| Nils Månsson | far | 1860-06-18 | Åryd |
+| Johanna Johansdotter/Johansdr | mor | 1868-06-02 | Åryd |
+| Thekla Emilia | Johannas dotter; senare i hushåll med Nils/Johanna, troligen född före äktenskapet | 1888-09-05 | Åryd |
+| Sven August | son | 1890-09-19 | Åryd |
+| Anna Mathilda | dotter | 1892-11-23 | Åryd |
+| Edla Eleonora | dotter | 1895-08-09 | Åryd |
+| Ernst Frithiof | son | 1897-12-16 | Åryd |
+| Alma Sofia | dotter | 1900-04-04 | Åryd |
+
+**Viktig korrigering:**  
+Den tidigare preliminära läsningen av faderns födelsedatum som **1860-06-08** korrigeras till **1860-06-18**. Moderns patronymikon korrigeras också från preliminärt **Jönsdotter/Jonsdotter** till **Johansdotter/Johansdr**.
+
+**Tolkning:**  
+Detta stärker Alma Sofia-linjen tydligt. Vi har nu både hennes födelsenotis och hushållet där hennes föräldrar och syskon framgår. Nästa naturliga steg är att följa **Nils Månsson** och **Johanna Johansdotter** bakåt i Åryd.
+
+**Nästa kontroll:**  
+- Kontrollera Nils Månssons födelsenotis 1860-06-18 i Åryd.
+- Kontrollera Johanna Johansdotters födelsenotis 1868-06-02 i Åryd.
+- Sök vigseln mellan Nils Månsson och Johanna Johansdotter, troligen före Thekla Emilias födelse 1888.
+- Följ hushållet bakåt i församlingsbok/husförhör för att hitta föräldrarnas ursprung.
+
+**Källor:**  
+- K59.
+
+---
+
+
+### Thekla Emilias födelsenotis i Åryd 1888
+
+Thekla Emilias födelsenotis är nu hittad i Åryd.
+
+| Fält | Uppgift |
+|---|---|
+| Person | Thekla Emilia |
+| Född | 1888-09-05 |
+| Döpt | 1888-09-23 |
+| Församling | Åryd |
+| Notering | oäkta |
+| Far | ej angiven i födelsenotisen |
+| Mor | pigan Johanna Johansdotter |
+| Moderns ålder | 20 år |
+| Hemvist | Gustavsborg, hänvisning p. 188 |
+| Källa i filen | K60 |
+
+**Tolkning:**  
+Notisen är viktig eftersom Thekla Emilia står som **oäkta**. Det betyder att hon är född utom äktenskap och att fadern inte anges i födelsenotisen. Hon ska därför föras som **Johanna Johansdotters dotter**. Hon kan i hushållet senare stå tillsammans med Nils Månsson, men födelsenotisen bekräftar inte Nils som biologisk far.
+
+**Konsekvens för hushållet:**  
+Thekla Emilia bör i nuläget markeras som **Alma Sofias äldre halvsyster eller hushållssyster**, inte som säkert biologiskt barn till Nils Månsson. Om senare källa visar erkännande, legitimering eller annan fadersuppgift kan detta ändras.
+
+**Nästa kontroll:**  
+- Öppna hänvisningen **Gustavsborg p. 188** för att se Johanna före Theklas födelse.
+- Kontrollera om någon senare notis anger fader eller legitimering.
+- Sök vigseln mellan Nils Månsson och Johanna Johansdotter för att se när de gifter sig i relation till Theklas födelse.
+
+**Källor:**  
+- K60.
+
+---
+
+
+### Åryd sida 185: Nils Månsson, Johanna Johansdotter och Thekla Emilia
+
+Sida 185 är nu kontrollerad som uppföljning till Thekla Emilias födelsenotis.
+
+| Rad | Avläsning | Född | Födelseort |
+|---:|---|---|---|
+| 13 | Fästm. Nils Månsson, sjöman | 1860-06-18 | Åryd |
+| 14 | Dottr. Johanna Johansdotter | 1868-06-02 | Åryd |
+| 15 | oä. Thekla Emilia, med notering “mak. före äktensk.”/”makarna före äktenskapet” | 1888-09-05 | Åryd |
+
+**Tolkning:**  
+Det här är en viktig komplettering till Thekla Emilias födelsenotis. Födelsenotisen anger Thekla som **oäkta** och utan angiven far, men sida 185 visar Nils Månsson tillsammans med Johanna och Thekla, där Nils verkar stå som **fästman**. Anteckningen vid Thekla ser ut att syfta på att hon är född **före makarnas äktenskap**.
+
+**Konsekvens för släktträdet:**  
+Thekla Emilia kan inte föras som biologiskt bekräftad dotter till Nils Månsson enbart utifrån födelsenotisen, men sida 185 stärker att hon senare räknades till Nils och Johannas hushåll som barn före äktenskapet. I arbetsmaterialet bör hon därför markeras ungefär så här:
+
+```text
+Thekla Emilia
+född 1888-09-05 i Åryd
+mor: Johanna Johansdotter
+far: ej angiven i födelsenotisen
+notering: i senare hushåll med Nils Månsson/Johanna; sannolikt makarnas barn före äktenskapet, men faderskap ej uttryckligen bekräftat i födelsenotisen
+```
+
+**Nästa kontroll:**  
+- Kontrollera om vigseln mellan Nils Månsson och Johanna Johansdotter nämner Thekla eller datum för äktenskapet.
+- Kontrollera om senare församlingsbok anger Thekla som dotter till Nils eller om någon legitimerings-/faderskapsnotis finns.
+- Komplettera exakt volym/bild/sida för Åryd sida 185.
+
+**Källor:**  
+- K61.
+
+---
+
+
+### Arbetsplan: kartlägga Alma Sofia Nilssons liv före Årstad
+
+ArkivDigitals postlista för Alma Sofia Nilsson visar att hon före etableringen i Årstad verkar ha rört sig mellan flera församlingar och platser. Listan ska dock läsas källkritiskt: **tidsperioden i listan är ofta volymens tidsomfång, inte exakt den tid Alma bodde där**. Därför behöver varje post kontrolleras i originalet med inflyttad-/utflyttad-kolumner.
+
+| Ordning att kontrollera | Post i ArkivDigital-listan | Vad vi vill få fram |
+|---:|---|---|
+| 1 | Årstad (N), Årstad, 1921–1930 | När Alma kommer till Årstad, varifrån hon kommer och när hon gifter sig/flyttas till Nils Birgers hushåll. |
+| 2 | Landskrona stadsförsamling (M), Tärnan, 1921–1927 | Om detta är platsen hon flyttar från till Årstad. Kontrollera yrke, hushåll och flyttdatum. |
+| 3 | Ränneslöv (N), Vallberga, 1916–1936 | Kontrollera om detta är en tjänstepost mellan Landskrona och Årstad eller ett parallellt registerspår. |
+| 4 | Landskrona stadsförsamling (M), Sten Sture, 1915–1921 | Kontrollera om Alma arbetar/bor där före Tärnan. |
+| 5 | Landskrona stadsförsamling (M), Norra Fäladsmarken, 1915–1921 | Kontrollera eventuell tidigare Landskrona-post och flyttkedja. |
+| 6 | Karlshamn (K), Uppala, 1906–1924 | Troligen ungdoms-/familje- eller tjänstepost. Kontrollera inflyttning/utflyttning och hushåll. |
+| 7 | Bräkne-Hoby (K), Efvaryd, 1901–1910 och 1910–1919 | Kontrollera barndom/uppväxt efter födelsen i Åryd och eventuell familjeflytt. |
+| 8 | Åryd (K), Åryd, 1900–1911 samt 1890–1899/1886–1900 | Födelse-/familjeanknytning. Kontrollera exakt hushåll och när familjen lämnar Åryd. |
+
+**Viktig princip:**  
+Börja inte längst bak i listan och anta att ordningen är kronologisk. Det bästa är att börja i den säkra Årstadposten och arbeta bakåt genom flyttkolumnerna:
+
+```text
+Årstad → Landskrona/Tärnan → eventuell Ränneslöv/Vallberga → Landskrona/Sten Sture/Norra Fäladsmarken → Karlshamn/Uppala → Bräkne-Hoby/Efvaryd → Åryd
+```
+
+**Vad som ska noteras för varje originalpost:**
+
+| Fält | Varför det är viktigt |
+|---|---|
+| Exakt källa, bild och sida | För att kunna bygga en säker kedja. |
+| Radnummer | Gör det lätt att återvända till posten. |
+| Yrke/titel | Kan visa om Alma var piga, tjänarinna, hushållerska, arbetare etc. |
+| Hushåll/arbetsgivare | Ger kontext om var hon arbetade eller bodde. |
+| Inflyttad från | Binder posten till föregående plats. |
+| Utflyttad till | Binder posten till nästa plats. |
+| Datum/år för flytt | Gör tidslinjen exakt. |
+| Eventuella anteckningar | Kan förklara varför hon flyttar, om hon tar tjänst, får attest, gifter sig etc. |
+
+**Målbild:**  
+När originalposterna är kontrollerade ska Alma Sofias liv före Årstad sammanfattas som en sammanhängande tidslinje med platser, flyttdatum, yrken/tjänster och hushåll.
+
+**Källor:**  
+- K62.
+
+---
+
+
 ## 5. Källor och hänvisningar
 
 Använd gärna formatet:
@@ -1324,6 +1995,22 @@ Församling, boktyp och volym, årtal/intervall, sida/bild, arkiv/källa, releva
 | K53 | Uppladdad originaldetalj och ArkivDigital-renskrivning för Ingerd/Ingrid Grellsdotter, filer: “Skärmavbild 2026-07-13 kl. 23.42.45.png” och “Skärmavbild 2026-07-13 kl. 23.42.55.png” | Ingerd/Ingrid Grellsdotter, Ifvar Bengtsson, Britta Larsdotter m.fl. | Okome AI:1 (1791–1826), Bild 1300 / Sida 11. Renskrivningen anger Ingerd Grillsdot., född 1734-12-07, änka, boende i Gällsås/Gjälsås. Originalbilden visar “Enk: Ingerd Grillsd:r” i samma hushållssammanhang som Ifvar Bengtsson och Britta Larsdotter. | ArkivDigital-renskrivning och originaldetalj; stärker Ivars mor som Ingerd/Ingrid Grellsdotter |
 | K54 | Uppladdad vigselnotis och ArkivDigital-renskrivning, filer: “Skärmavbild 2026-07-13 kl. 23.48.33.png” och “Skärmavbild 2026-07-13 kl. 23.49.51.png” | Bengt Arvidsson/Arfvidsson, Ingerd/Ingrid Grellsdotter | Vigsel i Okome 1757-02-25 enligt ArkivDigital-renskrivning. Källa: Okome CI:2 (1749–1827), Bild 2040 / Sida 210. Brudgum: drängen Bengt Arfvidsson, normerat Arvidsson. Brud: pigan Ingrid Grellsdottr./Grellsdotter från Gällsås Lars Måns gård. | Originalnotis och ArkivDigital-renskrivning; stark bekräftelse av Ivar Bengtssons föräldrapar |
 | K55 | Uppladdad bild av födda och döpta 1734, fil: “Skärmavbild 2026-07-13 kl. 23.58.25.png” | Möjlig kontroll av Ingerd/Ingrid Grellsdotter/Grillsdotter | Bilden visar födelse-/dopbok för 1734 och används som kandidatsida för Ingerd/Ingrid född 1734-12-07 enligt senare husförhör. Den specifika notisen kan inte säkert läsas i den uppladdade bilden och ska därför inte låsas utan tydligare detalj eller renskrivning. | Kandidatsida; ej slutlig bekräftelse |
+| K56 | Uppladdad bild av möjlig Britta Larsdotter-notis i Askome, fil: “Skärmavbild 2026-07-15 kl. 22.36.11.png” | Britta Larsdotter, Lars Olofsson, Johanna [svårläst]dotter | Bekräftad födelse-/dopnotis för Britta Larsdotter i arbetsmaterialet. Notisen anger att Britta döptes 1766-11-30 och längst ned står “Född den 26”, vilket matchar husförhörsuppgiften 1766-11-26. Fadern läses som Lars Olofsson; modern läses som Johanna [patronymikon svårläst]dotter. Exakt volym/bild/sida behöver kompletteras. | Originalbild; födelse/dop och föräldrar bekräftas i arbetsmaterialet, men moderns fullständiga namn och exakt källa behöver kompletteras |
+| K57 | Uppladdad bild av Årstad församlingsbok sida 393, fil: “Skärmavbild 2026-07-16 kl. 21.54.06.png” | Alma Sofia Nilsson, Nils Birger Gustafsson, Nils Stig Henning, Ingrid Linnea | Sida 393 visar Alma Sofia Nilsson på rad 10 som hustru till Nils Birger Gustafsson. Alma anges född 1900-04-04 i Åryd, troligen Blekinge län (“Åryd Bl.l.”). Hon verkar även förekomma tidigare på rad 23 som ogift/inneboende, med hänvisning till rad 10 år 1924. Barnen Nils Stig Henning f. 1924-09-01 och Ingrid Linnea f. 1926-02-01 syns i hushållet. | Originalbild; födelseort Åryd/Blekinge bör följas upp med födelsenotis |
+| K58 | Uppladdad födelse-/dopnotis för Alma Sofia i Åryd 1900, fil: “Skärmavbild 2026-07-16 kl. 22.12.18.png” | Alma Sofia, Nils Månsson, Johanna Johansdotter/Johansdr | Åryds födelse- och dopbok 1900, sida 66 enligt uppladdad bild. Alma Sofia föddes 1900-04-04 och döptes 1900-04-06. Föräldrarna läses som Nils Månsson, hemmansägare/hemmansbrukare från Byga/Bygd, född 1860-06-08, och hans hustru Johanna Johansdotter/Johansdr, född 1868-06-02. | Originalbild; platsnamn och moderns patronymikon bör kontrolleras i församlingsbok |
+| K59 | Uppladdad originalbild och ArkivDigital-renskrivning av hushållet i Åryd, filer: “Skärmavbild 2026-07-16 kl. 22.26.22.png” och “Skärmavbild 2026-07-16 kl. 22.26.46.png” | Nils Månsson, Johanna Johansdotter/Johansdr, Thekla Emilia, Sven August, Anna Mathilda, Edla Eleonora, Ernst Frithiof, Alma Sofia | Hushållet visar Nils Månsson född 1860-06-18 i Åryd och hustrun Johanna Johansdotter/Johansdr född 1868-06-02 i Åryd samt barnen Thekla Emilia 1888-09-05, Sven August 1890-09-19, Anna Mathilda 1892-11-23, Edla Eleonora 1895-08-09, Ernst Frithiof 1897-12-16 och Alma Sofia 1900-04-04. | Originalbild och ArkivDigital-renskrivning; exakt volym/bild/sida bör kompletteras |
+| K60 | Uppladdad födelse-/dopnotis för Thekla Emilia i Åryd 1888, fil: “Skärmavbild 2026-07-16 kl. 22.34.14.png” | Thekla Emilia, Johanna Johansdotter | Åryds födelse- och dopbok 1888 enligt uppladdad bild. Thekla Emilia föddes 1888-09-05 och döptes 1888-09-23. Hon anges som oäkta. Fader är inte angiven. Modern läses som pigan Johanna Johansdotter, 20 år, med hemvist Gustavsborg, hänvisning p. 188. | Originalbild; viktig notering eftersom Thekla inte bör föras som bekräftad biologisk dotter till Nils Månsson utan separat stöd |
+| K61 | Uppladdad bild av Åryd sida 185, fil: “Skärmavbild 2026-07-16 kl. 22.51.22.png” | Nils Månsson, Johanna Johansdotter, Thekla Emilia | Sida 185 visar sannolikt fästmannen Nils Månsson född 1860-06-18 i Åryd, dottern Johanna Johansdotter född 1868-06-02 i Åryd och oäkta Thekla Emilia född 1888-09-05 i Åryd. Anteckningen vid Thekla ser ut som “mak. före äktensk.”/”makarna före äktenskapet”, vilket stärker att Thekla senare räknades till Nils och Johannas hushåll som barn före äktenskapet. | Originalbild; faderskap fortfarande inte uttryckligen angivet i Theklas födelsenotis |
+| K62 | Uppladdad ArkivDigital-postlista för Alma Sofia Nilsson, fil: “Skärmavbild 2026-07-16 kl. 22.54.09.png” | Alma Sofia Nilsson | Postlistan visar förekomster för Alma Sofia Nilsson född 1900-04-04 i Åryd/Bräkne-Hoby/Karlshamn/Landskrona/Ränneslöv/Årstad. Den används som vägkarta för att kartlägga hennes liv och flyttkedja före Årstad. Tidsperioderna avser sannolikt källvolymernas omfång och ska inte tolkas som exakta boendeperioder utan originalkontroll. | ArkivDigital-renskrivnings-/postlista; kräver originalkontroll post för post |
+| K63 | Uppladdad detaljbild av Årstad sida 393, rad 8–12, fil: “Skärmavbild 2026-07-16 kl. 23.02.18.png” | Nils Birger Gustafsson, Alma Sofia Nilsson, Nils Stig Henning, Ingrid Linnea | Detaljbilden visar Nils Birger Gustafsson f. 1896-07-03 i Årstad och hustrun Alma Sofia Nilsson f. 1900-04-04 i Åryd Bl.l., vigda 1924-02-16. Alma är överförd från rad 23 år 1924 och Nils Birger sannolikt från rad 4 år 1924. Barnen Nils Stig Henning f. 1924-09-01 och Ingrid Linnea f. 1926-02-01 syns i hushållet. | Originalbild; används för att tolka hushållsbildningen efter vigseln, inte som extern inflyttning |
+| K64 | Uppladdad inzoomad detalj av Årstad sida 393, rad 8–12, fil: “Skärmavbild 2026-07-16 kl. 23.05.15.png” | Alma Sofia Nilsson, Nils Birger Gustafsson, Nils Stig Henning, Ingrid Linnea | Detaljen bekräftar Alma Sofia Nilsson f. 1900-04-04 i Åryd Bl.l. på rad 10, gift 1924-02-16 med Nils Birger Gustafsson. Alma är överförd från rad 23 år 1924. Det röda på högersidan verkar vara hänvisning till ny bok, troligen n.b. 259, för hushållets fortsättning. | Originalbild; visar hushållsöverföring efter vigsel, inte Almas externa inflyttning |
+| K65 | Uppladdad detaljbild av Årstad sida 393, rad 21–25, fil: “Skärmavbild 2026-07-16 kl. 23.07.58.png” | Alma Sofia Nilsson | Rad 23 visar Alma Sofia Nilsson f. 1900-04-04 i Åryd Bl.l. Inflyttad/överförd-kolumnen visar Ränneslöv 1924-01-24. Utflyttad/överförd-kolumnen visar rad 10 år 1924, vilket förklarar att Alma förs till Nils Birger Gustafssons hushåll efter vigseln. | Originalbild; datumet vid Ränneslöv läses som 1924-01-24 och rörelsekedjan Ränneslöv → Årstad rad 23 → rad 10 är tydlig |
+| K66 | Uppladdad detaljbild av Ränneslöv/Vallberga-posten för Alma Sofia Nilsson, fil: “Skärmavbild 2026-07-16 kl. 23.17.55.png” | Alma Sofia Nilsson | Posten visar Alma Sofia Nilsson på rad 25, född 1900-04-04 i Åryd. Yrke/titel läses preliminärt som mejeriarb./mejeriarbeterska. Hon kom från Landskrona stadsförsamling år 1923, sannolikt 23/4, och flyttade till Årstad 1924-01-24. | Originalbild; inflyttningsdatum och yrkestitel bör kontrolleras mot originalkolumner/Landskrona-posten |
+| K67 | Uppladdad bild av Landskrona stadsförsamling, Tärnan N:o 16, sida 383, fil: “Skärmavbild 2026-07-19 kl. 13.21.30.png” | Alma Sofia Nilsson | Rad 23 visar Alma Sofia Nilsson född 1900-04-04 i Åryd, ogift och med yrke/titel mejerielev. Hon verkar ha kommit från Årstad år 1922 och flyttat vidare till Ränneslöv år 1923. Utflyttningsdatumet till Ränneslöv är svårläst, möjligen 9/4 eller 23/4. | Originalbild; datum behöver kontrolleras i flyttlängd/Ränneslöv-posten |
+| K68 | Uppladdad bild av Landskrona stadsförsamling, Sten Sture N:o 3, sida 342, fil: “Skärmavbild 2026-07-19 kl. 13.35.41.png” | Alma Sofia Nilsson | Landskrona stadsförsamling AIIa:78 (1915–1921), Bild 1220 / Sida 342. Alma Sofia Nilsson står född 1900-04-04 i Åryd Blekinge län. Hon kommer från Bräkne-Hoby 1916-12-15 och flyttas vidare inom Landskrona 1917-11-02 till en hänvisning som läses “VI fol. 383”. | Originalbild och ArkivDigital-renskrivning; hänvisningen VI fol. 383 behöver följas |
+| K69 | Uppladdad bild av Landskrona stadsförsamling, Norra Fäladsmarken, sida 383, fil: “Skärmavbild 2026-07-19 kl. 14.04.27.png” | Alma Sofia Nilsson | Landskrona stadsförsamling AIIa:74 (1915–1921), Bild 1690 / Sida 383. Alma Sofia Nilsson står på rad 11 som tjänarinna, född 1900-04-04 i Åryd Blekinge län, ogift. Hon är inflyttad/överförd från VI fol. 342 år 1917, med datum 15/11, och flyttar vidare till Karlshamn, troligen Karlshamns stadsförsamling, 1918-07-10. | Originalbild och ArkivDigital-renskrivning; Karlshamnsposten bör kontrolleras |
+| K70 | Uppladdad bild av Bräkne-Hoby/Efvaryd N:o 7, sida 87, fil: “Skärmavbild 2026-07-19 kl. 14.27.39.png” samt ArkivDigital-renskrivning “Skärmavbild 2026-07-19 kl. 14.27.50.png” | Nils Månsson, Johanna Johansdotter, Alma Sofia Nilsson med syskon | Familjeposten visar Nils Månsson f. 1860-06-18 i Åryd, Johanna Johansdotter f. 1868-06-02 i Åryd och Alma Sofia f. 1900-04-04 i Åryd. Alma står på rad 20. Posten bekräftar utflyttning till Landskrona 1916-12-15 och visar senare åter-/inflyttning från Karlshamn 1918-10-21, vilket nu stöds av K71. | Originalbild och ArkivDigital-renskrivning; Karlshamn-återkomsten bekräftas av K71 |
+| K71 | Uppladdad bild av Karlshamn/Uppsala, sida 87, fil: “Skärmavbild 2026-07-19 kl. 22.30.00.png” samt ArkivDigital-renskrivning “Skärmavbild 2026-07-19 kl. 22.29.49.png” | Alma Sofia Nilsson | Karlshamn AIIa:8 (1906–1924), Bild 980 / Sida 87. Alma Sofia Nilsson står på rad 5 som tjänarinna, född 1900-04-04 i Åryd Blekinge län, ogift. Hon är inflyttad från Landskrona 1918-07-10 och utflyttad till Bräkne-Hoby 1918-10-21. | Originalbild och ArkivDigital-renskrivning; låser kedjan Landskrona → Karlshamn → Bräkne-Hoby/Efvaryd |
 
 ---
 
@@ -1832,6 +2519,130 @@ Bengt Arvidsson/Arfvidssons vigsel ska inte längre stå som ett söksteg. Den �
 
 **Rätt nästa steg:**  
 Fokus ska nu ligga på att hitta **Bengt Arvidssons födelse/ursprung, föräldrar, tidigare hushåll eller dödnotis**. Vigseln används som startpunkt bakåt, inte som något som behöver hittas igen.
+
+---
+
+
+### Arbetsbeslut: Bengt Arvidsson-spåret pausas
+
+Bengt Arvidsson/Arfvidsson-spåret pausas tills vidare. Han är redan tillräckligt starkt placerad i kedjan genom vigseln med Ingerd/Ingrid Grellsdotter och genom Ivar Bengtssons födelsenotis.
+
+| Person | Status |
+|---|---|
+| Bengt Arvidsson/Arfvidsson | Bekräftad som make till Ingerd/Ingrid Grellsdotter och far till Ivar Bengtsson |
+| Vigsel | Bekräftad 1757-02-25 i Okome, K54 |
+| Barn/koppling | Ivar Bengtsson född 1757-04-21, K51 |
+| Fortsatt arbete | Pausas tills vidare |
+
+**Motivering:**  
+Det finns risk att spåret bakåt på Bengt blir tidskrävande och osäkert utan fler tydliga ledtrådar. Därför läggs Bengt på paus, medan huvudfokus flyttas till spår där vi har tydligare datum och platser.
+
+**Nästa rekommenderade huvudspår:**  
+Följ **Britta Larsdotter** bakåt. Vi har ett tydligt födelsedatum från husförhör, **1766-11-26**, och vigseln 1788 anger henne som pigan från **Ytregård/Ytregården**.
+
+---
+
+
+### Britta Larsdotter: födelsenotis ej hittad i Okome
+
+Britta Larsdotters födelsenotis har inte hittats i Okome trots födelsedatumet **1766-11-26** från senare husförhör/renskrivning. Detta talar för att **Okome inte ska låsas som födelseförsamling**.
+
+| Uppgift | Status |
+|---|---|
+| Namn | Britta Larsdotter |
+| Födelsedatum enligt husförhör | 1766-11-26 |
+| Födelseförsamling | Ej bekräftad |
+| Okome födelsebok | Ingen säker notis hittad |
+| Vigsel 1788 | Askome |
+| Hemort vid vigsel | Ytregård/Ytregården |
+
+**Tolkning:**  
+Att hon inte hittas i Okome är inte konstigt, eftersom vigseln 1788 sker i **Askome** och hon anges som pigan från **Ytregård/Ytregården**. Det gör Askome till ett starkare nästa sökområde än Okome.
+
+**Arbetslinje framåt:**  
+Sök Britta i **Askome födelsebok** kring **1766-11-26**, men med marginal. Födelsedatum i husförhör kan vara fel med några dagar, månader eller ibland år. Om ingen träff finns exakt 1766-11-26 bör även närliggande år kontrolleras, särskilt eftersom vigseln och hemorten pekar mot Askome/Ytregård.
+
+**Nästa kontroll:**  
+- Askome födelsebok kring 1766-11-26.
+- Askome födelsebok med marginal 1765–1767.
+- Husförhör/mantal för Ytregård/Ytregården före vigseln 1788.
+- Eventuell dödnotis för Britta, som kan bekräfta ålder och födelseplats.
+
+---
+
+
+### Britta Larsdotters födelsenotis i Askome
+
+En stark kandidat till **Britta Larsdotters födelsenotis** har hittats i Askome.
+
+| Fält | Uppgift |
+|---|---|
+| Person | Britta Larsdotter |
+| Född | 1766-11-26 enligt notisens avslutande rad: “Född den 26” |
+| Döpt | 1766-11-30, läst från raden “d. 30 November döptes ...” |
+| Församling | Askome enligt sökspår/användarens uppgift |
+| Fader | Lars Olofsson |
+| Moder | Johanna [patronymikon svårläst]dotter |
+| Källa | Uppladdad bild från Askome födelse-/dopbok; exakt volym/bild/sida behöver kompletteras |
+| Källa i filen | K56 |
+
+**Tolkning:**  
+Detta är nu fört som bekräftad födelse-/dopnotis för Britta Larsdotter i arbetsmaterialet. Den viktigaste detaljen är att notisen verkar skilja på dopdatum och födelsedatum: **Britta döps 30 november**, men längst ned står **“Född den 26”**. Det matchar exakt det födelsedatum som senare husförhör anger för Britta: **1766-11-26**.
+
+**Koppling till tidigare källor:**  
+Vid vigseln 1788 anges Britta som **pigan från Ytregård/Ytregården**. Eftersom notisen är funnen i Askome och födelsedatumet stämmer med husförhöret är detta sannolikt rätt Britta. Moderns fullständiga namn behöver dock läsas tydligare innan hennes patronymikon förs in.
+
+**Kedjan blir nu:**  
+
+```text
+Lars Olofsson + Johanna [patronymikon ej låst]dotter
+→ Britta Larsdotter, född 1766-11-26, döpt 1766-11-30 i Askome
+→ gift 1788-06-22 med Ivar Bengtsson
+→ Arvid/Arfvid Ivarsson, född 1797-09-01 i Okome
+```
+
+**Nästa kontroll:**  
+- Komplettera exakt källa: volym, bild och sida.
+- Ta fram ArkivDigitals renskrivning om den finns.
+- Zooma in moderns namn för att kunna läsa Johannas patronymikon.
+- Kontrollera om platsen i notisen kan knytas till Ytregård/Ytregården.
+
+**Källor:**  
+- K56.
+
+---
+
+
+### Slutsats: Britta Larsdotters föräldrar bekräftas
+
+Britta Larsdotters föräldrar förs nu som bekräftade utifrån födelse-/dopnotisen i Askome.
+
+| Person | Uppgift |
+|---|---|
+| Barn | Britta Larsdotter |
+| Född | 1766-11-26 |
+| Döpt | 1766-11-30 |
+| Far | Lars Olofsson |
+| Mor | Johanna [patronymikon ännu ej låst] |
+| Källa | K56 |
+
+**Slutsats:**  
+Kombinationen av födelse-/dopnotisen i Askome, födelsedatumet **1766-11-26** och den senare vigseluppgiften där Britta står som pigan från **Ytregård/Ytregården** gör att föräldrarna kan föras som bekräftade:
+
+```text
+Lars Olofsson
++ Johanna [patronymikon ej låst]
+→ Britta Larsdotter, född 1766-11-26, döpt 1766-11-30 i Askome
+```
+
+**Källkritisk notering:**  
+Fadern **Lars Olofsson** och moderns förnamn **Johanna** förs som bekräftade. Moderns patronymikon är fortfarande svårläst och ska inte låsas förrän en tydligare detalj, renskrivning eller kompletterande hushålls-/vigselnotis har kontrollerats.
+
+**Nästa kontroll:**  
+- Läs moderns fullständiga namn: **Johanna [patronymikon]dotter**.
+- Följ Lars Olofsson och Johanna i Askome/Ytregård före och efter Brittas födelse.
+- Sök vigseln mellan Lars Olofsson och Johanna.
+- Kontrollera om platsen i Brittas födelsenotis kan knytas till Ytregård/Ytregården.
 
 ---
 
@@ -2538,12 +3349,238 @@ Här dokumenteras varje steg, inklusive återvändsgränder och osäkra tolkning
 
 ---
 
+### 2026-07-15, Bengt Arvidsson-spåret pausas
+
+- Bengt Arvidsson/Arfvidsson-spåret pausas tills vidare.
+- Bengt är bekräftad genom vigseln 1757-02-25 i Okome med Ingerd/Ingrid Grellsdotter och genom Ivar Bengtssons födelsenotis 1757-04-21.
+- Nästa aktiva huvudspår blir i stället Britta Larsdotter, född 1766-11-26, från Ytregård/Ytregården enligt vigseln 1788.
+
+---
+
+### 2026-07-15, Britta Larsdotter ej hittad i Okome
+
+- Britta Larsdotters födelsenotis har inte hittats i Okome trots födelsedatum 1766-11-26 i senare husförhör/renskrivning.
+- Födelseförsamling ska därför inte låsas som Okome.
+- Eftersom vigseln 1788 sker i Askome och Britta anges som pigan från Ytregård/Ytregården bör Askome vara nästa huvudspår.
+- Sökning bör göras kring 1766-11-26 med marginal, exempelvis 1765–1767.
+
+---
+
+### 2026-07-15, stark kandidat till Britta Larsdotters födelsenotis i Askome
+
+- En bild från Askome födelse-/dopbok lades in som stark kandidat till Britta Larsdotters födelsenotis.
+- Notisen verkar ange dopdatum 1766-11-30 och födelsedatum 1766-11-26 genom formuleringen “Född den 26”.
+- Detta matchar exakt Brittas födelsedatum i senare husförhör.
+- Fadern läses som Lars Olofsson.
+- Modern läses som Johanna [patronymikon svårläst]dotter.
+- Exakt volym/bild/sida samt moderns patronymikon behöver kompletteras.
+
+---
+
+### 2026-07-15, Britta Larsdotters föräldrar bekräftas
+
+- Britta Larsdotters föräldrar förs nu som bekräftade utifrån födelse-/dopnotisen K56.
+- Britta anges född 1766-11-26 och döpt 1766-11-30 i Askome, vilket matchar senare husförhör.
+- Fadern förs som Lars Olofsson.
+- Modern förs som Johanna [patronymikon ännu ej låst].
+- Nästa steg är att läsa Johannas patronymikon och följa Lars Olofsson/Johanna i Askome/Ytregård.
+
+---
+
+### 2026-07-16, nytt aktivt huvudspår: Alma Sofia Nilsson
+
+- Arbetet flyttas till farfars mors sida: Alma Sofia Nilsson.
+- Känd bas: född 1900-04-04, gift 1924-02-16 i Årstad med Nils Birger Gustafsson.
+- Alma är mor till Nils Stig Henning Nilsson.
+- Vigselnotisen hänvisar båda makarna till sida 393 i församlingsboken.
+- Nästa praktiska steg är sida 393 och/eller ArkivDigitals personpost/lista över Alma Sofia Nilsson.
+
+---
+
+### 2026-07-16, Alma Sofia Nilsson på Årstad sida 393
+
+- Årstad församlingsbok sida 393 lades in som ny huvudkälla för Alma Sofia Nilsson.
+- Alma står som hustru till Nils Birger Gustafsson på rad 10.
+- Alma anges född 1900-04-04 i Åryd, troligen Blekinge län.
+- Hon verkar även förekomma på rad 23 som ogift/inneboende före vigseln.
+- Barnen Nils Stig Henning och Ingrid Linnea syns i hushållet.
+- Nästa steg är Alma Sofias födelsenotis i Åryd 1900-04-04.
+
+---
+
+### 2026-07-16, Alma Sofia Nilssons födelsenotis i Åryd
+
+- Alma Sofia Nilssons födelsenotis i Åryd 1900 lades in.
+- Hon föddes 1900-04-04 och döptes 1900-04-06.
+- Föräldrarna läses som Nils Månsson och Johanna Johansdotter/Johansdr.
+- Nils anges som hemmansägare/hemmansbrukare från Byga/Bygd.
+- Föräldrafödelsedatumen i notisen verkar vara Nils 1860-06-18 och Johanna 1868-06-02.
+- Nästa steg är hushållet i Åryd/Byga kring 1900.
+
+---
+
+### 2026-07-16, hushållet för Alma Sofia i Åryd
+
+- Hushållet för Alma Sofia Nilsson i Åryd lades in med originalbild och ArkivDigital-renskrivning.
+- Fadern korrigeras till Nils Månsson, född 1860-06-18 i Åryd.
+- Modern korrigeras till Johanna Johansdotter/Johansdr, född 1868-06-02 i Åryd.
+- Barn i hushållet: Thekla Emilia, Sven August, Anna Mathilda, Edla Eleonora, Ernst Frithiof och Alma Sofia.
+- Nästa steg är att kontrollera Nils och Johannas födelsenotiser samt deras vigsel.
+
+---
+
+### 2026-07-16, Thekla Emilias födelsenotis
+
+- Thekla Emilias födelsenotis i Åryd 1888 lades in.
+- Hon föddes 1888-09-05 och döptes 1888-09-23.
+- Hon anges som oäkta.
+- Fader är inte angiven i födelsenotisen.
+- Modern är pigan Johanna Johansdotter, 20 år, med hemvist Gustavsborg p. 188.
+- Thekla bör därför föras som Johannas dotter och inte som bekräftad biologisk dotter till Nils Månsson utan separat stöd.
+
+---
+
+### 2026-07-16, Åryd sida 185 för Nils/Johanna/Thekla
+
+- Åryd sida 185 lades in som uppföljning till Thekla Emilias födelsenotis.
+- Sidan visar sannolikt fästmannen Nils Månsson, dottern Johanna Johansdotter och oäkta Thekla Emilia.
+- Anteckningen vid Thekla ser ut att säga “mak. före äktensk.”/”makarna före äktenskapet”.
+- Detta stärker att Thekla senare räknades till Nils och Johannas hushåll som barn före äktenskapet.
+- Födelsenotisen anger fortfarande ingen far, så faderskapet ska inte låsas utan ytterligare stöd.
+
+---
+
+### 2026-07-16, arbetsplan för Alma Sofia Nilssons liv före Årstad
+
+- ArkivDigitals postlista för Alma Sofia Nilsson lades in som vägkarta.
+- Listan visar poster i Åryd, Bräkne-Hoby/Efvaryd, Karlshamn/Uppala, Landskrona, Ränneslöv/Vallberga och Årstad.
+- Tidsperioderna i listan ska behandlas som källvolymernas tidsomfång, inte exakta boendeperioder.
+- Nästa steg är att börja från Årstadposten och arbeta bakåt genom originalens inflyttad-/utflyttad-kolumner.
+
+---
+
+### 2026-07-16, detalj av första Årstad-hushållet för Alma
+
+- Detaljbild från Årstad sida 393, rad 8–12, lades in.
+- Alma Sofia Nilsson står på rad 10 som hustru till Nils Birger Gustafsson.
+- Nils Birger och Alma är noterade som vigda 1924-02-16.
+- Alma verkar vara överförd från rad 23 år 1924, inte inflyttad externt i denna rad.
+- För att följa Alma bakåt behöver rad 23 läsas i detalj.
+
+---
+
+### 2026-07-16, förtydligad detalj av Alma på Årstad sida 393
+
+- En mer inzoomad detalj av Årstad sida 393, rad 8–12, lades in.
+- Bilden bekräftar Alma Sofia Nilsson f. 1900-04-04 i Åryd Bl.l. och vigseln 1924-02-16.
+- Alma är överförd från rad 23 år 1924.
+- Röd hänvisning på högersidan verkar avse ny bok, troligen n.b. 259.
+- Nästa steg är fortfarande rad 23 för att följa Alma bakåt före giftermålet.
+
+---
+
+### 2026-07-16, Alma Sofia på Årstad sida 393 rad 23
+
+- Årstad sida 393 rad 23 lades in.
+- Rad 23 visar Alma Sofia Nilsson före hon förs till Nils Birger Gustafssons hushåll.
+- Hon är född 1900-04-04 i Åryd, Blekinge län.
+- Hon kom från Ränneslöv 1924-01-24.
+- Hon överförs till rad 10 år 1924, vilket passar vigseln med Nils Birger 1924-02-16.
+- Nästa steg är Ränneslöv/Vallberga-posten.
+
+---
+
+### 2026-07-16, datumet från Ränneslöv korrigerat
+
+- Datumet i Årstad sida 393 rad 23 läses nu som 24/1 1924.
+- Alma Sofia Nilssons rörelsekedja korrigeras till Ränneslöv 1924-01-24 → Årstad rad 23 → Årstad rad 10.
+- Detta passar vigseln med Nils Birger Gustafsson 1924-02-16.
+
+---
+
+### 2026-07-16, Ränneslöv/Vallberga-posten för Alma Sofia
+
+- Ränneslöv/Vallberga-posten för Alma Sofia Nilsson lades in.
+- Alma står på rad 25, född 1900-04-04 i Åryd.
+- Yrke/titel läses preliminärt som mejeriarb./mejeriarbeterska.
+- Hon kom från Landskrona stadsförsamling år 1923, sannolikt 23/4.
+- Hon flyttade vidare till Årstad 1924-01-24.
+- Rörelsekedjan är nu Landskrona stadsförsamling → Ränneslöv/Vallberga → Årstad.
+
+---
+
+### 2026-07-19, Landskrona/Tärnan-posten för Alma Sofia
+
+- Landskrona stadsförsamling, Tärnan N:o 16, sida 383, lades in.
+- Alma Sofia Nilsson står på rad 23, född 1900-04-04 i Åryd.
+- Yrke/titel läses som mejerielev.
+- Hon kom från Årstad år 1922, datum svårläst.
+- Hon flyttade vidare till Ränneslöv år 1923, datum svårläst.
+- Preliminär rörelsekedja blir Årstad → Landskrona/Tärnan → Ränneslöv/Vallberga → Årstad.
+
+---
+
+### 2026-07-19, Landskrona/Sten Sture-posten för Alma Sofia
+
+- Landskrona stadsförsamling, Sten Sture N:o 3, sida 342, lades in.
+- Alma Sofia Nilsson står född 1900-04-04 i Åryd, Blekinge län.
+- Hon kom från Bräkne-Hoby 1916-12-15.
+- Hon flyttades vidare inom Landskrona 1917-11-02 till hänvisning “VI fol. 383”.
+- Nästa steg är att följa hänvisningen VI fol. 383.
+
+---
+
+### 2026-07-19, Landskrona/Norra Fäladsmarken-posten för Alma Sofia
+
+- Landskrona stadsförsamling, Norra Fäladsmarken, sida 383, lades in.
+- Alma Sofia Nilsson står på rad 11 som tjänarinna.
+- Hon är född 1900-04-04 i Åryd, Blekinge län.
+- Hon kom från VI fol. 342 den 1917-11-15, vilket motsvarar Sten Sture-posten.
+- Hon flyttade vidare till Karlshamn 1918-07-10.
+- Kedjan är nu Bräkne-Hoby → Landskrona/Sten Sture → Landskrona/Norra Fäladsmarken → Karlshamn.
+
+---
+
+### 2026-07-19, Bräkne-Hoby/Efvaryd familjepost för Alma Sofia
+
+- Bräkne-Hoby/Efvaryd N:o 7, sida 87, lades in.
+- Hushållet visar Nils Månsson, Johanna Johansdotter och barnen, inklusive Alma Sofia på rad 20.
+- Alma flyttar från Efvaryd/Bräkne-Hoby till Landskrona 1916-12-15.
+- Posten verkar också visa åter-/inflyttning från Karlshamn 1918-10-21.
+- Kedjan Bräkne-Hoby/Efvaryd → Landskrona → Karlshamn → Bräkne-Hoby/Efvaryd stärks, men Karlshamn-posten behöver kontrolleras.
+
+---
+
+### 2026-07-19, Karlshamn/Uppsala-posten för Alma Sofia
+
+- Karlshamn AIIa:8, Bild 980 / Sida 87, lades in.
+- Alma Sofia Nilsson står på rad 5 som tjänarinna.
+- Hon är född 1900-04-04 i Åryd, Blekinge län.
+- Hon kom från Landskrona 1918-07-10.
+- Hon flyttade vidare till Bräkne-Hoby 1918-10-21.
+- Detta låser kedjan Landskrona/Norra Fäladsmarken → Karlshamn/Uppsala → Bräkne-Hoby/Efvaryd.
+
+---
+
 ## 7. Osäkra uppgifter och hypoteser
 
 Här samlas sådant som ännu inte är bekräftat.
 
 | Hypotes | Stöd | Osäkerhet | Nästa kontroll |
 |---|---|---|---|
+| Alma Sofias återkoppling via Karlshamn till Efvaryd | K69 visar Landskrona → Karlshamn 1918-07-10; K71 visar Karlshamn → Bräkne-Hoby/Efvaryd 1918-10-21 | Kedjan är nu i huvudsak låst | Följ Alma vidare från Efvaryd efter 1918-10-21 |
+| Alma Sofias Karlshamn-post efter Norra Fäladsmarken | K69 visar utflyttning till Karlshamn 1918-07-10 | Exakt Karlshamnspost och plats, sannolikt Uppala, är ännu inte kontrollerad | Öppna Karlshamn/Uppala-posten i ArkivDigital-listan |
+| Alma Sofias Landskrona-kedja 1916–1917 | K68 visar Bräkne-Hoby → Sten Sture 1916-12-15 och vidare till “VI fol. 383” 1917-11-02 | Det är ännu oklart vilken plats VI fol. 383 motsvarar | Följ hänvisningen i originalet |
+| Alma Sofias tidigare Årstad-vistelse före Landskrona | K67 anger inflyttad från Årstad år 1922 till Landskrona/Tärnan | Exakt Årstad-post och datum är ännu inte identifierade | Hitta Årstad-posten före 1922 och följ därifrån bakåt |
+| Alma Sofias yrke i Ränneslöv | K66 ser ut att visa mejeriarb./mejeriarbeterska | Titeln är överstruken och svårläst | Kontrollera mot Landskrona-posten och bättre originalbild |
+| Alma Sofia Nilssons flyttkedja före Årstad | K62 visar flera poster i Åryd, Bräkne-Hoby, Karlshamn, Landskrona och Ränneslöv | Listans tidsperioder är inte exakta boendetider | Kontrollera originalposterna bakåt från Årstad via inflyttad/utflyttad-kolumner |
+| Thekla Emilias far | K60 anger henne som oäkta utan far; K61 visar henne med Nils/Johanna och notering om makarna före äktenskapet | Nils är starkare som hushålls-/möjlig far, men biologiskt faderskap är inte uttryckligen låst i födelsenotisen | Kontrollera vigsel/legitimering eller senare församlingsbok |
+| Nils Månssons födelsedatum | K59/renskrivning visar 1860-06-18 | Tidigare preliminär läsning 1860-06-08 var fel | Kontrollera födelsenotis 1860-06-18 i Åryd |
+| Plats och moderns patronymikon i Almas födelsenotis | K58 visar Nils Månsson och Johanna Johansdotter/Johansdr från Byga/Bygd | Platsformen och Jöns-/Jonsdotter bör kontrolleras | Kontrollera Åryd församlingsbok kring 1900 |
+| Alma Sofia Nilssons födelseort | K57 och K58 bekräftar Åryd | Bekräftad i arbetsmaterialet | Följ föräldrarna i Åryd/Byga |
+| Johannas patronymikon | K56 visar modern som Johanna [svårläst]dotter | Patronymikonet är ännu inte låst | Ta fram inzoomning/renskrivning eller hitta vigseln med Lars Olofsson |
+| Britta Larsdotters födelseförsamling/födelsenotis | K56 anger Britta född 1766-11-26 och döpt 1766-11-30 i Askome; matchar husförhör | Bekräftad i arbetsmaterialet, men exakt volym/bild/sida bör kompletteras | Komplettera källa och läs modern Johanna [patronymikon]dotter |
+| Bengt Arvidsson bakåt före 1757 | K54 och K51 bekräftar honom i kedjan | Födelse/ursprung är oklart och spåret bedöms svårt just nu | Pausas tills vidare; gå vidare med Britta Larsdotter |
 | Ingerd/Ingrid Grellsdotters födelsenotis 1734 | K55 är rätt årgång och K53 anger född 1734-12-07 | Den specifika notisen är inte säkert läsbar i bilden | Ta fram tydligare detalj eller ArkivDigital-renskrivning kring december 1734 |
 | Relationer och åldrar i Gjälsås/Gjalsås-posten | K52 visar hushållet med Ivar, Britta, barnen och troligen modren Ingiärd | Renskrivningen saknar födelsedatum och originalet behöver detaljläsas | Kontrollera originalets ålderskolumn och eventuella relationstexter |
 | Ivar Bengtssons mors fullständiga namn | K51 visar moderns förnamn som Ingiärd/Ingerd, K52 verkar visa “modren Ingiärd” och K53 anger Ingerd/Ingrid Grellsdotter | Namnet är starkt men bör slutbekräftas i dödnotis/vigsel | Kontrollera Ingerd/Ingrid Grellsdotters dödnotis eller vigseln med Bengt Arvidsson |
@@ -3152,4 +4189,44 @@ Skapa ett släktträd för farfars sida baserat på bekräftade uppgifter i denn
 65. Ta fram en inzoomad detalj eller ArkivDigital-renskrivning av födelsenotisen för Ingerd/Ingrid 1734-12-07 om vi vill komplettera hennes ursprung senare.
 
 
-66. Nästa huvudspår: följ Bengt Arvidsson/Arfvidsson bakåt från den redan bekräftade vigseln 1757 och försök hitta hans födelse, föräldrar eller tidigare hushåll.
+66. Bengt Arvidsson/Arfvidsson-spåret pausas tills vidare; återuppta endast om nya ledtrådar dyker upp.
+67. Nästa huvudspår: följ Britta Larsdotter bakåt från Ytregård/Ytregården. Okome gav ingen säker födelsenotis; sök i Askome kring 1766-11-26 med marginal.
+68. Britta Larsdotters födelsenotis bekräftas i arbetsmaterialet: född 1766-11-26, döpt 1766-11-30 i Askome, far Lars Olofsson, mor Johanna [patronymikon ej låst].
+69. Komplettera exakt källa för Brittas födelsenotis och läs modern Johanna [patronymikon]dotter.
+70. Sök vigseln mellan Lars Olofsson och Johanna samt följ dem i Askome/Ytregård.
+
+
+71. Alma Sofia Nilssons födelsenotis i Åryd är hittad: född 1900-04-04, döpt 1900-04-06, dotter till Nils Månsson och Johanna Johansdotter/Johansdr.
+
+72. Hushållet för Nils Månsson och Johanna Johansdotter/Johansdr i Åryd är hittat; komplettera exakt volym/bild/sida och platsnamn.
+
+73. Kontrollera Nils Månsson född 1860-06-18 och Johanna Johansdotter/Johansdr född 1868-06-02 i deras respektive födelseböcker.
+
+74. Sök vigseln mellan Nils Månsson och Johanna Johansdotter, sannolikt före 1888.
+
+75. Åryd sida 185 är kontrollerad för Johanna Johansdotter, Nils Månsson och Thekla Emilia; nästa kontroll är vigseln mellan Nils och Johanna samt eventuell legitimerings-/faderskapsuppgift.
+
+76. Kontrollera vigseln mellan Nils Månsson och Johanna Johansdotter, sannolikt 1888/1889, och se om Thekla Emilia nämns indirekt eller om äktenskapet förklarar noteringen “före äktenskapet”.
+
+77. Årstad sida 393 rad 10 är kontrollerad: Alma står som hustru efter vigseln och är överförd från rad 23 år 1924.
+
+78. Årstad sida 393 rad 23 är kontrollerad: Alma kom från Ränneslöv 1924-01-24 och överfördes till rad 10 samma år.
+
+79. Bygg en separat tidslinje över Alma Sofias liv före Årstad med originalkälla, rad, yrke, hushåll och flyttdatum för varje post.
+
+80. Ränneslöv/Vallberga-posten är kontrollerad: Alma kom från Landskrona stadsförsamling 1923 och flyttade till Årstad 1924-01-24.
+
+81. Öppna Landskrona stadsförsamlings post före Ränneslöv och kontrollera om datumet till Ränneslöv är 1923-04-23.
+
+82. Landskrona/Tärnan-posten är kontrollerad: Alma står som mejerielev och kom dit från Årstad 1922.
+
+83. Hitta den tidigare Årstad-posten som Alma kom från till Landskrona/Tärnan år 1922.
+84. Kontrollera Landskrona utflyttningslängd 1923 och Ränneslöv inflyttningslängd 1923 för att låsa datumet till Ränneslöv.
+
+85. Landskrona/Norra Fäladsmarken är kontrollerad: Alma kom från VI fol. 342 den 1917-11-15 och flyttade till Karlshamn 1918-07-10.
+
+86. Öppna Karlshamn/Uppala-posten för Alma Sofia Nilsson efter flytten 1918-07-10.
+
+87. Karlshamn/Uppsala-posten är kontrollerad och låser kedjan Landskrona 1918-07-10 → Karlshamn/Uppsala → Bräkne-Hoby 1918-10-21.
+
+88. Följ Alma från Bräkne-Hoby/Efvaryd efter återkomsten 1918-10-21 och hitta vägen mot den tidigare Årstad-vistelsen före Landskrona/Tärnan.
