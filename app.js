@@ -34,6 +34,7 @@ const CARD_GAP = 12;
 const UNIT_GAP = 64;
 const BRANCH_GAP = window.innerWidth <= 640 ? 180 : 360;
 const FATHER_SIDE_GAP = window.innerWidth <= 640 ? 180 : 300;
+const MOTHER_SIDE_GAP = FATHER_SIDE_GAP;
 const LEVEL_H = window.innerWidth <= 640 ? 255 : 265;
 const PAD = 80;
 const canvas = document.getElementById('canvas');
@@ -41,6 +42,13 @@ const linksSvg = document.getElementById('links');
 const viewport = document.getElementById('viewport');
 const branchState = { mother:true, father:true };
 let currentPlaceId = null;
+const MANUAL_STORAGE_KEY = "axels-slakt-manual-data-v1";
+const manualData = { people:{}, edits:{}, units:[], places:[] };
+let currentPanelPersonId = null;
+const collapsedUnitIds = new Set();
+const compactExpandedUnitIds = new Set();
+let compactTreeMode = true;
+let layoutMinGen = 0;
 
 function personWidth(id){ return DIRECT_HEIRS.has(id) ? DIRECT_CARD_W : CARD_W; }
 function unitWidth(unit){ return unit.persons.reduce((sum,id)=>sum + personWidth(id), 0) + (unit.persons.length - 1) * CARD_GAP; }
@@ -49,7 +57,82 @@ function shouldShowUnit(unit){
   if(FATHER_UNITS.has(unit.id) && !branchState.father) return false;
   return true;
 }
-function activeUnits(){ return UNITS.filter(shouldShowUnit); }
+function childUnitIds(unitId){
+  return UNIT_BY_ID[unitId]?.children || [];
+}
+function descendantUnitIds(unitId, seen=new Set()){
+  childUnitIds(unitId).forEach(childId=>{
+    if(seen.has(childId)) return;
+    seen.add(childId);
+    descendantUnitIds(childId, seen);
+  });
+  return seen;
+}
+function hiddenByCollapseIds(){
+  const hidden = new Set();
+  collapsedUnitIds.forEach(unitId=>{
+    descendantUnitIds(unitId).forEach(id=>hidden.add(id));
+  });
+  return hidden;
+}
+function compactVisibleUnitIds(){
+  const visible = new Set([...DIRECT_UNITS].filter(id=>UNIT_BY_ID[id] && shouldShowUnit(UNIT_BY_ID[id])));
+  let changed = true;
+  while(changed){
+    changed = false;
+    [...visible].forEach(unitId=>{
+      if(!compactExpandedUnitIds.has(unitId)) return;
+      childUnitIds(unitId).forEach(childId=>{
+        if(visible.has(childId) || !UNIT_BY_ID[childId] || !shouldShowUnit(UNIT_BY_ID[childId])) return;
+        visible.add(childId);
+        changed = true;
+      });
+    });
+  }
+  return visible;
+}
+function activeUnits(){
+  const hidden = hiddenByCollapseIds();
+  const compactVisible = compactVisibleUnitIds();
+  return UNITS.filter(unit=>{
+    if(!shouldShowUnit(unit) || hidden.has(unit.id)) return false;
+    if(compactTreeMode && !compactVisible.has(unit.id)) return false;
+    return true;
+  });
+}
+function hiddenChildCount(unit){
+  if(compactTreeMode){
+    const compactVisible = compactVisibleUnitIds();
+    return childUnitIds(unit.id).filter(id=>UNIT_BY_ID[id] && shouldShowUnit(UNIT_BY_ID[id]) && !compactVisible.has(id)).length;
+  }
+  return [...descendantUnitIds(unit.id)].filter(id=>UNIT_BY_ID[id] && shouldShowUnit(UNIT_BY_ID[id])).length;
+}
+function revealKind(unit){
+  const hasDirectChild = childUnitIds(unit.id).some(id=>DIRECT_UNITS.has(id));
+  return hasDirectChild && DIRECT_UNITS.has(unit.id) ? "syskon" : "barn";
+}
+function unitToggleState(unit){
+  const hiddenCount = hiddenChildCount(unit);
+  if(compactTreeMode){
+    const expanded = compactExpandedUnitIds.has(unit.id);
+    if(!hiddenCount && !expanded) return null;
+    const kind = revealKind(unit);
+    return {
+      expanded,
+      symbol:expanded ? "▾" : "▸",
+      text:expanded ? `Dölj ${kind}` : `Visa ${kind}${hiddenCount ? ` (${hiddenCount})` : ""}`,
+      label:expanded ? `Dölj utfällda ${kind}` : `Visa ${kind}${hiddenCount ? `, ${hiddenCount} dolda kort` : ""}`
+    };
+  }
+  const collapsed = collapsedUnitIds.has(unit.id);
+  if(!hiddenCount && !collapsed) return null;
+  return {
+    expanded:!collapsed,
+    symbol:collapsed ? "▸" : "▾",
+    text:collapsed ? `Visa gren (${hiddenCount})` : "Dölj gren",
+    label:collapsed ? `Visa ${hiddenCount} dolda kort` : "Dölj grenen under kortet"
+  };
+}
 function unitBranch(unit){
   if(MOTHER_UNITS.has(unit.id)) return "mother";
   if(FATHER_UNITS.has(unit.id)) return "father";
@@ -61,6 +144,12 @@ function fatherLane(unit){
   if(typeof FATHER_FATHER_UNITS !== "undefined" && FATHER_FATHER_UNITS.has(unit.id)) return "father-father";
   return "father-other";
 }
+function motherLane(unit){
+  if(unit.id === "u_karin_harry") return "mother-couple";
+  if(typeof MOTHER_MOTHER_UNITS !== "undefined" && MOTHER_MOTHER_UNITS.has(unit.id)) return "mother-karin";
+  if(typeof MOTHER_FATHER_UNITS !== "undefined" && MOTHER_FATHER_UNITS.has(unit.id)) return "mother-harry";
+  return "mother-other";
+}
 function personMatchesActiveBranches(id){
   const unitId = PERSON_TO_UNIT[id];
   if(MOTHER_UNITS.has(unitId)) return branchState.mother;
@@ -69,9 +158,11 @@ function personMatchesActiveBranches(id){
 }
 function layoutUnits(units){
   const rows = new Map();
+  layoutMinGen = units.length ? Math.min(...units.map(u=>u.gen)) : 0;
   units.forEach(u=>{ if(!rows.has(u.gen)) rows.set(u.gen, []); rows.get(u.gen).push(u); });
   if(branchState.mother && branchState.father) return layoutSplitBranches(rows, units);
   if(!branchState.mother && branchState.father) return layoutFatherOnly(rows, units);
+  if(branchState.mother && !branchState.father) return layoutMotherOnly(rows, units);
   let worldW = 0;
   [...rows.entries()].forEach(([gen, units])=>{
     const rowW = units.reduce((sum,u)=>sum + unitWidth(u), 0) + Math.max(0, units.length-1) * UNIT_GAP;
@@ -81,22 +172,48 @@ function layoutUnits(units){
     const rowW = units.reduce((sum,u)=>sum + unitWidth(u), 0) + Math.max(0, units.length-1) * UNIT_GAP;
     let x = PAD + (worldW - rowW) / 2;
     units.forEach(u=>{
-      u._x = x; u._y = PAD + gen * LEVEL_H; u._w = unitWidth(u); u._h = 0;
+      u._x = x; u._y = rowTop(gen); u._w = unitWidth(u); u._h = 0;
       x += u._w + UNIT_GAP;
     });
   });
   const maxGen = units.length ? Math.max(...units.map(u=>u.gen)) : 0;
-  return {worldW: Math.max(worldW + PAD*2, viewport.clientWidth || 0), worldH: PAD*2 + (maxGen + 1) * LEVEL_H};
+  return {worldW: Math.max(worldW + PAD*2, viewport.clientWidth || 0), worldH: PAD*2 + (maxGen - layoutMinGen + 1) * LEVEL_H};
 }
 function rowWidth(units){
   return units.reduce((sum,u)=>sum + unitWidth(u), 0) + Math.max(0, units.length-1) * UNIT_GAP;
 }
+function rowTop(gen){ return PAD + (gen - layoutMinGen) * LEVEL_H; }
 function placeRow(units, startX, gen){
   let x = startX;
   units.forEach(u=>{
-    u._x = x; u._y = PAD + gen * LEVEL_H; u._w = unitWidth(u); u._h = 0;
+    u._x = x; u._y = rowTop(gen); u._w = unitWidth(u); u._h = 0;
     x += u._w + UNIT_GAP;
   });
+}
+function motherLaneWidths(rows){
+  let karinW = 0, harryW = 0, coupleW = 0, otherW = 0;
+  [...rows.values()].forEach(row=>{
+    const motherRow = row.filter(u=>unitBranch(u)==="mother");
+    karinW = Math.max(karinW, rowWidth(motherRow.filter(u=>motherLane(u)==="mother-karin")));
+    harryW = Math.max(harryW, rowWidth(motherRow.filter(u=>motherLane(u)==="mother-harry")));
+    coupleW = Math.max(coupleW, rowWidth(motherRow.filter(u=>motherLane(u)==="mother-couple")));
+    otherW = Math.max(otherW, rowWidth(motherRow.filter(u=>motherLane(u)==="mother-other")));
+  });
+  const hasAny = karinW || harryW || coupleW || otherW;
+  const centerGap = hasAny ? Math.max(MOTHER_SIDE_GAP, coupleW + UNIT_GAP) : 0;
+  return {karinW, harryW, coupleW, otherW, centerGap, totalW: karinW + centerGap + harryW + otherW};
+}
+function placeMotherLanes(row, startX, gen, widths){
+  const karin = row.filter(u=>motherLane(u)==="mother-karin");
+  const harry = row.filter(u=>motherLane(u)==="mother-harry");
+  const couple = row.filter(u=>motherLane(u)==="mother-couple");
+  const other = row.filter(u=>motherLane(u)==="mother-other");
+  const karinW = rowWidth(karin);
+  const harryStart = startX + widths.karinW + widths.centerGap;
+  placeRow(karin, startX + widths.karinW - karinW, gen);
+  placeRow(couple, startX + widths.karinW + widths.centerGap / 2 - rowWidth(couple) / 2, gen);
+  placeRow(harry, harryStart, gen);
+  placeRow(other, harryStart + widths.harryW + UNIT_GAP, gen);
 }
 function fatherLaneWidths(rows){
   let motherW = 0, fatherW = 0, coupleW = 0, otherW = 0;
@@ -134,15 +251,30 @@ function layoutFatherOnly(rows, units){
     placeRow(shared, PAD + (worldW - PAD*2 - rowWidth(shared)) / 2, gen);
   });
   const maxGen = units.length ? Math.max(...units.map(u=>u.gen)) : 0;
-  return {worldW, worldH: PAD*2 + (maxGen + 1) * LEVEL_H};
+  return {worldW, worldH: PAD*2 + (maxGen - layoutMinGen + 1) * LEVEL_H};
+}
+function layoutMotherOnly(rows, units){
+  const widths = motherLaneWidths(rows);
+  const sharedW = Math.max(...[...rows.values()].map(row=>rowWidth(row.filter(u=>unitBranch(u)!=="mother"))), 0);
+  const worldW = Math.max(PAD*2 + Math.max(widths.totalW, sharedW), viewport.clientWidth || 0);
+  const motherStartX = PAD + (worldW - PAD*2 - widths.totalW) / 2;
+  [...rows.entries()].forEach(([gen, row])=>{
+    const mother = row.filter(u=>unitBranch(u)==="mother");
+    const shared = row.filter(u=>unitBranch(u)!=="mother");
+    placeMotherLanes(mother, motherStartX, gen, widths);
+    placeRow(shared, PAD + (worldW - PAD*2 - rowWidth(shared)) / 2, gen);
+  });
+  const maxGen = units.length ? Math.max(...units.map(u=>u.gen)) : 0;
+  return {worldW, worldH: PAD*2 + (maxGen - layoutMinGen + 1) * LEVEL_H};
 }
 function layoutSplitBranches(rows, units){
-  let leftW = 0, sharedW = 0;
+  let sharedW = 0;
+  const motherWidths = motherLaneWidths(rows);
   const fatherWidths = fatherLaneWidths(rows);
   [...rows.entries()].forEach(([, row])=>{
-    leftW = Math.max(leftW, rowWidth(row.filter(u=>unitBranch(u)==="mother")));
     sharedW = Math.max(sharedW, rowWidth(row.filter(u=>unitBranch(u)==="shared")));
   });
+  const leftW = motherWidths.totalW;
   const rightW = fatherWidths.totalW;
   const centerGap = Math.max(BRANCH_GAP, sharedW + UNIT_GAP * 2);
   const worldW = Math.max(PAD*2 + leftW + centerGap + rightW, viewport.clientWidth || 0);
@@ -151,14 +283,13 @@ function layoutSplitBranches(rows, units){
     const mother = row.filter(u=>unitBranch(u)==="mother");
     const shared = row.filter(u=>unitBranch(u)==="shared");
     const father = row.filter(u=>unitBranch(u)==="father");
-    const motherW = rowWidth(mother);
     const sharedRowW = rowWidth(shared);
-    placeRow(mother, PAD + leftW - motherW, gen);
+    placeMotherLanes(mother, PAD, gen, motherWidths);
     placeRow(shared, centerX - sharedRowW / 2, gen);
     placeFatherLanes(father, PAD + leftW + centerGap, gen, fatherWidths);
   });
   const maxGen = units.length ? Math.max(...units.map(u=>u.gen)) : 0;
-  return {worldW, worldH: PAD*2 + (maxGen + 1) * LEVEL_H};
+  return {worldW, worldH: PAD*2 + (maxGen - layoutMinGen + 1) * LEVEL_H};
 }
 
 let world = {worldW:0, worldH:0};
@@ -183,7 +314,14 @@ function renderUnits(units){
     div.style.left = u._x + "px";
     div.style.top = u._y + "px";
     div.style.width = u._w + "px";
-    div.innerHTML = u.persons.map(pid=>personHTML(pid,u)).join("");
+    div.classList.toggle("collapsed", collapsedUnitIds.has(u.id));
+    div.classList.toggle("compact-expanded", compactExpandedUnitIds.has(u.id));
+    const toggleState = unitToggleState(u);
+    const toggle = toggleState ? `<button class="unit-toggle" type="button" data-collapse-unit="${escapeHtml(u.id)}" aria-label="${escapeHtml(toggleState.label)}" title="${escapeHtml(toggleState.label)}">
+      <span class="unit-toggle-symbol">${escapeHtml(toggleState.symbol)}</span>
+      <span class="unit-toggle-text">${escapeHtml(toggleState.text)}</span>
+    </button>` : "";
+    div.innerHTML = u.persons.map(pid=>personHTML(pid,u)).join("") + toggle;
     canvas.appendChild(div);
     u._el = div;
     u._h = div.offsetHeight;
@@ -194,6 +332,24 @@ function renderUnits(units){
         openPerson(btn.dataset.id);
       });
     });
+    const toggleBtn = div.querySelector('.unit-toggle');
+    if(toggleBtn){
+      toggleBtn.addEventListener('pointerdown', e=>e.stopPropagation());
+      toggleBtn.addEventListener('click', e=>{
+        e.preventDefault(); e.stopPropagation();
+        const unitId = toggleBtn.dataset.collapseUnit;
+        if(compactTreeMode){
+          if(compactExpandedUnitIds.has(unitId)){
+            compactExpandedUnitIds.delete(unitId);
+            descendantUnitIds(unitId).forEach(id=>compactExpandedUnitIds.delete(id));
+          }else compactExpandedUnitIds.add(unitId);
+        }else{
+          if(collapsedUnitIds.has(unitId)) collapsedUnitIds.delete(unitId);
+          else collapsedUnitIds.add(unitId);
+        }
+        renderTree({preserveView:true});
+      });
+    }
   });
 }
 
@@ -217,6 +373,7 @@ function renderTree({preserveView=false}={}){
   applyWorld(layoutUnits(units));
   renderUnits(units);
   drawLinks();
+  syncTreeControlButtons();
   if(!preserveView) fit();
 }
 
@@ -352,8 +509,11 @@ function buildTimeline(p){
 }
 function openPerson(id){
   const p = PEOPLE[id]; if(!p) return;
+  currentPanelPersonId = id;
   panel.setAttribute('aria-label','Livshistoria');
   panel.classList.remove('place-mode');
+  document.getElementById('pActions').style.display = "";
+  document.getElementById('panelEditForm').classList.remove('open');
   const photo = document.getElementById('pPhoto');
   photo.style.display = "";
   photo.src = personPhoto(p);
@@ -397,10 +557,13 @@ function openPerson(id){
 }
 function openPlace(id){
   const place = PLACES.find(p=>p.id===id); if(!place) return;
+  currentPanelPersonId = null;
   selectPlace(place.id,{skipMap:true});
   const relatedPeople = placePeople(place);
   panel.setAttribute('aria-label','Platskort');
   panel.classList.add('place-mode');
+  document.getElementById('pActions').style.display = "none";
+  document.getElementById('panelEditForm').classList.remove('open');
   document.getElementById('pPhoto').style.display = "none";
   document.getElementById('pRole').textContent = "Platskort";
   document.getElementById('pName').textContent = place.name;
@@ -483,6 +646,36 @@ function personSearchContext(id){
   if(PARTNER[id]) parts.push(`make/maka: ${PEOPLE[PARTNER[id]].name}`);
   return parts.slice(0,3).join(" · ");
 }
+function syncTreeControlButtons(){
+  const compact = document.getElementById('compactTree');
+  const expand = document.getElementById('expandTree');
+  if(compact) compact.checked = compactTreeMode;
+  if(expand) expand.checked = !compactTreeMode;
+}
+function initTreeControls(){
+  const compact = document.getElementById('compactTree');
+  const expand = document.getElementById('expandTree');
+  if(compact){
+    compact.addEventListener('change',()=>{
+      if(!compact.checked) return;
+      const alreadyCompact = compactTreeMode;
+      compactTreeMode = true;
+      collapsedUnitIds.clear();
+      if(alreadyCompact) compactExpandedUnitIds.clear();
+      renderTree();
+    });
+  }
+  if(expand){
+    expand.addEventListener('change',()=>{
+      if(!expand.checked) return;
+      compactTreeMode = false;
+      collapsedUnitIds.clear();
+      compactExpandedUnitIds.clear();
+      renderTree();
+    });
+  }
+  syncTreeControlButtons();
+}
 function currentSearchMode(){
   return document.querySelector('input[name="searchMode"]:checked')?.value || "person";
 }
@@ -555,6 +748,13 @@ function initPersonSearch(){
 let placeMap = null;
 const placeMarkers = {};
 function hasCoords(place){ return Number.isFinite(place.lat) && Number.isFinite(place.lng); }
+function ensurePlaceMarker(place){
+  if(!placeMap || !window.L || !hasCoords(place) || placeMarkers[place.id]) return;
+  const marker = L.circleMarker([place.lat,place.lng],{radius:7,color:'#245A3B',weight:2,fillColor:'#3F7D5A',fillOpacity:.78}).addTo(placeMap);
+  marker.bindPopup(`<strong>${escapeHtml(place.name)}</strong><br>${escapeHtml(place.area)}<br><button type="button" data-place-card="${escapeHtml(place.id)}">Öppna platskort</button>`);
+  marker.on('click',()=>selectPlace(place.id));
+  placeMarkers[place.id] = marker;
+}
 function placeHaystack(p){
   return [p.place,...(p.facts||[]).flat(),...(p.story||[]),...(p.timeline||[]).flat()].filter(Boolean).join(" ");
 }
@@ -610,13 +810,7 @@ function initPlaceMap(){
   document.getElementById('mapEmpty').style.display = "none";
   placeMap = L.map(mapEl,{scrollWheelZoom:false}).setView([57.04,12.40],11);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap'}).addTo(placeMap);
-  PLACES.forEach(place=>{
-    if(!hasCoords(place)) return;
-    const marker = L.circleMarker([place.lat,place.lng],{radius:7,color:'#38583F',weight:2,fillColor:'#5E7A55',fillOpacity:.78}).addTo(placeMap);
-    marker.bindPopup(`<strong>${escapeHtml(place.name)}</strong><br>${escapeHtml(place.area)}<br><button type="button" data-place-card="${escapeHtml(place.id)}">Öppna platskort</button>`);
-    marker.on('click',()=>selectPlace(place.id));
-    placeMarkers[place.id]=marker;
-  });
+  PLACES.forEach(ensurePlaceMarker);
   const mappedPlaces = PLACES.filter(hasCoords);
   if(mappedPlaces.length) placeMap.fitBounds(L.latLngBounds(mappedPlaces.map(p=>[p.lat,p.lng])),{padding:[24,24]});
   selectPlace('munkaskog');
@@ -661,7 +855,438 @@ document.addEventListener('click', e=>{
   if(placeCardBtn) openPlace(placeCardBtn.dataset.placeCard);
 });
 
+function slugify(value){
+  return String(value || "person")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .toLowerCase().replace(/å/g,"a").replace(/ä/g,"a").replace(/ö/g,"o")
+    .replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"") || "person";
+}
+function uniqueId(base, collection){
+  let id = base, i = 2;
+  while(collection[id]) id = `${base}_${i++}`;
+  return id;
+}
+function safeLocalStorageGet(key){
+  try{ return localStorage.getItem(key); }catch{ return null; }
+}
+function safeLocalStorageSet(key, value){
+  try{ localStorage.setItem(key, value); return true; }catch{ return false; }
+}
+function safeLocalStorageRemove(key){
+  try{ localStorage.removeItem(key); return true; }catch{ return false; }
+}
+function applyManualUnit(unit){
+  if(UNIT_BY_ID[unit.id]) return;
+  const normalized = {
+    id:unit.id,
+    gen:Number.isFinite(unit.gen) ? unit.gen : 8,
+    persons:unit.persons || [],
+    children:unit.children || []
+  };
+  if(unit.direct) normalized.heir = true;
+  UNITS.push(normalized);
+  UNIT_BY_ID[normalized.id] = normalized;
+  normalized.persons.forEach(pid=>{ if(!PERSON_TO_UNIT[pid]) PERSON_TO_UNIT[pid] = normalized.id; });
+  if(unit.branch === "mother") MOTHER_UNITS.add(normalized.id);
+  if(unit.branch === "father"){
+    FATHER_UNITS.add(normalized.id);
+    if(unit.fatherLane === "father-mother") FATHER_MOTHER_UNITS.add(normalized.id);
+    else FATHER_FATHER_UNITS.add(normalized.id);
+  }
+  if(unit.direct) DIRECT_UNITS.add(normalized.id);
+  if(unit.parentUnitId && UNIT_BY_ID[unit.parentUnitId]){
+    const parent = UNIT_BY_ID[unit.parentUnitId];
+    if(!parent.children.includes(normalized.id)) parent.children.push(normalized.id);
+    if(!EDGES.some(edge=>edge.from===unit.parentUnitId && edge.to===normalized.id)) EDGES.push({from:unit.parentUnitId,to:normalized.id});
+    if(unit.direct) DIRECT_EDGES.add(`${unit.parentUnitId}>${normalized.id}`);
+  }
+}
+function applyManualPerson(id, person){
+  if(PEOPLE[id]) return;
+  PEOPLE[id] = person;
+  if(person.direct) DIRECT_HEIRS.add(id);
+  (person.parents || []).forEach(parentId=>{
+    if(PEOPLE[parentId]){
+      if(!PEOPLE[parentId].children) PEOPLE[parentId].children = [];
+      if(!PEOPLE[parentId].children.includes(id)) PEOPLE[parentId].children.push(id);
+    }
+  });
+  (person.children || []).forEach(childId=>{
+    if(PEOPLE[childId]){
+      if(!PEOPLE[childId].parents) PEOPLE[childId].parents = [];
+      if(!PEOPLE[childId].parents.includes(id)) PEOPLE[childId].parents.push(id);
+    }
+  });
+  if(person.partner && PEOPLE[person.partner]){
+    PARTNER[id] = person.partner;
+    PARTNER[person.partner] = id;
+  }
+}
+function removePersonRelationLinks(id, beforeParents, beforePartner){
+  beforeParents.forEach(parentId=>{
+    const parent = PEOPLE[parentId];
+    if(parent?.children) parent.children = parent.children.filter(childId=>childId !== id);
+  });
+  if(beforePartner && PARTNER[beforePartner] === id) delete PARTNER[beforePartner];
+  delete PARTNER[id];
+}
+function addPersonRelationLinks(id, person){
+  (person.parents || []).forEach(parentId=>{
+    const parent = PEOPLE[parentId];
+    if(!parent) return;
+    if(!parent.children) parent.children = [];
+    if(!parent.children.includes(id)) parent.children.push(id);
+  });
+  if(person.partner && PEOPLE[person.partner]){
+    PARTNER[id] = person.partner;
+    PARTNER[person.partner] = id;
+  }
+}
+function applyManualPersonEdit(id, edit){
+  const person = PEOPLE[id]; if(!person) return;
+  const beforeParents = [...(person.parents || [])];
+  const beforePartner = PARTNER[id] || person.partner || "";
+  removePersonRelationLinks(id, beforeParents, beforePartner);
+  ["name","alt","role","born","died","status","place","photo"].forEach(key=>{
+    person[key] = edit[key] || "";
+  });
+  person.facts = edit.facts || [];
+  person.story = edit.story?.length ? edit.story : ["Ännu inte utforskad."];
+  person.parents = edit.parents || [];
+  person.partner = edit.partner || "";
+  person.direct = !!edit.direct;
+  addPersonRelationLinks(id, person);
+  const unitId = PERSON_TO_UNIT[id];
+  if(person.direct){
+    DIRECT_HEIRS.add(id);
+    if(unitId) DIRECT_UNITS.add(unitId);
+  }else{
+    DIRECT_HEIRS.delete(id);
+    const unit = unitId ? UNIT_BY_ID[unitId] : null;
+    const hasDirectPartner = unit?.persons?.some(pid=>pid !== id && DIRECT_HEIRS.has(pid));
+    if(unitId && !hasDirectPartner) DIRECT_UNITS.delete(unitId);
+  }
+}
+function applyManualPlace(place){
+  if(PLACES.some(p=>p.id===place.id)) return;
+  PLACES.push(place);
+  ensurePlaceMarker(place);
+}
+function loadManualData(){
+  const raw = safeLocalStorageGet(MANUAL_STORAGE_KEY);
+  if(!raw) return;
+  try{
+    const parsed = JSON.parse(raw);
+    Object.assign(manualData.people, parsed.people || {});
+    Object.assign(manualData.edits, parsed.edits || {});
+    manualData.units.push(...(parsed.units || []));
+    manualData.places.push(...(parsed.places || []));
+  }catch{
+    return;
+  }
+  Object.entries(manualData.people).forEach(([id,person])=>applyManualPerson(id,person));
+  manualData.units.forEach(applyManualUnit);
+  manualData.places.forEach(applyManualPlace);
+  Object.entries(manualData.edits).forEach(([id,edit])=>applyManualPersonEdit(id,edit));
+}
+function saveManualData(){
+  return safeLocalStorageSet(MANUAL_STORAGE_KEY, JSON.stringify(manualData, null, 2));
+}
+function selectOptions(){
+  const rows = Object.entries(PEOPLE).sort((a,b)=>a[1].name.localeCompare(b[1].name,'sv'));
+  return '<option value="">Ingen vald</option>' + rows.map(([id,p])=>{
+    const meta = [p.born, p.role].filter(Boolean).join(" · ");
+    return `<option value="${escapeHtml(id)}">${escapeHtml(p.name)}${meta ? ` (${escapeHtml(meta)})` : ""}</option>`;
+  }).join("");
+}
+function refreshEditorSelects(){
+  document.querySelectorAll('.person-select').forEach(select=>{
+    const value = select.value;
+    select.innerHTML = selectOptions();
+    if(value && PEOPLE[value]) select.value = value;
+  });
+}
+function renderManualList(){
+  const list = document.getElementById('manualList');
+  if(!list) return;
+  const people = Object.entries(manualData.people);
+  const edits = Object.entries(manualData.edits || {}).filter(([id])=>!manualData.people[id]);
+  const places = manualData.places || [];
+  if(!people.length && !edits.length && !places.length){ list.innerHTML = '<p class="editor-note">Inga manuella personer, platser eller redigeringar är tillagda ännu.</p>'; return; }
+  list.innerHTML = people.map(([id,p])=>`<div class="manual-item">
+    <div class="manual-name">${escapeHtml(p.name)}</div>
+    <div class="manual-meta">${escapeHtml([p.born, p.role, p.place].filter(Boolean).join(" · "))}</div>
+  </div>`).join("") + edits.map(([id,p])=>`<div class="manual-item">
+    <div class="manual-name">${escapeHtml(p.name || PEOPLE[id]?.name || id)}</div>
+    <div class="manual-meta">Redigerad person${p.born ? ` · ${escapeHtml(p.born)}` : ""}</div>
+  </div>`).join("") + places.map(place=>`<div class="manual-item">
+    <div class="manual-name">${escapeHtml(place.name)}</div>
+    <div class="manual-meta">Manuell plats · ${escapeHtml(place.area || "Område saknas")}${hasCoords(place) ? " · kartpunkt" : ""}</div>
+  </div>`).join("");
+}
+function editorMessage(text){
+  const el = document.getElementById('editorMessage');
+  if(!el) return;
+  el.textContent = text;
+  window.clearTimeout(editorMessage._timer);
+  editorMessage._timer = window.setTimeout(()=>{ el.textContent = ""; }, 4200);
+}
+function factsToText(facts){
+  return (facts || []).map(([key,value])=>`${key}: ${value}`).join("\n");
+}
+function textToFacts(text){
+  return String(text || "").split(/\n+/).map(row=>row.trim()).filter(Boolean).map(row=>{
+    const splitAt = row.indexOf(":");
+    if(splitAt < 0) return ["Notering", row];
+    return [row.slice(0,splitAt).trim() || "Notering", row.slice(splitAt + 1).trim()];
+  });
+}
+function textToStory(text){
+  return String(text || "").split(/\n+/).map(row=>row.trim()).filter(Boolean);
+}
+function setSelectValue(id, value){
+  const el = document.getElementById(id);
+  if(el) el.value = value || "";
+}
+function fillPanelEditor(id){
+  const person = PEOPLE[id]; if(!person) return;
+  refreshEditorSelects();
+  document.getElementById('editName').value = person.name || "";
+  document.getElementById('editAlt').value = person.alt || "";
+  document.getElementById('editRole').value = person.role || "";
+  document.getElementById('editBorn').value = person.born || "";
+  document.getElementById('editDied').value = person.died || "";
+  document.getElementById('editPlace').value = person.place || "";
+  document.getElementById('editPhoto').value = person.photo || "";
+  document.getElementById('editStatus').value = person.status || "open";
+  document.getElementById('editDirect').value = DIRECT_HEIRS.has(id) || person.direct ? "yes" : "";
+  document.getElementById('editFacts').value = factsToText(person.facts);
+  document.getElementById('editStory').value = (person.story || []).join("\n");
+  setSelectValue('editParent1', person.parents?.[0] || "");
+  setSelectValue('editParent2', person.parents?.[1] || "");
+  setSelectValue('editPartner', PARTNER[id] || person.partner || "");
+  document.getElementById('panelEditMessage').textContent = "";
+}
+function panelEditMessage(text){
+  const el = document.getElementById('panelEditMessage');
+  if(!el) return;
+  el.textContent = text;
+  window.clearTimeout(panelEditMessage._timer);
+  panelEditMessage._timer = window.setTimeout(()=>{ el.textContent = ""; }, 4200);
+}
+function savePanelPersonEdit(){
+  const id = currentPanelPersonId;
+  if(!id || !PEOPLE[id]) return;
+  const name = document.getElementById('editName').value.trim();
+  if(!name){ panelEditMessage("Namn behövs för att spara."); return; }
+  const edit = {
+    name,
+    alt:document.getElementById('editAlt').value.trim(),
+    role:document.getElementById('editRole').value.trim(),
+    born:document.getElementById('editBorn').value.trim(),
+    died:document.getElementById('editDied').value.trim(),
+    status:document.getElementById('editStatus').value,
+    place:document.getElementById('editPlace').value.trim(),
+    photo:document.getElementById('editPhoto').value.trim(),
+    facts:textToFacts(document.getElementById('editFacts').value),
+    story:textToStory(document.getElementById('editStory').value),
+    parents:[document.getElementById('editParent1').value, document.getElementById('editParent2').value].filter(Boolean),
+    partner:document.getElementById('editPartner').value,
+    direct:document.getElementById('editDirect').value === "yes"
+  };
+  manualData.edits[id] = edit;
+  if(manualData.people[id]) manualData.people[id] = {...manualData.people[id], ...edit};
+  applyManualPersonEdit(id, edit);
+  saveManualData();
+  refreshEditorSelects();
+  renderManualList();
+  renderTree({preserveView:true});
+  renderPlaceList();
+  refreshSelectedPlace();
+  openPerson(id);
+}
+function addManualPerson(form){
+  const name = document.getElementById('newPersonName').value.trim();
+  if(!name) return;
+  const id = uniqueId(slugify(name), {...PEOPLE,...manualData.people});
+  const parentIds = [document.getElementById('newPersonParent1').value, document.getElementById('newPersonParent2').value].filter(Boolean);
+  const partner = document.getElementById('newPersonPartner').value;
+  const storyText = document.getElementById('newPersonStory').value.trim();
+  const branch = document.getElementById('newPersonBranch').value;
+  const direct = document.getElementById('newPersonDirect').value === "yes";
+  const parentUnit = parentIds.length ? (parentIds.length > 1
+    ? UNITS.find(u=>parentIds.every(pid=>u.persons.includes(pid)))
+    : UNIT_BY_ID[PERSON_TO_UNIT[parentIds[0]]]) : null;
+  const partnerUnit = partner ? UNIT_BY_ID[PERSON_TO_UNIT[partner]] : null;
+  const unit = {
+    id:`u_${id}`,
+    gen:parentUnit ? parentUnit.gen + 1 : partnerUnit ? partnerUnit.gen : 8,
+    persons:[id],
+    children:[],
+    branch,
+    direct,
+    fatherLane:branch === "father" ? "father-mother" : "",
+    parentUnitId:parentUnit?.id || ""
+  };
+  const person = {
+    name,
+    role:document.getElementById('newPersonRole').value.trim() || "Manuellt tillagd",
+    born:document.getElementById('newPersonBorn').value.trim(),
+    died:document.getElementById('newPersonDied').value.trim(),
+    status:document.getElementById('newPersonStatus').value,
+    place:document.getElementById('newPersonPlace').value.trim(),
+    photo:document.getElementById('newPersonPhoto').value.trim(),
+    facts:[["Tillagd","Manuellt i redigeringsläget"]],
+    story:storyText ? storyText.split(/\n+/).map(s=>s.trim()).filter(Boolean) : ["Manuellt tillagd person. Fyll på med mer släkthistoria när källorna är klara."],
+    parents:parentIds,
+    children:[],
+    partner,
+    direct
+  };
+  Object.keys(person).forEach(key=>{ if(person[key] === "" || (Array.isArray(person[key]) && !person[key].length)) delete person[key]; });
+  manualData.people[id] = person;
+  manualData.units.push(unit);
+  applyManualPerson(id, person);
+  applyManualUnit(unit);
+  if(saveManualData()) editorMessage(`${name} är tillagd och sparad lokalt.`);
+  else editorMessage(`${name} är tillagd, men browsern kunde inte spara lokalt.`);
+  form.reset();
+  document.getElementById('newPersonStatus').value = "working";
+  document.getElementById('newPersonBranch').value = branch;
+  refreshEditorSelects();
+  renderManualList();
+  renderTree({preserveView:true});
+  renderPlaceList();
+  refreshSelectedPlace();
+  focusPerson(id);
+  openPerson(id);
+}
+function parseCoordinate(value){
+  if(!String(value || "").trim()) return null;
+  const parsed = Number(String(value).replace(",", "."));
+  return Number.isFinite(parsed) ? parsed : NaN;
+}
+function addManualPlace(form){
+  const name = document.getElementById('newPlaceName').value.trim();
+  if(!name) return;
+  const lat = parseCoordinate(document.getElementById('newPlaceLat').value);
+  const lng = parseCoordinate(document.getElementById('newPlaceLng').value);
+  if(Number.isNaN(lat) || Number.isNaN(lng)){
+    editorMessage("Koordinaterna behöver vara siffror, eller lämnas tomma.");
+    return;
+  }
+  if((lat === null) !== (lng === null)){
+    editorMessage("Fyll i både latitud och longitud, eller lämna båda tomma.");
+    return;
+  }
+  const id = uniqueId(slugify(name), Object.fromEntries(PLACES.map(place=>[place.id,true])));
+  const aliases = document.getElementById('newPlaceAliases').value
+    .split(",").map(alias=>alias.trim()).filter(Boolean);
+  const place = {
+    id,
+    name,
+    area:document.getElementById('newPlaceArea').value.trim() || "Område saknas",
+    note:document.getElementById('newPlaceNote').value.trim() || "Ingen längre platsbeskrivning är inlagd ännu.",
+    aliases:[name, ...aliases].filter((alias,index,array)=>array.indexOf(alias)===index)
+  };
+  if(lat !== null && lng !== null){
+    place.lat = lat;
+    place.lng = lng;
+  }
+  manualData.places.push(place);
+  applyManualPlace(place);
+  saveManualData();
+  form.reset();
+  renderManualList();
+  renderPlaceList();
+  selectPlace(place.id);
+  editorMessage(`${name} är tillagd som plats.`);
+  document.getElementById('platskarta').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function exportManualData(){
+  const blob = new Blob([JSON.stringify(manualData, null, 2)], {type:"application/json"});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `axels-slakt-manuella-tillagg-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  URL.revokeObjectURL(a.href);
+  a.remove();
+}
+function importManualFile(file){
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const parsed = JSON.parse(reader.result);
+      Object.assign(manualData.people, parsed.people || {});
+      Object.assign(manualData.edits, parsed.edits || {});
+      manualData.units.push(...(parsed.units || []).filter(unit=>!manualData.units.some(existing=>existing.id===unit.id)));
+      manualData.places.push(...(parsed.places || []).filter(place=>!manualData.places.some(existing=>existing.id===place.id)));
+      Object.entries(parsed.people || {}).forEach(([id,person])=>applyManualPerson(id,person));
+      (parsed.units || []).forEach(applyManualUnit);
+      (parsed.places || []).forEach(applyManualPlace);
+      Object.entries(parsed.edits || {}).forEach(([id,edit])=>applyManualPersonEdit(id,edit));
+      saveManualData();
+      refreshEditorSelects();
+      renderManualList();
+      renderTree({preserveView:true});
+      renderPlaceList();
+      refreshSelectedPlace();
+      editorMessage("Importen är inläst och sparad lokalt.");
+    }catch{
+      editorMessage("Importen kunde inte läsas som JSON.");
+    }
+  };
+  reader.readAsText(file);
+}
+function initEditor(){
+  const shell = document.getElementById('editorShell');
+  const toggle = document.getElementById('editorToggle');
+  if(!shell || !toggle) return;
+  toggle.addEventListener('click',()=>{
+    shell.classList.toggle('open');
+    if(shell.classList.contains('open')) refreshEditorSelects();
+  });
+  document.getElementById('personEditorForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    addManualPerson(e.currentTarget);
+  });
+  document.getElementById('placeEditorForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    addManualPlace(e.currentTarget);
+  });
+  document.getElementById('panelEditToggle').addEventListener('click', ()=>{
+    if(!currentPanelPersonId) return;
+    const form = document.getElementById('panelEditForm');
+    form.classList.toggle('open');
+    if(form.classList.contains('open')) fillPanelEditor(currentPanelPersonId);
+  });
+  document.getElementById('panelEditForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    savePanelPersonEdit();
+  });
+  document.getElementById('panelEditCancel').addEventListener('click', ()=>{
+    document.getElementById('panelEditForm').classList.remove('open');
+  });
+  document.getElementById('exportManualData').addEventListener('click', exportManualData);
+  document.getElementById('importManualData').addEventListener('change', e=>{
+    const file = e.target.files?.[0];
+    if(file) importManualFile(file);
+    e.target.value = "";
+  });
+  document.getElementById('clearManualData').addEventListener('click',()=>{
+    if(!confirm("Rensa manuella tillägg från den här browsern? Själva grundträdet påverkas inte.")) return;
+    safeLocalStorageRemove(MANUAL_STORAGE_KEY);
+    editorMessage("Lokala tillägg är rensade. Ladda om sidan för en helt ren vy.");
+  });
+  refreshEditorSelects();
+  renderManualList();
+}
+
+loadManualData();
 renderTree();
+initTreeControls();
+initEditor();
 initBranchFilters();
 initPersonSearch();
 initPlaceMap();

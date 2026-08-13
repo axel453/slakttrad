@@ -3,34 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Axels släkt</title>
+<title>Nilsson/Bengtsson släktträd</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
   :root{
-    --paper:#E7E1CF; --paper-deep:#DED7C2; --surface:#F4EFE1; --surface-2:#EFE8D6;
-    --ink:#2B3138; --ink-soft:#5E6158; --ink-faint:#8C887B; --thread:#5E7A55;
-    --thread-deep:#38583F; --blue:#42606E; --rule:#CDC4AC; --rule-soft:#D8D0BA;
-    --st-confirmed:#5C6E4F; --st-likely:#B0792B; --st-working:#6E7C82; --st-open:#9A8E76;
+    --paper:#F6F7F5; --paper-deep:#EEF1EC; --surface:#FFFFFF; --surface-2:#F8FAF7;
+    --ink:#17211D; --ink-soft:#59635E; --ink-faint:#8A938E; --thread:#3F7D5A;
+    --thread-deep:#245A3B; --blue:#4F6F87; --rule:#E1E6E0; --rule-soft:#EDF0EC;
+    --st-confirmed:#3F7D5A; --st-likely:#B67824; --st-working:#637D8E; --st-open:#8F8577;
   }
   *{box-sizing:border-box}
   html,body{margin:0;min-height:100%}
   body{
-    background:radial-gradient(120% 80% at 50% -10%, #EFE9D7 0%, var(--paper) 55%, var(--paper-deep) 100%) fixed;
-    color:var(--ink);font-family:"Spectral",Georgia,serif;font-size:17px;line-height:1.6;
+    background:linear-gradient(180deg,#FBFCFA 0%,var(--paper) 100%) fixed;
+    color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.55;
     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
   }
   ::selection{background:rgba(94,122,85,.22)}
-  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
-  header.masthead{padding:54px 0 26px;text-align:center}
-  .eyebrow{font-family:"Spline Sans Mono",monospace;font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--thread);margin:0 0 18px}
-  h1{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(2.3rem,5.4vw,3.8rem);line-height:1;letter-spacing:-.015em;margin:0}
-  h1 em{font-style:italic;color:var(--thread);font-weight:400}
-  .subtitle{font-size:1.06rem;color:var(--ink-soft);max-width:58ch;margin:16px auto 0;font-style:italic}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 28px}
+  header.masthead{padding:48px 0 28px;text-align:left}
+  .eyebrow{font-family:"Spline Sans Mono",monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--thread);margin:0 0 14px}
+  h1{font-weight:700;font-size:clamp(2.2rem,5vw,4.15rem);line-height:.96;letter-spacing:0;margin:0;max-width:860px}
+  h1 em{font-style:normal;color:var(--thread);font-weight:700}
+  .subtitle{font-size:1.04rem;color:var(--ink-soft);max-width:720px;margin:18px 0 0;font-style:normal}
 
-  .stage-shell{margin:30px 0 8px}
+  .stage-shell{margin:28px 0 8px}
   .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
   .hint{font-family:"Spline Sans Mono",monospace;font-size:11.5px;color:var(--ink-faint);margin-left:auto}
   .line-key{display:inline-flex;align-items:center;gap:10px;font-family:"Spline Sans Mono",monospace;font-size:11px;color:var(--ink-soft)}
@@ -38,34 +38,59 @@
   .line-sample{width:28px;height:0;border-top:3px solid var(--thread-deep)}
   .line-sample.side{border-top:1.5px dashed var(--ink-faint);opacity:.65}
   .branch-filters{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .branch-toggle{display:inline-flex;align-items:center;gap:7px;font-family:"Spline Sans Mono",monospace;font-size:11px;color:var(--ink-soft);background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:6px 9px;cursor:pointer;user-select:none}
+  .branch-toggle{display:inline-flex;align-items:center;gap:7px;font-family:"Spline Sans Mono",monospace;font-size:11px;color:var(--ink-soft);background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:7px 10px;cursor:pointer;user-select:none;box-shadow:0 1px 2px rgba(23,33,29,.03)}
   .branch-toggle input{accent-color:var(--thread);margin:0}
+  .tree-view-toggle{display:inline-flex;border:1px solid var(--rule);border-radius:9px;overflow:hidden;background:var(--paper);box-shadow:0 1px 2px rgba(23,33,29,.03)}
+  .tree-view-toggle label{font-family:"Spline Sans Mono",monospace;font-size:11px;color:var(--ink-soft);padding:9px 12px;cursor:pointer;line-height:1;white-space:nowrap}
+  .tree-view-toggle input{position:absolute;opacity:0;pointer-events:none}
+  .tree-view-toggle label:has(input:checked){background:var(--thread);color:var(--surface)}
   .btn{
     font-family:"Spline Sans Mono",monospace;font-size:12px;letter-spacing:.04em;color:var(--ink-soft);
-    background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:7px 12px;
+    background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:9px 13px;
     cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:7px;
   }
-  .btn:hover{background:var(--surface-2);border-color:var(--ink-faint)}
-  .btn:focus-visible,.search-input:focus,.person:focus-visible,.relchip:focus-visible,.place-btn:focus-visible,.place-open:focus-visible,.search-hit:focus-visible{outline:2px solid var(--thread);outline-offset:2px}
+  .btn:hover{background:var(--surface-2);border-color:#C9D4CB;color:var(--ink)}
+  .btn.active{background:var(--thread);border-color:var(--thread);color:var(--surface)}
+  .btn:focus-visible,.search-input:focus,.person:focus-visible,.relchip:focus-visible,.place-btn:focus-visible,.place-open:focus-visible,.search-hit:focus-visible,.editor-field:focus{outline:2px solid var(--thread);outline-offset:2px}
 
-  .search-shell{margin:0 0 14px;background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:12px}
+  .search-shell{margin:0 0 14px;background:rgba(255,255,255,.86);border:1px solid var(--rule);border-radius:12px;padding:12px;box-shadow:0 16px 40px -32px rgba(23,33,29,.28)}
   .search-row{display:flex;align-items:center;gap:10px}
   .search-label{font-family:"Spline Sans Mono",monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--thread);white-space:nowrap}
-  .search-mode{display:inline-flex;border:1px solid var(--rule);border-radius:3px;overflow:hidden;background:var(--paper);flex:none}
+  .search-mode{display:inline-flex;border:1px solid var(--rule);border-radius:9px;overflow:hidden;background:var(--paper);flex:none}
   .search-mode label{font-family:"Spline Sans Mono",monospace;font-size:11px;color:var(--ink-soft);padding:8px 10px;cursor:pointer;line-height:1}
   .search-mode input{position:absolute;opacity:0;pointer-events:none}
   .search-mode label:has(input:checked){background:var(--thread);color:var(--surface)}
-  .search-input{width:100%;border:1px solid var(--rule);border-radius:3px;background:var(--paper);color:var(--ink);font:inherit;font-size:15px;line-height:1.2;padding:9px 11px}
+  .search-input{width:100%;border:1px solid var(--rule);border-radius:9px;background:var(--paper);color:var(--ink);font:inherit;font-size:15px;line-height:1.2;padding:10px 12px}
   .search-results{display:none;margin-top:10px;border-top:1px solid var(--rule-soft);padding-top:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
   .search-results.open{display:grid}
-  .search-hit{text-align:left;border:1px solid var(--rule);border-radius:3px;background:var(--paper);color:var(--ink);cursor:pointer;padding:10px 12px;font:inherit;min-height:74px}
+  .search-hit{text-align:left;border:1px solid var(--rule);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer;padding:11px 13px;font:inherit;min-height:74px}
   .search-hit:hover{border-color:var(--thread);background:var(--surface-2)}
-  .search-hit-name{font-family:"Fraunces",serif;font-size:1.03rem;line-height:1.12;color:var(--thread-deep)}
+  .search-hit-name{font-weight:650;font-size:1rem;line-height:1.2;color:var(--thread-deep)}
   .search-hit-meta{font-family:"Spline Sans Mono",monospace;font-size:10.5px;color:var(--ink-soft);margin-top:4px}
   .search-hit-context{font-size:13px;color:var(--ink-faint);line-height:1.35;margin-top:5px}
   .search-empty{font-size:14px;color:var(--ink-faint);font-style:italic;padding:4px 2px}
 
-  .viewport{position:relative;overflow:hidden;height:76vh;min-height:520px;background:var(--surface);border:1px solid var(--rule);border-radius:4px;cursor:grab;touch-action:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.4), inset 0 0 60px rgba(43,49,56,.05)}
+  .editor-shell{display:none;margin:0 0 14px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px;box-shadow:0 16px 40px -34px rgba(23,33,29,.24)}
+  .editor-shell.open{display:block}
+  .editor-form-spaced{margin-top:20px;padding-top:18px;border-top:1px solid var(--rule-soft)}
+  .editor-subtitle{font-weight:700;font-size:.98rem;color:var(--ink);margin:14px 0 0}
+  .editor-shell > .editor-subtitle:first-of-type{margin-top:12px}
+  .editor-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}
+  .editor-field-wrap{display:grid;gap:5px}
+  .editor-field-wrap.wide{grid-column:span 2}
+  .editor-field-wrap.full{grid-column:1/-1}
+  .editor-label{font-family:"Spline Sans Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--thread)}
+  .editor-field{width:100%;border:1px solid var(--rule);border-radius:8px;background:var(--paper);color:var(--ink);font:inherit;font-size:14.5px;line-height:1.25;padding:10px 11px}
+  textarea.editor-field{min-height:86px;resize:vertical}
+  .editor-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .editor-note{font-size:13.5px;color:var(--ink-soft);margin:8px 0 0}
+  .editor-message{font-size:13.5px;color:var(--thread-deep);margin-left:auto}
+  .manual-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-top:12px}
+  .manual-item{border:1px solid var(--rule);border-radius:10px;background:var(--paper);padding:10px 12px}
+  .manual-name{font-weight:650;font-size:1rem;line-height:1.15;color:var(--thread-deep)}
+  .manual-meta{font-family:"Spline Sans Mono",monospace;font-size:10.5px;color:var(--ink-faint);margin-top:3px}
+
+  .viewport{position:relative;overflow:hidden;height:76vh;min-height:520px;background:var(--surface);border:1px solid var(--rule);border-radius:16px;cursor:grab;touch-action:none;box-shadow:0 22px 60px -42px rgba(23,33,29,.42), inset 0 1px 0 rgba(255,255,255,.7)}
   .viewport.grabbing{cursor:grabbing}
   .canvas{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform}
   .links{position:absolute;top:0;left:0;overflow:visible;pointer-events:none}
@@ -74,13 +99,24 @@
   .link.faint{stroke:var(--ink-faint);stroke-dasharray:4 6;opacity:.38;stroke-width:1.5}
 
   .unit{position:absolute;display:flex;gap:12px;align-items:stretch}
+  .unit-toggle{
+    position:absolute;left:50%;bottom:-35px;transform:translateX(-50%);z-index:2;
+    border:1px solid var(--rule);border-radius:999px;background:rgba(255,255,255,.96);color:var(--ink-soft);
+    min-width:34px;height:30px;padding:0 9px;font:600 11px/1 Inter,system-ui,sans-serif;
+    cursor:pointer;box-shadow:0 12px 26px -18px rgba(23,33,29,.52);
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;
+  }
+  .unit-toggle:hover{border-color:#C9D4CB;background:var(--surface-2);color:var(--thread-deep)}
+  .unit-toggle-symbol{width:18px;height:18px;border-radius:999px;background:#EEF6F1;color:var(--thread-deep);display:grid;place-items:center;font-size:15px;line-height:1}
+  .unit-toggle-text{font-size:10.5px;color:inherit}
+  .unit.collapsed .unit-toggle,.unit.compact-expanded .unit-toggle{color:var(--thread-deep);border-color:rgba(63,125,90,.35);background:#F8FCF9}
   .person{
     width:208px;text-align:left;background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--blue);
-    border-radius:4px;box-shadow:0 1px 0 rgba(43,49,56,.05),0 10px 24px -18px rgba(43,49,56,.5);
-    padding:11px 13px;cursor:pointer;font:inherit;color:inherit;min-height:92px;display:grid;grid-template-columns:46px minmax(0,1fr);gap:10px;align-items:start;
+    border-radius:12px;box-shadow:0 14px 30px -26px rgba(23,33,29,.42);
+    padding:12px 13px;cursor:pointer;font:inherit;color:inherit;min-height:92px;display:grid;grid-template-columns:46px minmax(0,1fr);gap:10px;align-items:start;
   }
-  .person:hover{background:var(--surface-2)}
-  .person.heir{width:246px;min-height:112px;border-left-width:5px;border-left-color:var(--thread);border-color:rgba(94,122,85,.62);background:linear-gradient(180deg,#EEF3E7 0%,var(--surface) 100%);box-shadow:0 0 0 1px rgba(94,122,85,.16),0 18px 34px -23px rgba(56,88,63,.78)}
+  .person:hover{background:var(--surface-2);border-color:#CAD6CD;transform:translateY(-1px)}
+  .person.heir{width:246px;min-height:112px;border-left-width:5px;border-left-color:var(--thread);border-color:rgba(63,125,90,.36);background:linear-gradient(180deg,#F6FBF7 0%,var(--surface) 100%);box-shadow:0 0 0 1px rgba(63,125,90,.08),0 20px 42px -30px rgba(36,90,59,.55)}
   .person.heir .pname{color:var(--thread-deep)}
   .person.ancestor{border-style:dashed;border-left-style:solid}
   .prole{font-family:"Spline Sans Mono",monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);display:flex;align-items:center;gap:6px;margin-bottom:3px}
@@ -91,14 +127,14 @@
   .sdot{width:7px;height:7px;border-radius:50%;flex:none;box-shadow:0 0 0 1px rgba(43,49,56,.12) inset}
   .sdot.confirmed{background:var(--st-confirmed)} .sdot.likely{background:var(--st-likely)}
   .sdot.working{background:var(--st-working)} .sdot.open{background:var(--st-open)}
-  .pname{font-family:"Fraunces",serif;font-weight:500;font-size:1.04rem;line-height:1.12;letter-spacing:-.01em}
+  .pname{font-weight:650;font-size:1rem;line-height:1.16;letter-spacing:0}
   .person.heir .pname{font-size:1.17rem}
   .pname .alt{display:block;font-size:.74rem;font-style:italic;color:var(--ink-faint);font-weight:400;letter-spacing:0}
   .pdates{font-family:"Spline Sans Mono",monospace;font-size:10.5px;color:var(--ink-soft);margin-top:3px}
 
-  .scrim{position:fixed;inset:0;background:rgba(30,28,22,.34);opacity:0;visibility:hidden;transition:opacity .25s;z-index:9000}
+  .scrim{position:fixed;inset:0;background:rgba(23,33,29,.28);backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .25s;z-index:9000}
   .scrim.open{opacity:1;visibility:visible}
-  .panel{position:fixed;top:0;right:0;height:100%;width:420px;max-width:92vw;z-index:9010;background:var(--surface);border-left:1px solid var(--rule);box-shadow:-20px 0 50px -30px rgba(43,49,56,.6);transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+  .panel{position:fixed;top:0;right:0;height:100%;width:440px;max-width:92vw;z-index:9010;background:var(--surface);border-left:1px solid var(--rule);box-shadow:-26px 0 70px -42px rgba(23,33,29,.58);transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
   .panel.open{transform:none}
   .panel-head{padding:24px 26px 16px;border-bottom:1px solid var(--rule);position:relative}
   .panel-person-top{display:grid;grid-template-columns:84px minmax(0,1fr);gap:16px;align-items:center;padding-right:34px}
@@ -107,13 +143,14 @@
   .panel-title{min-width:0}
   .panel-close{position:absolute;top:18px;right:18px;width:32px;height:32px;border-radius:50%;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink-soft);cursor:pointer;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center}
   .panel-role{font-family:"Spline Sans Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--thread);margin:0 0 8px}
-  .panel-name{font-family:"Fraunces",serif;font-weight:500;font-size:1.7rem;line-height:1.08;margin:0;letter-spacing:-.01em}
+  .panel-name{font-weight:700;font-size:1.62rem;line-height:1.08;margin:0;letter-spacing:0}
   .panel-name .alt{font-size:.82rem;font-style:italic;color:var(--ink-faint);font-weight:400}
   .panel-dates{font-family:"Spline Sans Mono",monospace;font-size:12.5px;color:var(--ink-soft);margin-top:8px}
   .panel-status{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Spline Sans Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:100px;border:1px solid currentColor}
   .panel-status .sd{width:7px;height:7px;border-radius:50%;background:currentColor}
   .panel-status.confirmed{color:var(--st-confirmed)} .panel-status.likely{color:var(--st-likely)}
   .panel-status.working{color:var(--st-working)} .panel-status.open{color:var(--st-open)}
+  .panel-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px}
   .panel-body{padding:20px 26px 40px;overflow-y:auto;flex:1}
   .facts{list-style:none;margin:0 0 22px;padding:0;font-size:14.5px}
   .facts li{display:flex;gap:12px;padding:6px 0;border-top:1px solid var(--rule-soft)}
@@ -128,32 +165,41 @@
   .timeline .tl-y{flex:none;width:96px;font-family:"Spline Sans Mono",monospace;font-size:11px;color:var(--thread-deep);padding-top:2px}
   .timeline .tl-t{font-size:14.5px;color:var(--ink);line-height:1.5}
   .relchips{display:flex;flex-wrap:wrap;gap:7px;margin:4px 0 22px}
-  .relchip{font-size:13px;padding:4px 11px;border-radius:100px;background:var(--paper);border:1px solid var(--rule);color:var(--ink-soft);cursor:pointer;display:inline-flex;align-items:baseline;gap:6px;font:inherit;font-size:13px}
+  .relchip{font-size:13px;padding:6px 11px;border-radius:999px;background:var(--paper);border:1px solid var(--rule);color:var(--ink-soft);cursor:pointer;display:inline-flex;align-items:baseline;gap:6px;font:inherit;font-size:13px}
   .relchip:hover{border-color:var(--thread);color:var(--thread-deep)}
   .relchip .yr{font-family:"Spline Sans Mono",monospace;font-size:10.5px;color:var(--ink-faint)}
   .branch-list{display:grid;gap:8px;margin:4px 0 22px}
-  .branch-item{width:100%;text-align:left;border:1px solid var(--rule);border-radius:4px;background:var(--paper);color:var(--ink);cursor:pointer;padding:9px 11px;font:inherit;display:grid;gap:3px}
+  .branch-item{width:100%;text-align:left;border:1px solid var(--rule);border-radius:10px;background:var(--paper);color:var(--ink);cursor:pointer;padding:10px 12px;font:inherit;display:grid;gap:3px}
   .branch-item:hover{border-color:var(--thread);background:var(--surface-2)}
-  .branch-name{font-family:"Fraunces",serif;font-size:1rem;line-height:1.1}
+  .branch-name{font-weight:650;font-size:1rem;line-height:1.15}
   .branch-meta{font-family:"Spline Sans Mono",monospace;font-size:10.5px;color:var(--ink-faint);line-height:1.35}
   .branch-note{font-size:13px;color:var(--ink-soft);line-height:1.4}
   .person-link{color:var(--thread-deep);background:none;border:0;border-bottom:1px dotted currentColor;padding:0;cursor:pointer;font:inherit;text-align:inherit}
+  .panel-edit-form{display:none;border:1px solid var(--rule);border-radius:12px;background:var(--paper);padding:14px;margin:0 0 20px}
+  .panel-edit-form.open{display:block}
+  .panel-edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .panel-edit-grid .full{grid-column:1/-1}
+  .panel-edit-label{display:grid;gap:4px;font-family:"Spline Sans Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--thread)}
+  .panel-edit-field{width:100%;border:1px solid var(--rule);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit;font-family:Inter,system-ui,sans-serif;font-size:14px;letter-spacing:0;text-transform:none;line-height:1.25;padding:9px 10px}
+  textarea.panel-edit-field{min-height:82px;resize:vertical}
+  .panel-edit-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .panel-edit-message{font-size:13px;color:var(--thread-deep)}
 
-  section.block{padding:46px 0;border-top:1px solid var(--rule)}
+  section.block{padding:52px 0;border-top:1px solid var(--rule)}
   .sec-kicker{font-family:"Spline Sans Mono",monospace;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--thread);margin:0 0 10px}
-  h2{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(1.6rem,3.2vw,2.1rem);letter-spacing:-.01em;margin:0;line-height:1.05}
+  h2{font-weight:700;font-size:clamp(1.5rem,3vw,2.05rem);letter-spacing:0;margin:0;line-height:1.08}
   .sec-lead{color:var(--ink-soft);max-width:68ch;margin:14px 0 0}
-  .map-shell{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px;margin-top:24px;align-items:stretch}
-  .place-map{min-height:430px;border:1px solid var(--rule);border-radius:4px;background:var(--surface);overflow:hidden;position:relative}
+  .map-shell{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;margin-top:24px;align-items:stretch}
+  .place-map{min-height:430px;border:1px solid var(--rule);border-radius:16px;background:var(--surface);overflow:hidden;position:relative;box-shadow:0 18px 46px -36px rgba(23,33,29,.34)}
   .place-map .leaflet-pane,.place-map .leaflet-top,.place-map .leaflet-bottom{z-index:1}
   .map-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);padding:24px;text-align:center;font-style:italic}
-  .place-panel{border:1px solid var(--rule);border-radius:4px;background:var(--surface);padding:16px}
+  .place-panel{border:1px solid var(--rule);border-radius:16px;background:var(--surface);padding:18px;box-shadow:0 18px 46px -38px rgba(23,33,29,.3)}
   .place-list{display:flex;flex-direction:column;gap:7px;margin-top:12px;max-height:315px;overflow:auto;padding-right:3px}
-  .place-btn{width:100%;text-align:left;border:1px solid var(--rule);border-radius:3px;background:var(--paper);color:var(--ink-soft);cursor:pointer;padding:8px 10px;font:inherit;font-size:14px;line-height:1.25}
+  .place-btn{width:100%;text-align:left;border:1px solid var(--rule);border-radius:10px;background:var(--paper);color:var(--ink-soft);cursor:pointer;padding:9px 11px;font:inherit;font-size:14px;line-height:1.25}
   .place-btn:hover,.place-btn.active{border-color:var(--thread);color:var(--thread-deep);background:var(--surface-2)}
   .place-btn-name{display:block;color:var(--ink)}
   .place-btn-meta{display:block;font-family:"Spline Sans Mono",monospace;font-size:10px;color:var(--ink-faint);margin-top:2px}
-  .place-name{font-family:"Fraunces",serif;font-size:1.25rem;font-weight:500;line-height:1.1;margin:0}
+  .place-name{font-size:1.18rem;font-weight:700;line-height:1.15;margin:0}
   .place-meta{font-family:"Spline Sans Mono",monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--thread);margin:6px 0 0}
   .place-note{font-size:14.5px;color:var(--ink-soft);line-height:1.55;margin:12px 0 0}
   .place-open{margin-top:12px;width:100%;justify-content:center}
@@ -165,18 +211,20 @@
   .place-evidence-text{display:block;color:var(--ink-soft)}
   .place-empty-row{color:var(--ink-faint);font-style:italic}
   .leads{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:24px}
-  .lead{background:var(--surface);border:1px solid var(--rule);border-top:2px solid var(--st-open);border-radius:3px;padding:18px 20px}
-  .lead h3{font-family:"Fraunces",serif;font-weight:500;font-size:1.18rem;margin:0 0 8px}
+  .lead{background:var(--surface);border:1px solid var(--rule);border-top:3px solid var(--st-open);border-radius:14px;padding:18px 20px;box-shadow:0 16px 40px -36px rgba(23,33,29,.28)}
+  .lead h3{font-weight:700;font-size:1.08rem;margin:0 0 8px}
   .lead p{margin:0;font-size:14.5px;color:var(--ink-soft);line-height:1.55}
   .steps{display:grid;gap:14px;margin-top:24px;counter-reset:step}
-  .step{display:flex;gap:18px;align-items:flex-start;background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:18px 22px}
-  .step::before{counter-increment:step;content:counter(step);font-family:"Fraunces",serif;font-size:1.7rem;color:var(--thread);line-height:1;flex:none;width:30px}
-  .step h3{font-family:"Fraunces",serif;font-weight:500;font-size:1.16rem;margin:0 0 6px}
+  .step{display:flex;gap:16px;align-items:flex-start;background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:18px 22px;box-shadow:0 16px 40px -38px rgba(23,33,29,.24)}
+  .step::before{counter-increment:step;content:counter(step);font-weight:700;font-size:1rem;color:var(--thread);line-height:1;flex:none;width:30px;height:30px;border-radius:999px;background:#EDF6EF;display:grid;place-items:center}
+  .step h3{font-weight:700;font-size:1.08rem;margin:0 0 6px}
   .step p{margin:0;font-size:14.5px;color:var(--ink-soft);line-height:1.55}
   footer{text-align:center;padding:40px 24px 60px;border-top:1px solid var(--rule);color:var(--ink-faint);font-size:13px}
   @media (max-width:640px){
     body{font-size:16px}.viewport{height:68vh}.person{width:188px;grid-template-columns:42px minmax(0,1fr)}.person.heir{width:216px;min-height:106px}.person.heir .pcard-photo{width:48px;height:48px}.hint{display:none}
     .search-row{align-items:stretch;flex-direction:column}.search-label{white-space:normal}
+    .editor-grid{grid-template-columns:1fr}.editor-field-wrap.wide{grid-column:auto}
+    .panel-edit-grid{grid-template-columns:1fr}
     .map-shell{grid-template-columns:1fr}.place-map{min-height:340px}
   }
 </style>
@@ -185,8 +233,8 @@
 <header class="masthead">
   <div class="wrap">
     <p class="eyebrow">Släktforskning · Tvååker–Morup, Halland</p>
-    <h1>Axels <em>släkt</em></h1>
-    <p class="subtitle">Ett levande släktträd över Axel Nilssons familj, byggt av namn, platser, kyrkboksnotiser, familjeuppgifter och öppna forskningsspår. Här växer den röda tråden fram person för person, från nutidens Klastorp bakåt genom Halland.</p>
+    <h1>Nilsson/Bengtsson <em>släktträd</em></h1>
+    <p class="subtitle">Ett levande släktträd över familjerna Nilsson och Bengtsson, byggt av namn, platser, kyrkboksnotiser, bouppteckningar, familjeuppgifter och öppna forskningsspår. Här växer släktlinjerna fram person för person, från nutidens Klastorp bakåt genom Halland och vidare genom äldre gårdar, socknar och familjeband.</p>
   </div>
 </header>
 
@@ -208,13 +256,63 @@
       <button class="btn" id="zoomIn"><span class="ico">+</span> Zooma in</button>
       <button class="btn" id="zoomOut"><span class="ico">-</span> Zooma ut</button>
       <button class="btn" id="fit"><span class="ico">⤢</span> Anpassa</button>
+      <span class="tree-view-toggle" aria-label="Välj trädvy">
+        <label><input id="compactTree" type="radio" name="treeViewMode" value="compact" checked> Visa mer-läge</label>
+        <label><input id="expandTree" type="radio" name="treeViewMode" value="full"> Hela trädet</label>
+      </span>
       <button class="btn" id="mapJump"><span class="ico">⌖</span> Karta</button>
+      <button class="btn" id="editorToggle" type="button"><span class="ico">✎</span> Redigera</button>
       <span class="branch-filters" aria-label="Grenfilter">
         <label class="branch-toggle"><input id="toggleMother" data-branch-toggle="mother" type="checkbox" checked> Mammas sida</label>
         <label class="branch-toggle"><input id="toggleFather" data-branch-toggle="father" type="checkbox" checked> Pappas sida</label>
       </span>
       <span class="line-key" aria-label="Linjetyper"><span><i class="line-sample"></i>Direkt led</span><span><i class="line-sample side"></i>Sidogren</span></span>
       <span class="hint">Klicka på en person · dra för att flytta · skrolla för att zooma</span>
+    </div>
+    <div class="editor-shell" id="editorShell" aria-label="Redigeringsläge">
+      <p class="sec-kicker" style="margin:0">Redigeringsläge</p>
+      <p class="editor-note">Lägg till nya personer och platser direkt i trädet. De sparas lokalt i den här browsern och kan exporteras som JSON.</p>
+      <form id="personEditorForm">
+        <p class="editor-subtitle">Ny person</p>
+        <div class="editor-grid">
+          <label class="editor-field-wrap"><span class="editor-label">Namn</span><input class="editor-field" id="newPersonName" required></label>
+          <label class="editor-field-wrap"><span class="editor-label">Roll</span><input class="editor-field" id="newPersonRole" placeholder="t.ex. Morfars far"></label>
+          <label class="editor-field-wrap"><span class="editor-label">Född</span><input class="editor-field" id="newPersonBorn" placeholder="YYYY-MM-DD"></label>
+          <label class="editor-field-wrap"><span class="editor-label">Död</span><input class="editor-field" id="newPersonDied" placeholder="YYYY-MM-DD"></label>
+          <label class="editor-field-wrap"><span class="editor-label">Plats</span><input class="editor-field" id="newPersonPlace" placeholder="Ort, gård eller socken"></label>
+          <label class="editor-field-wrap"><span class="editor-label">Status</span><select class="editor-field" id="newPersonStatus"><option value="working">Arbetsantagande</option><option value="confirmed">Bekräftat</option><option value="likely">Starkt sannolikt</option><option value="open">Öppet spår</option></select></label>
+          <label class="editor-field-wrap"><span class="editor-label">Gren</span><select class="editor-field" id="newPersonBranch"><option value="father">Pappas sida</option><option value="mother">Mammas sida</option><option value="shared">Gemensam/fristående</option></select></label>
+          <label class="editor-field-wrap"><span class="editor-label">Direkt led</span><select class="editor-field" id="newPersonDirect"><option value="">Nej</option><option value="yes">Ja</option></select></label>
+          <label class="editor-field-wrap wide"><span class="editor-label">Förälder 1</span><select class="editor-field person-select" id="newPersonParent1"><option value="">Ingen vald</option></select></label>
+          <label class="editor-field-wrap wide"><span class="editor-label">Förälder 2</span><select class="editor-field person-select" id="newPersonParent2"><option value="">Ingen vald</option></select></label>
+          <label class="editor-field-wrap wide"><span class="editor-label">Make/maka</span><select class="editor-field person-select" id="newPersonPartner"><option value="">Ingen vald</option></select></label>
+          <label class="editor-field-wrap wide"><span class="editor-label">Profilbild</span><input class="editor-field" id="newPersonPhoto" placeholder="assets/bild.jpg eller URL"></label>
+          <label class="editor-field-wrap full"><span class="editor-label">Livshistoria</span><textarea class="editor-field" id="newPersonStory" placeholder="Kort text som visas i personkortet"></textarea></label>
+        </div>
+        <div class="editor-actions">
+          <button class="btn" type="submit">Lägg till person</button>
+          <button class="btn" id="exportManualData" type="button">Exportera JSON</button>
+          <label class="btn" for="importManualData">Importera JSON</label>
+          <input id="importManualData" type="file" accept="application/json,.json" hidden>
+          <button class="btn" id="clearManualData" type="button">Rensa lokala tillägg</button>
+          <span class="editor-message" id="editorMessage"></span>
+        </div>
+      </form>
+      <form id="placeEditorForm" class="editor-form-spaced">
+        <p class="editor-subtitle">Ny plats</p>
+        <div class="editor-grid">
+          <label class="editor-field-wrap"><span class="editor-label">Platsnamn</span><input class="editor-field" id="newPlaceName" required placeholder="t.ex. Munkaskog"></label>
+          <label class="editor-field-wrap"><span class="editor-label">Område</span><input class="editor-field" id="newPlaceArea" placeholder="t.ex. Tvååker, Halland"></label>
+          <label class="editor-field-wrap"><span class="editor-label">Latitud</span><input class="editor-field" id="newPlaceLat" inputmode="decimal" placeholder="57.045"></label>
+          <label class="editor-field-wrap"><span class="editor-label">Longitud</span><input class="editor-field" id="newPlaceLng" inputmode="decimal" placeholder="12.390"></label>
+          <label class="editor-field-wrap full"><span class="editor-label">Namnvarianter</span><input class="editor-field" id="newPlaceAliases" placeholder="Komma-separerat, t.ex. Svenborgsgård, Sven Börges gård"></label>
+          <label class="editor-field-wrap full"><span class="editor-label">Platsens historia</span><textarea class="editor-field" id="newPlaceNote" placeholder="Kort historik eller notering om platsen"></textarea></label>
+        </div>
+        <div class="editor-actions">
+          <button class="btn" type="submit">Lägg till plats</button>
+        </div>
+      </form>
+      <div class="manual-list" id="manualList"></div>
     </div>
     <div class="viewport" id="viewport">
       <div class="canvas" id="canvas"><svg class="links" id="links"></svg></div>
@@ -268,7 +366,7 @@
 </div>
 
 <footer>
-  Axels släkt · byggd från masterfilen 2026-07-06 · bevisstatus: bekräftat, starkt sannolikt, arbetsantagande och öppet spår
+  Nilsson/Bengtsson släktträd · byggd från masterfilen 2026-07-06 · bevisstatus: bekräftat, starkt sannolikt, arbetsantagande och öppet spår
 </footer>
 
 <div class="scrim" id="scrim"></div>
@@ -282,10 +380,34 @@
         <h2 class="panel-name" id="pName"></h2>
         <p class="panel-dates" id="pDates"></p>
         <span class="panel-status" id="pStatus"></span>
+        <div class="panel-actions" id="pActions"><button class="btn" id="panelEditToggle" type="button">Redigera person</button></div>
       </div>
     </div>
   </div>
   <div class="panel-body">
+    <form class="panel-edit-form" id="panelEditForm">
+      <div class="panel-edit-grid">
+        <label class="panel-edit-label">Namn<input class="panel-edit-field" id="editName" required></label>
+        <label class="panel-edit-label">Alternativt namn<input class="panel-edit-field" id="editAlt"></label>
+        <label class="panel-edit-label">Roll<input class="panel-edit-field" id="editRole"></label>
+        <label class="panel-edit-label">Status<select class="panel-edit-field" id="editStatus"><option value="confirmed">Bekräftat</option><option value="likely">Starkt sannolikt</option><option value="working">Arbetsantagande</option><option value="open">Öppet spår</option></select></label>
+        <label class="panel-edit-label">Född<input class="panel-edit-field" id="editBorn" placeholder="YYYY-MM-DD"></label>
+        <label class="panel-edit-label">Död<input class="panel-edit-field" id="editDied" placeholder="YYYY-MM-DD"></label>
+        <label class="panel-edit-label full">Plats<input class="panel-edit-field" id="editPlace" placeholder="Ort, gård eller socken"></label>
+        <label class="panel-edit-label full">Profilbild<input class="panel-edit-field" id="editPhoto" placeholder="assets/bild.jpg eller URL"></label>
+        <label class="panel-edit-label">Förälder 1<select class="panel-edit-field person-select" id="editParent1"><option value="">Ingen vald</option></select></label>
+        <label class="panel-edit-label">Förälder 2<select class="panel-edit-field person-select" id="editParent2"><option value="">Ingen vald</option></select></label>
+        <label class="panel-edit-label">Make/maka<select class="panel-edit-field person-select" id="editPartner"><option value="">Ingen vald</option></select></label>
+        <label class="panel-edit-label">Direkt led<select class="panel-edit-field" id="editDirect"><option value="">Nej</option><option value="yes">Ja</option></select></label>
+        <label class="panel-edit-label full">Fakta, en per rad<textarea class="panel-edit-field" id="editFacts" placeholder="Exempel: Vigsel: 1820-01-01 i Tvååker"></textarea></label>
+        <label class="panel-edit-label full">Livshistoria<textarea class="panel-edit-field" id="editStory"></textarea></label>
+      </div>
+      <div class="panel-edit-actions">
+        <button class="btn" type="submit">Spara ändringar</button>
+        <button class="btn" id="panelEditCancel" type="button">Avbryt</button>
+        <span class="panel-edit-message" id="panelEditMessage"></span>
+      </div>
+    </form>
     <ul class="facts" id="pFacts"></ul>
     <div id="pParentsWrap" style="display:none"><p class="panel-section-label">Föräldrar</p><div class="relchips" id="pParents"></div></div>
     <div id="pSpouseWrap" style="display:none"><p class="panel-section-label">Make / maka</p><div class="relchips" id="pSpouse"></div></div>
