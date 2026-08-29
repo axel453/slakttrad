@@ -1,11 +1,11 @@
-# Släktgrenar för Axels släkt
+# Släktgrenar för Nilsson/Bengtsson släktträd
 
-**Senast uppdaterad:** 2026-08-05
+**Senast uppdaterad:** 2026-08-28
 
 Det här är arbetsmappen för att hålla isär släktgrenarna:
 
 - `mammas_sida_gerd.md` – Gerd Bengtssons sida, med Karin Margit Johansson/Bengtsson och den hittills kartlagda Hallandslinjen bakåt.
-- `mammas_morfar_bengtssonlinjen.md` – morfars Bengtssonlinje via Axel Harry Bengtsson, Sven Adolf Bengtsson, Nils Bengtsson, Wahlagården/Jon Nilsgård, Olof Svensgård och den nya gårdskedjan via Anna Olofsdotter.
+- `mammas_morfar_bengtssonlinjen.md` – morfars Bengtssonlinje via Axel Harry Bengtsson, Sven Adolf Bengtsson, Nils Bengtsson, Wahlagården/Jon Nilsgård, Olof Svensgård och den nya gårdskedjan via Anna Olofsdotter. Senaste inlästa underlag: `slaktforskning_mamma_morfar_bengtssonlinjen_master_2026-08-24_v89.md`.
 - `pappas_sida_goran.md` – Göran Nilssons sida.
 - `farfars_sida_nils_stig_henning.md` – farfars sida via Nils Stig Henning Nilsson.
 

@@ -18,12 +18,14 @@ function personHTML(id, unit){
   const role = p.role || (heir ? "Direkt linje" : "Person");
   const alt = p.alt ? `<span class="alt">/ ${escapeHtml(p.alt)}</span>` : "";
   const dates = formatDates(p);
+  const place = p.place ? `<span class="pplace">${escapeHtml(p.place)}</span>` : "";
   return `<button class="person${heir ? " heir" : ""}${unit?.ancestor ? " ancestor" : ""}" data-id="${id}" title="Öppna livshistoria">
     <img class="pcard-photo" src="${escapeHtml(personPhoto(p))}" alt="" loading="lazy" onerror="this.src='${PERSON_PLACEHOLDER}'">
     <span class="pcard-text">
       <span class="prole"><span class="sdot ${p.status || 'open'}"></span>${escapeHtml(role)}</span>
       <span class="pname">${escapeHtml(p.name)}${alt}</span>
       ${dates ? `<span class="pdates">${escapeHtml(dates)}</span>` : ""}
+      ${place}
     </span>
   </button>`;
 }
@@ -155,6 +157,24 @@ function personMatchesActiveBranches(id){
   if(MOTHER_UNITS.has(unitId)) return branchState.mother;
   if(FATHER_UNITS.has(unitId)) return branchState.father;
   return true;
+}
+function personBranch(id, seen=new Set()){
+  if(seen.has(id)) return "shared";
+  seen.add(id);
+  const unitId = PERSON_TO_UNIT[id];
+  if(MOTHER_UNITS.has(unitId)) return "mother";
+  if(FATHER_UNITS.has(unitId)) return "father";
+  const parentSides = new Set((PEOPLE[id]?.parents || []).map(parentId=>personBranch(parentId, seen)));
+  if(parentSides.has("mother") && parentSides.has("father")) return "shared";
+  if(parentSides.has("mother")) return "mother";
+  if(parentSides.has("father")) return "father";
+  return "shared";
+}
+function personBranchLabel(id){
+  const branch = personBranch(id);
+  if(branch === "mother") return {branch, label:"Mammas led"};
+  if(branch === "father") return {branch, label:"Pappas led"};
+  return {branch, label:"Mammas och pappas led"};
 }
 function layoutUnits(units){
   const rows = new Map();
@@ -526,6 +546,11 @@ function openPerson(id){
   const statusEl = document.getElementById('pStatus');
   statusEl.className = "panel-status " + st;
   statusEl.innerHTML = `<span class="sd"></span>${STATUS_LABEL[st]}`;
+  const branchInfo = personBranchLabel(id);
+  const branchEl = document.getElementById('pBranch');
+  branchEl.className = "panel-branch " + branchInfo.branch;
+  branchEl.textContent = branchInfo.label;
+  branchEl.style.display = "";
   const facts = [];
   if(p.place) facts.push(["Plats",p.place]);
   (p.facts||[]).forEach(f=>facts.push(f));
@@ -571,12 +596,14 @@ function openPlace(id){
   const statusEl = document.getElementById('pStatus');
   statusEl.className = "panel-status " + (hasCoords(place) ? "confirmed" : "working");
   statusEl.innerHTML = `<span class="sd"></span>${hasCoords(place) ? "Kartlagd plats" : "Plats utan exakt punkt"}`;
+  document.getElementById('pBranch').style.display = "none";
   const facts = [
     ["Område", place.area || "Ej angivet"],
     ["Kartstatus", hasCoords(place) ? `${place.lat.toFixed(3)}, ${place.lng.toFixed(3)}` : "Exakt kartpunkt saknas"],
     ["Kopplade personer", String(relatedPeople.length)]
   ];
   if(place.aliases?.length) facts.push(["Namnvarianter", place.aliases.join(", ")]);
+  (place.facts||[]).forEach(f=>facts.push(f));
   document.getElementById('pFacts').innerHTML = facts.map(([k,v])=>`<li><span class="k">${escapeHtml(k)}</span><span class="v">${escapeHtml(v)}</span></li>`).join("");
   document.getElementById('pParentsWrap').style.display = "none";
   document.getElementById('pSpouseWrap').style.display = "none";
@@ -585,18 +612,19 @@ function openPlace(id){
   document.getElementById('pPlacePeople').innerHTML = relatedPeople.map(row=>relChip(row.id)).join("");
   document.getElementById('pPlacePeopleWrap').style.display = relatedPeople.length ? "" : "none";
   document.getElementById('pStoryLabel').textContent = "Om platsen";
-  const placeStory = [place.note || "Ingen längre platsbeskrivning är inlagd ännu."];
+  const placeStory = place.story?.length ? place.story : [place.note || "Ingen längre platsbeskrivning är inlagd ännu."];
   if(relatedPeople.length){
     const direct = relatedPeople.filter(row=>DIRECT_HEIRS.has(row.id)).map(row=>PEOPLE[row.id].name);
     if(direct.length) placeStory.push(`Direkta ledet har koppling hit genom ${direct.slice(0,5).join(", ")}${direct.length > 5 ? " med flera" : ""}.`);
   }
   document.getElementById('pStory').innerHTML = placeStory.map(s=>`<p>${linkPersonNames(s)}</p>`).join("");
   document.getElementById('pTimelineLabel').textContent = "Platsens historia";
-  document.getElementById('pTimeline').innerHTML = relatedPeople.flatMap(row=>row.texts.map((text,index)=>[
+  const placeTimeline = place.timeline?.length ? place.timeline : relatedPeople.flatMap(row=>row.texts.map((text,index)=>[
     index === 0 ? PEOPLE[row.id].name : "Fler spår",
     text
-  ])).slice(0,12).map(([y,t])=>`<li><span class="tl-y">${escapeHtml(y)}</span><span class="tl-t">${linkPersonNames(t)}</span></li>`).join("");
-  document.getElementById('pTimelineWrap').style.display = relatedPeople.length ? "" : "none";
+  ])).slice(0,12);
+  document.getElementById('pTimeline').innerHTML = placeTimeline.map(([y,t])=>`<li><span class="tl-y">${escapeHtml(y)}</span><span class="tl-t">${linkPersonNames(t)}</span></li>`).join("");
+  document.getElementById('pTimelineWrap').style.display = placeTimeline.length ? "" : "none";
   panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); scrim.classList.add('open');
   document.getElementById('panelClose').focus();
 }
@@ -952,6 +980,7 @@ function applyManualPersonEdit(id, edit){
   });
   person.facts = edit.facts || [];
   person.story = edit.story?.length ? edit.story : ["Ännu inte utforskad."];
+  person.timeline = edit.timeline || [];
   person.parents = edit.parents || [];
   person.partner = edit.partner || "";
   person.direct = !!edit.direct;
@@ -1044,6 +1073,16 @@ function textToFacts(text){
 function textToStory(text){
   return String(text || "").split(/\n+/).map(row=>row.trim()).filter(Boolean);
 }
+function timelineToText(timeline){
+  return (timeline || []).map(([date,note])=>`${date}: ${note}`).join("\n");
+}
+function textToTimeline(text){
+  return String(text || "").split(/\n+/).map(row=>row.trim()).filter(Boolean).map(row=>{
+    const splitAt = row.indexOf(":");
+    if(splitAt < 0) return ["Notering", row];
+    return [row.slice(0,splitAt).trim() || "Notering", row.slice(splitAt + 1).trim()];
+  }).filter(([,note])=>note);
+}
 function setSelectValue(id, value){
   const el = document.getElementById(id);
   if(el) el.value = value || "";
@@ -1062,6 +1101,7 @@ function fillPanelEditor(id){
   document.getElementById('editDirect').value = DIRECT_HEIRS.has(id) || person.direct ? "yes" : "";
   document.getElementById('editFacts').value = factsToText(person.facts);
   document.getElementById('editStory').value = (person.story || []).join("\n");
+  document.getElementById('editTimeline').value = timelineToText(person.timeline);
   setSelectValue('editParent1', person.parents?.[0] || "");
   setSelectValue('editParent2', person.parents?.[1] || "");
   setSelectValue('editPartner', PARTNER[id] || person.partner || "");
@@ -1090,6 +1130,7 @@ function savePanelPersonEdit(){
     photo:document.getElementById('editPhoto').value.trim(),
     facts:textToFacts(document.getElementById('editFacts').value),
     story:textToStory(document.getElementById('editStory').value),
+    timeline:textToTimeline(document.getElementById('editTimeline').value),
     parents:[document.getElementById('editParent1').value, document.getElementById('editParent2').value].filter(Boolean),
     partner:document.getElementById('editPartner').value,
     direct:document.getElementById('editDirect').value === "yes"
