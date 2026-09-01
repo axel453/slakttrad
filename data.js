@@ -553,3 +553,295 @@ const PLACES = [
   { id:"karlshamn", name:"Karlshamn", area:"Blekinge", lat:56.170, lng:14.863, zoom:13, aliases:["Karlshamn","Karlshamns stadsförsamling"], note:"Alma Sofia Nilsson flyttar hit från Landskrona 1918-07-10 och vidare till Bräkne-Hoby 1918-10-21." },
   { id:"uppsala_karlshamn", name:"Uppsala", area:"Karlshamn", aliases:["Uppsala","Uppala"], note:"Karlshamn-post där Alma Sofia Nilsson står som tjänarinna 1918. Platsnamnet ska inte förväxlas med staden Uppsala." }
 ];
+
+// Additiva uppgifter ur Valagården-mastern 2026-09-01.
+// Grundposterna ovan behålls ordagrant; denna avgränsade komplettering kan tas bort separat.
+function appendUniqueArchiveDetails(record, additions){
+  if(!record) return;
+  ["aliases","facts","story","timeline","sources","uncertainties"].forEach(key=>{
+    if(!additions[key]?.length) return;
+    record[key] ||= [];
+    const known = new Set(record[key].map(value=>JSON.stringify(value)));
+    additions[key].forEach(value=>{
+      const signature = JSON.stringify(value);
+      if(known.has(signature)) return;
+      record[key].push(value);
+      known.add(signature);
+    });
+  });
+}
+
+const valagardenArchive = PLACES.find(place=>place.id === "wahlagarden");
+appendUniqueArchiveDetails(valagardenArchive,{
+  aliases:["Träslöv nr 5 Valagården","Träslöv 5:3 Valagården","Träslöv 5:6","Träslöv 5:7","Hwalagården","Joen Nielsons gård"],
+  facts:[
+    ["Källnivåer","Originalhandlingar och kontrollerade kyrkböcker hålls åtskilda från familjeavskrifter, register, sekundär forskning och hypoteser."],
+    ["Äldre namn","Hallands Släktforskarförenings register anger Joen Nilsgård som namn år 1645 för Träslöv nr 5."],
+    ["Jordnatur","En familjeavskrift uppger klosterhemman 1649 och senare kronohemman. Bakomliggande originalkälla är ännu inte identifierad."],
+    ["Landsbeskrivning 1729","Familjens avskrift beskriver Joen Nielsons gård som ett kronohemman om 3/4 mantal, delat mellan Swen Andersson och Anders Mårtenssons änka med 3/8 mantal vardera."],
+    ["Laga skifte 1839","Familjens avskrift anger tre åbor: Börje Larsson 3/16 mantal, Nils Börjesson 3/16 mantal och Bengt Olsson 3/8 mantal."],
+    ["Gårdsmiljö 1857","Familjeanteckningarna anger 37 personer i sex hushåll samt ett jordtorp och en backstuga inom Träslöv nr 5."],
+    ["Byggnader 1866","Familjens avskrift för Träslöv 5:6 beskriver delning av ett förfallet halmtäckt boningshus och ladugård mellan Petter Anders Svensson och Bengt August Nilsson."],
+    ["Ekonomiska handlingar","Skuldebrev och inteckningar 1888-1912 berör andelar i Träslöv nr 5, men varje andels exakta samband med familjens del av Valagården är inte slutligt klarlagt."],
+    ["Jordbruk 1915","Valagård omfattade 12,00 hektar, varav 11,50 hektar odlad jord. Djurbeståndet omfattade bland annat två arbetshästar, ett föl, ungnöt, kalv, grisar och 25 höns."],
+    ["Fastighetsdelar","Materialet nämner bland annat Träslöv 5:3, 5:6 och 5:7. De ska inte behandlas som identiska utan fortsatt kontroll av avstyckningar och ägogränser."],
+    ["Arrende 1958-1963","Originalkontraktet visar att Lars Emil Bengtsson ägde Träslöv 5:7 och arrenderade ut fastigheten till brorsonen Harry Bengtsson för 900 kronor per år."]
+  ],
+  story:[
+    "Den nya Valagården-mastern skiljer uttryckligen mellan originalhandlingar, familjens avskrifter, index och register, sekundär forskning samt hypoteser. Gårdens historia redovisas därför med olika säkerhetsnivåer: en senare gårdsanknytning innebär exempelvis inte automatiskt att personen föddes där eller ägde marken.",
+    "Gårdsregistret för Träslöv nr 5 anger Joen Nilsgård som äldre namn år 1645. Familjens bevarade gårdsanteckningar uppger dessutom att gården var klosterhemman 1649 och senare kronohemman. Den uppgiften är värdefull men vilar ännu på en familjeavskrift vars bakomliggande original måste identifieras.",
+    "Omkring år 1700 visar det äldre materialet två skilda hushållsgrupper vid Jon Nils hemman. I den första finns Anders Andersson, Karin Olsdotter/Olofsdotter och barnen Olof, Börje och Kirsti/Kerstin Andersdotter. Den femåriga personen har tidigare lästs som Mårten Andersson, men den läsningen är korrigerad. I en andra grupp finns Börje Nilsson med hustru och flera barn. Grupperna visar gårdsmiljön men får inte utan ytterligare belägg kopplas till huvudlinjens Mårten Andersson.",
+    "Familjens avskrift av 1729 års landsbeskrivning ger en konkret bild av Joen Nielsons gård som ett kronohemman om tre fjärdedels mantal, delat mellan två åbor. Där fanns två stugor med förstugor, härbärgen, brygghus, uthus, torvhus och vagnskjul, en liten trädgård med äppelträd samt två kålhagar. Swen Andersson uppges ha tillträtt sin andel 1699 och Anders Mårtenssons änka sin andel 1722. Uppgifterna behöver fortfarande kontrolleras mot landsbeskrivningens original.",
+    "Den första säkra och tydligt dokumenterade kopplingen för den direkta linjen är Mårten Andersson och Helena Jönsdotter vid Jöns Nilsgård 1762. Därefter kan boende- och släktkontinuiteten följas genom Anna Mårtensdotter, Anna Olofsdotter och Bengta Börjesdotter till Bengt Olofsson och barnen. Mönstret talar för att gårdsanknytningen kan ha följt kvinnolinjen, men det bevisar inte privat ägande eller exakt brukningsrätt.",
+    "Kartavskrifter från 1823 och 1840 visar flera gårdslägen inom Träslöv nr 5. Inför laga skiftet 1839 brukade Börje Larsson och Nils Börjesson vardera tre sextondels mantal, medan Bengt Olsson brukade tre åttondels mantal. Nils Börjesson och Bengt Olsson uppges ha haft en gård tillsammans, medan Börje Larssons bebyggelse låg avskilt. År 1857 fanns enligt familjeanteckningarna 37 personer i sex hushåll samt jordtorp och backstuga.",
+    "En familjeavskrift av en förrättning den 4 juli 1866 beskriver Valagården Träslöv 5:6 i ovanlig detalj. Det halmtäckta boningshuset var 61 fot långt och rymde stuga, förstuga, härbärge, kammare och kök. Byggnaderna var förfallna och delades mellan Petter Anders Svensson och Bengt August Nilsson. Tolkningen att Petter skulle flytta och Bengt August stanna kvar är stark men behöver jämföras med originalhandlingen.",
+    "Ekonomiska handlingar visar flera skilda andelar i Träslöv nr 5. Alfred Sundgren intecknade 3/64 mantal 1888. Bengt August Nilsson den äldre tog 1901 ett lån på 1 600 kronor med en indirekt säkerhet knuten till 3/64 mantal Jöns Nilsgård; räntebetalningar kan följas till 1911. Handlingarna belyser gårdens ekonomi men bevisar inte att alla nämnda andelar motsvarade samma brukningsdel.",
+    "Lokalundersökningen 1915 visar Valagård som ett intensivt brukat jordbruk på 12 hektar, nästan helt odlat. Där odlades spannmål, potatis, foderrotfrukter, hö och grönfoder, och gården hade hästar, nötkreatur, grisar och höns. Bengt Nilsson den äldre står i ägarfältet, men blanketten avgör inte om Sara Britta Andersdotter hade en juridisk andel.",
+    "Familjens material från 1920-talet visar flera åbor och yrkesarbetande barn inom den äldre gårdsmiljön. Ett originalskuldebrev från 1928 visar dessutom att Lars Emil Bengtsson, under namnet Emil Bengtsson och adressen nr 5 Träslöv, erkände en skuld på 3 000 kronor till brodern Sven Adolf Bengtsson i Klastorp. Räntan anges löpa från 1920, vilket kan tyda på ett äldre lån men ännu är en tolkning.",
+    "Svenska Gods och Gårdar 1939 och 1946 återger två olika ägarlängder för Träslöv 5:3 Valagården. En går genom Bengt Olsson, Nils Bengtsson, Bengt August Nilsson och Lars Emil Bengtsson; en annan genom Karl Andersson, Emil Johansson, Algot Leonard Andersson och Sten Andersson. Skillnaden bevaras som en öppen fråga och får inte jämnas ut utan kontroll av utgåvor, brukningsdelar och tidsskeden.",
+    "Arvskiftet efter Alma Josefina Bengtsson 1955 placerar Lars Emil Bengtsson på Valagården och dokumenterar syskon och amerikanska arvingar. Ett originalkontrakt från 1958 visar sedan att Lars Emil, som skrev sig Emil Bengtsson, ägde Träslöv 5:7 och arrenderade ut fastigheten till brorsonen Harry Bengtsson till 1963. Emil behöll Smedlyckan bakom ladan för eget bruk, medan Harry fick bruka jorden och använda lada och loge."
+  ],
+  timeline:[
+    ["1645","Gårdsregistret anger Joen Nilsgård som äldre namn för Träslöv nr 5."],
+    ["1649","Familjens avskrift uppger att gården var klosterhemman och senare blev kronohemman; originalkällan återstår."],
+    ["1718","Familjens gårdsanteckningar nämner 'Swen Hwahl och Ingri av Hwalagården'. Identifikationen med Swen Andersson och Inger Olsdotter är ännu en hypotes."],
+    ["1729","Familjens avskrift av landsbeskrivningen visar två åbor på Joen Nielsons gård och beskriver byggnader, trädgård, åker, äng och samfälld betesmark."],
+    ["1731-04-25","Mårten Andersson och Helena Jönsdotter vigs. Notisen anger Träslövs by respektive Skultagården och är inte ett säkert Valagårdsbelägg."],
+    ["1740-08-08","Nils Mårtensson anges i sekundär forskning vara född på Valagård; originalnotisen är ännu inte kontrollerad."],
+    ["ca 1756-1759","Husförhör under Jon Nilsgård visar Mårten Anderssons och Börge Anderssons hushåll. En tidigare marginaltolkning om flytt till Walegård är korrigerad till sannolikt Falkenberg."],
+    ["1812-1829","Husförhöret Träslöv AI:5 har rubriken 'Wahlagården Jon Nilsgård', ett direkt belägg för parallell namnanvändning."],
+    ["1823","Familjens handritade kartavskrift visar flera husgrupper på Träslöv 5 Jon Nilsgård."],
+    ["1839","Förarbetena till laga skiftet beskriver tre åbor och gårdens tre brukningsandelar."],
+    ["1840","En kartavskrift markerar gårdslägen för Bengt Olsson, Nils Börjesson och Börje Larsson."],
+    ["1857","Familjeanteckningarna anger 37 personer i sex hushåll, ett jordtorp och en backstuga inom Träslöv nr 5."],
+    ["1866-07-04","Boningshus och ladugård på Träslöv 5:6 delas mellan Petter Anders Svensson och Bengt August Nilsson enligt en familjeavskrift."],
+    ["1888-05-09","Alfred Sundgren belånar 3/64 mantal kronoskatte Träslöv nr 5; dokumentet fastställer inte vilken senare brukningsdel andelen motsvarar."],
+    ["1901-04-04","Bengt August Nilsson den äldre utfärdar ett skuldebrev på 1 600 kronor. Räntor kvitteras 1902-1911."],
+    ["1920","Familjens församlingsboksutdrag visar flera åbor och hushåll inom den äldre gårdsmiljön."],
+    ["1928-11-12","Lars Emil Bengtsson erkänner under namnet Emil Bengtsson en skuld på 3 000 kronor till brodern Sven Adolf Bengtsson."],
+    ["1939-1946","Svenska Gods och Gårdar återger olika ägarlängder för Träslöv 5:3 Valagården; skillnaden är inte löst."],
+    ["1954-10-15","Alma Josefina Bengtsson avlider enligt originalutdraget ur arvskiftet."],
+    ["1955-01-12","Arvskiftet efter Alma dokumenterar syskonen, amerikanska arvingar och Lars Emil Bengtssons bosättning på Valagården."],
+    ["1958-03-25","Lars Emil Bengtsson tecknar under namnet Emil Bengtsson arrendeavtal om Träslöv 5:7 med brorsonen Harry Bengtsson."],
+    ["1958-04-01–1963-04-01","Harry Bengtsson arrenderar Träslöv 5:7 för 900 kronor per år. Emil behåller Smedlyckan bakom ladan."]
+  ],
+  sources:[
+    "Träslöv (N) CI:4 (1747-1798), Bild 490 / Sida 87: Anna Olofsdotters födelse 1767.",
+    "Träslöv (N) CI:4, Bild 1180 / Sida 223: Olof Anderssons och Anna Mårtensdotters vigsel 1765.",
+    "Träslöv (N) CI:4, Bild 1230 / Sida 233: Börje Pehrssons och Anna Olofsdotters vigsel 1790.",
+    "Träslöv (N) CI:4, Bild 1410 / Sida 267: Mårten Anderssons död 1762.",
+    "Träslöv (N) CI:5 (1799-1825), Bild 109 / Sida 211: Nils Bengtssons födelse 1814.",
+    "Träslöv (N) CI:5, Bild 130 / Sida 251: Anders Bengtssons födelse 1816.",
+    "Träslöv (N) CI:5, Bild 208 / Sida 407: Bengt Olofssons och Bengta Börjesdotters vigsel 1813.",
+    "Träslöv (N) AI:3 (1787-1800), Bild 85 / Sida 111: N:o 5 Jon Nilsgård.",
+    "Träslöv (N) AI:5 (1812-1829), Bild 174 / Sida 37: 'Wahlagården Jon Nilsgård'.",
+    "Himle häradsrätt FIIb:3 (1760-1789), originalsid 9: Mårten Anderssons bouppteckning 1762.",
+    "Himle häradsrätt FIIa:11 (1800-1802): Helena Jönsdotters bouppteckning 1800.",
+    "IMG_6517.HEIC, IMG_6518.HEIC och IMG_6519.HEIC: familjens gårdsanteckningar och kartavskrifter, granskade 2026-08-31.",
+    "IMG_6524.HEIC och IMG_6525.HEIC: familjeavskrift om Valagården Träslöv 5:6 och byggnadsdelningen 1866.",
+    "otydligt3.HEIC, otydligt1.HEIC och otydligt2.HEIC: kopia av Alfred Sundgrens skuldebrev 1888 och överlåtelsepåskrift 1912.",
+    "otydligt.HEIC och otydligt4.HEIC: kopia av Bengt August Nilssons skuldebrev 1901 och ränteanteckningar 1902-1911.",
+    "anteckning om sven adolf.HEIC: originalskuldebrev mellan Lars Emil och Sven Adolf Bengtsson, 1928-11-12.",
+    "Arvskifte efter Alma 1955.HEIC: originalutdrag efter Alma Josefina Bengtsson, förrättat 1955-01-12.",
+    "IMG_6532.HEIC: originalarrendekontrakt mellan Lars Emil Bengtsson och Harry Bengtsson, daterat 1958-03-25.",
+    "Leif Lundquist, Halländsk antavla 4, Hallands Släktforskarföreningen.",
+    "Hallands Släktforskarförenings gårds- och ortnamnsregister."
+  ],
+  uncertainties:[
+    "Familjeuppgiften om klosterhemman 1649 behöver spåras till bakomliggande originalkälla.",
+    "Swen Andersson, Inger Olsdotter och Karin Svensdotter är sekundärt knutna till gården omkring 1699-1702 och behöver verifieras i original.",
+    "1718 års anteckning om Swen Hwahl och Ingri behöver återfinnas i original.",
+    "Familjens avskrift av 1729 års landsbeskrivning behöver kontrolleras ord för ord mot originalet.",
+    "Mårten Anderssons och Helena Jönsdotters första inflyttning till Jon/Jöns Nilsgård är ännu inte fastställd.",
+    "Nils Mårtenssons uppgivna födelse på Valagård 1740 är sekundär tills födelsenotisen har kontrollerats.",
+    "Karin Börgesdotter som uppges ha avlidit på Valagård 1705 får inte sammanblandas med den 13-åriga Karin Börgesdotter i gruppen omkring 1700.",
+    "Originalkartorna 1823 och 1840 behöver identifieras för säker placering av hus och ägogränser.",
+    "Den bakomliggande källan till uppgiften om 37 personer och sex hushåll 1857 återstår.",
+    "Originalet till förrättningen 1866 behöver hittas; tolkningen att Petter Anders Svensson flyttade och Bengt August Nilsson stannade kvar är ännu inte slutbevisad.",
+    "Sambandet mellan fastighetsbeteckningarna Träslöv 5:3, 5:6 och 5:7 behöver klarläggas.",
+    "Alfred Sundgrens intecknade 3/64 mantal 1888 kan inte utan vidare likställas med Bengt August Nilssons brukningsdel.",
+    "Det exakta slutbetalningsdatumet för Bengt August Nilssons skuld är otydligt.",
+    "De två olika ägarlängderna för Träslöv 5:3 i Svenska Gods och Gårdar måste jämföras med originalutgåvorna.",
+    "Arvskiftet 1955 nämner ingen fastighet och visar därför inte i sig någon övergång av Valagården.",
+    "Arrendets fortsättning eller upphörande efter 1 april 1963 är inte känd.",
+    "Smedlyckans exakta läge bakom ladan behöver identifieras på karta.",
+    "Skillnaden mellan skuldebrevets datering 1928 och räntans startår 1920 behöver förklaras.",
+    "Amerikaspåren för Anders Gustaf, Karl Oskar och Johan Albin Bengtsson behöver beläggas med utflyttningslängder och amerikanska källor."
+  ]
+});
+
+const valagardenPersonAdditions = {
+  marten_andersson_1701:{
+    facts:[
+      ["Vigselnotis 1731","Mårten anges som dräng i Träslöfs by; notisen innehåller inget säkert Valagårdsbelägg."],
+      ["Husförhör ca 1756-1759","Mårtens familj står under gårdsrubriken Jon Nilsgård tillsammans med ett separat hushåll för Börge Andersson."],
+      ["Korrigerad läsning","Den femåriga personen i N:o 42-materialet omkring 1700 är Kirsti/Kerstin Andersdotter, inte Mårten Andersson."]
+    ],
+    story:[
+      "Valagården-mastern avgränsar den säkra gårdskopplingen noggrant: vigseln 1731 visar bara Mårten som dräng i Träslöfs by. Husförhöret omkring 1756-1759 och originalhandlingarna från 1762 ger däremot starka belägg för familjen vid Jon/Jöns Nilsgård."
+    ],
+    sources:["Träslöv (N) CI:4, Bild 1410 / Sida 267; Himle häradsrätt FIIb:3, originalsid 9."]
+  },
+  helena_jonsdotter_1713:{
+    facts:[
+      ["Valagårdskoppling","Vigseln 1731 anger Skultagården, inte Valagården. Bouppteckningen 1800 placerar henne däremot vid N:o 5 Jon Nilsgård."],
+      ["Åldersskillnad i Valagården-mastern","Personöversikten återger den äldre sekundära uppskattningen omkring 1709, medan den befintliga originaltolkningen anger födelse 1713-10-06/07. Båda uppgifterna bevaras med olika källstatus."]
+    ],
+    story:[
+      "Valagården-masterns personöversikt återger en äldre ungefärlig födelsetid omkring 1709. Webbplatsens redan publicerade uppgift 1713 bygger på den starkare födelse- och dopnotisen och behålls; avvikelsen dokumenteras i stället för att jämnas ut."
+    ],
+    sources:["Himle häradsrätt FIIa:11 (1800-1802), bouppteckning efter Helena Jönsdotter."]
+  },
+  anna_martensdotter_jon_nilsgard:{
+    facts:[
+      ["Gårdsövergång","Piga från Jön Nilsgård vid vigseln 1765; maken Olof Andersson kom från Dagsås."],
+      ["Källvärde","Mårtens bouppteckning 1762 nämner en dotter Anna, 30 år, vilket passar födelsen 1732."]
+    ],
+    sources:["Träslöv födelse- och dopbok 1732, originalsid 65; Träslöv (N) CI:4, Bild 1180 / Sida 223."]
+  },
+  bengt_a_nilsson:{
+    facts:[
+      ["Namnform i Valagården-mastern","Bengt August Nilsson; webbplatsens befintliga namnform Bengt A. Nilsson behålls tills fullständigt namn är slutligt samordnat mellan källorna."],
+      ["Delägare 1866","Familjens avskrift om Träslöv 5:6 beskriver Bengt August Nilsson som delägare i gårdens byggnader, sannolikt den kvarboende parten."],
+      ["Skuldebrev 1901","Lån på 1 600 kronor till J. O. Reis med sex procents ränta; årliga räntebetalningar kan följas 1902-1911."],
+      ["Valagård 1915","Lokalundersökningsblanketten anger Bengt Nilsson d.ä. som ägare/uppgiftslämnare för det 12 hektar stora jordbruket."],
+      ["Äganderätt","Handlingarna ger stark gårdskoppling men varje historisk mantalsandel och fastighetsdel måste fortfarande hållas isär."]
+    ],
+    story:[
+      "Valagården-mastern ger Bengt August Nilsson en betydligt tydligare gårdshistoria. Familjens avskrift av förrättningen 1866 beskriver honom som delägare i husen på Träslöv 5:6 och talar sannolikt för att han var den kvarboende parten när Petter Anders Svensson flyttade ut.",
+      "Ett skuldebrev från 1901 visar Bengt August under adressen nr 5 Träslöv med en skuld på 1 600 kronor och sex procents ränta. Räntebetalningar är noterade från 1902 till 1911. Säkerheten var indirekt knuten till 3/64 mantal Jöns Nilsgård, men handlingen visar inte ensam att Bengt August ägde just den intecknade andelen.",
+      "År 1915 står Bengt Nilsson den äldre som ägare eller uppgiftslämnare för Valagård i lokalundersökningen. Gården omfattade 12 hektar och var nästan helt uppodlad."
+    ],
+    timeline:[
+      ["1866-07-04","Familjens avskrift beskriver delning av gårdens byggnader mellan Petter Anders Svensson och Bengt August Nilsson."],
+      ["1901-04-04","Utfärdar skuldebrev på 1 600 kronor till J. O. Reis."],
+      ["1902-1911","Årliga räntebetalningar antecknas på skuldebrevet."],
+      ["1915-08-31","Anges som ägare/uppgiftslämnare för Valagård i lokalundersökningen."]
+    ],
+    sources:[
+      "IMG_6524.HEIC och IMG_6525.HEIC: familjeavskrift om byggnadsdelningen 1866.",
+      "otydligt.HEIC och otydligt4.HEIC: skuldebrev 1901 och ränteanteckningar 1902-1911.",
+      "Lokalundersökningsblankett för Valagård, uppgift lämnad 1915-08-31."
+    ]
+  },
+  sara_britta_andersdotter:{
+    facts:[
+      ["Valagård 1915","Maken Bengt Nilsson d.ä. står i lokalundersökningens ägarfält; blanketten avgör inte om Sara Britta hade juridisk deläganderätt."]
+    ],
+    story:[
+      "Sara Brittas gårdskoppling till Valagården är etablerad genom hushållet med Bengt August Nilsson. Lokalundersökningen 1915 namnger bara Bengt i ägarfältet, så hennes eventuella juridiska andel lämnas uttryckligen öppen."
+    ]
+  },
+  sven_adolf_bengtsson:{
+    facts:[
+      ["Bror","Lars Emil Bengtsson, som i handlingarna skrev sig Emil Bengtsson."],
+      ["Skuldebrev 1928","Fordringsägare till 3 000 kronor från brodern Lars Emil; Sven Adolf anges bo på nr 12 Klastorp."],
+      ["Familjekoppling till Valagården","Brodern Lars Emil bodde på Valagården 1955 och ägde Träslöv 5:7 1958."]
+    ],
+    story:[
+      "Ett originalskuldebrev daterat 12 november 1928 visar Sven Adolf som fordringsägare när brodern Lars Emil Bengtsson, under namnet Emil Bengtsson, erkände en skuld på 3 000 kronor. Sven Adolf bodde då på nr 12 Klastorp.",
+      "Räntan anges i handlingen löpa från 14 mars 1920, åtta år före dateringen. Det kan betyda att 1928 års handling formaliserade ett äldre lån, men detta är ännu en tolkning."
+    ],
+    timeline:[["1928-11-12","Brodern Lars Emil utfärdar ett skuldebrev på 3 000 kronor till Sven Adolf i Klastorp."]],
+    sources:["anteckning om sven adolf.HEIC: originalskuldebrev daterat 1928-11-12."]
+  },
+  lars_emil_bengtsson:{
+    facts:[
+      ["Namn i handlingar","Emil Bengtsson; identiteten som Lars Emil är familjebekräftad och stöds av arvskiftet 1955."],
+      ["Adress 1928","Nr 5 Träslöv."],
+      ["Skuld 1928","3 000 kronor till brodern Sven Adolf Bengtsson med fem procents ränta, angiven från 1920-03-14."],
+      ["Bosättning 1955","Arvskiftet efter Alma anger honom på Valagården i Träslöv."],
+      ["Ägare 1958","Originalkontraktet anger honom som ägare till Träslöv 5:7."],
+      ["Arrendator","Brorsonen Harry Bengtsson arrenderade fastigheten 1958-04-01–1963-04-01 för 900 kronor per år."]
+    ],
+    story:[
+      "Lars Emil Bengtsson framträder i Valagården-mastern genom tre originalhandlingar. I skuldförbindelsen 1928 skriver han sig Emil Bengtsson, nr 5 Träslöv, och erkänner en skuld på 3 000 kronor till brodern Sven Adolf.",
+      "Arvskiftet efter systern Alma 1955 anger Lars Emil bosatt på Valagården. Tre år senare skriver han som jordägare under ett arrendekontrakt där hans fastighet Träslöv 5:7 upplåts till brorsonen Harry Bengtsson.",
+      "Arrendet omfattade jord samt användning av lada och loge. Lars Emil behöll Smedlyckan bakom ladan och ansvarade själv för byggnadsunderhållet."
+    ],
+    timeline:[
+      ["1928-11-12","Under namnet Emil Bengtsson utfärdar han skuldebrev till brodern Sven Adolf."],
+      ["1955-01-12","Arvskiftet efter Alma placerar honom på Valagården i Träslöv."],
+      ["1958-03-25","Undertecknar arrendekontrakt som ägare till Träslöv 5:7."],
+      ["1958-04-01–1963-04-01","Arrenderar ut fastigheten till brorsonen Harry Bengtsson."]
+    ],
+    sources:[
+      "anteckning om sven adolf.HEIC: originalskuldebrev daterat 1928-11-12.",
+      "Arvskifte efter Alma 1955.HEIC.",
+      "IMG_6532.HEIC: originalarrendekontrakt daterat 1958-03-25."
+    ]
+  },
+  harry_bengtsson:{
+    facts:[
+      ["Arrende Valagården","Arrenderade Träslöv 5:7 av farbrodern Lars Emil Bengtsson 1958-04-01–1963-04-01."],
+      ["Arrendeavgift","900 kronor per år, betald halvårsvis."],
+      ["Brukningsvillkor","Fick använda lada och loge; skulle väl bruka jorden, återställa vall och rensa gränsdiket vartannat år."],
+      ["Jordägarens förbehåll","Lars Emil behöll Smedlyckan bakom ladan och svarade för byggnadsunderhållet."]
+    ],
+    story:[
+      "Ett originalkontrakt från 1958 visar att Harry, då lantbrukare i Klastorp, arrenderade Träslöv 5:7 av sin farbror Lars Emil Bengtsson. Avtalet ger honom en direkt, dokumenterad brukningskoppling till Valagården under efterkrigstiden.",
+      "Arrendet löpte i fem år och omfattade jordbruket samt användning av lada och loge. Om avtalet förlängdes efter 1 april 1963 är ännu okänt."
+    ],
+    timeline:[
+      ["1958-03-25","Arrendekontraktet för Träslöv 5:7 undertecknas av jordägaren Emil Bengtsson."],
+      ["1958-04-01–1963-04-01","Brukar Valagårdens fastighet Träslöv 5:7 som arrendator."]
+    ],
+    sources:["IMG_6532.HEIC: originalarrendekontrakt mellan Lars Emil Bengtsson och Harry Bengtsson."]
+  },
+  alma_j_bengtsdotter:{
+    facts:[
+      ["Fullständigt namn i arvskiftet","Alma Josefina Bengtsson."],
+      ["Motstridigt dödsår","Webbplatsen har sedan tidigare 1964. Originalutdraget ur arvskiftet anger 1954-10-15; inget raderas innan uppgifterna har samordnats."],
+      ["Hemvist","Valagården, Träslöv 5 enligt arvskiftesutdraget."],
+      ["Arvskifte","Förrättat 1955-01-12; namnger fyra kvarlevande syskon och tre amerikanska brorsdöttrar."]
+    ],
+    story:[
+      "Originalutdraget ur arvskiftet anger namnet Alma Josefina Bengtsson, hemvist Valagården Träslöv 5 och dödsdatum 15 oktober 1954. Webbplatsens äldre arbetsuppgift anger dödsåret 1964. Båda uppgifterna bevaras synligt tills den äldre posten har spårats och konflikten kan avgöras.",
+      "Arvskiftet dokumenterar syskonen Albin Bengtsson i Chicago, Anna Viktoria Johansson i Varberg, Sven Adolf Bengtsson i Klastorp och Lars Emil Bengtsson på Valagården. Även tre döttrar efter den avlidne brodern Nils Johan bodde i USA."
+    ],
+    timeline:[
+      ["1954-10-15","Avlider enligt originalutdraget ur arvskiftet; detta strider mot webbplatsens äldre arbetsår 1964."],
+      ["1955-01-12","Arvskifte förrättas och dokumenterar familjens svenska och amerikanska grenar."]
+    ],
+    sources:["Arvskifte efter Alma 1955.HEIC: originalutdrag ur arvskiftesinstrumentet."]
+  },
+  anna_v_bengtsdotter:{
+    facts:[
+      ["Arvskiftet 1955","Anna Viktoria Johansson, född Bengtsdotter, bodde på Påskbergsvägen 4 i Varberg och närvarade vid arvskiftet efter systern Alma."],
+      ["Syskonbelägg","Originalutdraget bekräftar syskonrelationen till Albin, Sven Adolf, Lars Emil, Alma och den avlidne Nils Johan."]
+    ],
+    sources:["Arvskifte efter Alma 1955.HEIC."]
+  },
+  johan_albin_bengtsson:{
+    facts:[
+      ["Amerikaspår","Arvskiftet 1955 anger Albin Bengtsson på 5707 Dorchester Avenue i Chicago, Illinois."],
+      ["Identitetsfråga","Det är mycket möjligt att Albin i arvskiftet är Johan Albin Bengtsson, men namnformen behöver bekräftas i svenska eller amerikanska originalkällor."]
+    ],
+    story:[
+      "Familjens äldre släktblad markerar Johan Albin med bostad i Amerika. Arvskiftet efter Alma ger ett säkert belägg för en bror Albin i Chicago 1955, men identiteten mellan namnformerna lämnas uttryckligen öppen."
+    ],
+    sources:["Arvskifte efter Alma 1955.HEIC; familjens äldre släktblad, sekundär migrationskälla."]
+  },
+  nils_johan_bengtsson:{
+    facts:[
+      ["Barn i USA 1955","Alice Beschel i Illinois, Edna Weltner i Kansas och Esther Sholeen i Illinois anges som döttrar i arvskiftet efter Alma."],
+      ["Källkritik","Arvskiftet visar döttrarnas amerikanska bosättning men inte i sig att Nils Johan själv utvandrade."]
+    ],
+    story:[
+      "Arvskiftet efter Alma 1955 ger ett direkt belägg för Nils Johans tre döttrar i USA. De maskinskrivna orts- och gatunamnen kan innehålla svenska felskrivningar och behöver kontrolleras mot amerikanska källor."
+    ],
+    sources:["Arvskifte efter Alma 1955.HEIC."]
+  },
+  anders_g_bengtsson:{
+    facts:[["Amerikaspår","Familjens äldre släktblad markerar sannolikt bostad i Amerika; exakta utvandringsdatum och amerikanska källor saknas."]],
+    sources:["Familjens äldre släktblad, sekundär migrationskälla."]
+  },
+  karl_oskar_bengtsson:{
+    facts:[["Amerikaspår","Familjens äldre släktblad markerar sannolikt bostad i Amerika; exakta utvandringsdatum och amerikanska källor saknas."]],
+    sources:["Familjens äldre släktblad, sekundär migrationskälla."]
+  }
+};
+
+Object.entries(valagardenPersonAdditions).forEach(([personId,additions])=>{
+  appendUniqueArchiveDetails(PEOPLE[personId],additions);
+});
