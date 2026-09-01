@@ -110,6 +110,9 @@
   .family-data-badge{display:inline-flex;align-items:center;min-height:28px;padding:4px 9px;border-radius:999px;background:#eef1ef;color:var(--ink-soft);font-size:12px;font-weight:700}
   .family-data-badge[data-mode="shared"]{background:#e4f1e8;color:#24613a}
   .family-data-badge[data-mode="error"]{background:#f8e7e4;color:#8a352b}
+  .family-locked-note{display:none;margin:14px 0 0;padding:12px 14px;border-left:3px solid var(--thread);background:#f3f8f4;color:var(--ink-soft);font-size:14px}
+  body.family-auth-required .family-locked-note{display:block}
+  body.family-auth-required #personEditorForm,body.family-auth-required #placeEditorForm,body.family-auth-required #manualList{display:none}
   .editor-message{font-size:13.5px;color:var(--thread-deep);margin-left:auto}
   .manual-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-top:12px}
   .manual-item{border:1px solid var(--rule);border-radius:10px;background:var(--paper);padding:10px 12px}
@@ -417,6 +420,7 @@
         <button class="btn" id="familySignOut" type="button" hidden>Logga ut</button>
         <span class="editor-message" id="familyAccountMessage" aria-live="polite"></span>
       </div>
+      <p class="family-locked-note">Logga in som familjemedlem för att lägga till eller redigera personer, platser, livslinjer och bilder.</p>
       <form id="personEditorForm">
         <p class="editor-subtitle">Ny person</p>
         <div class="editor-grid">

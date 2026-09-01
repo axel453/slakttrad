@@ -595,7 +595,7 @@ function openPerson(id){
   document.getElementById('pActions').style.display = "";
   document.getElementById('panelPageOpen').dataset.route = personPath(id);
   document.getElementById('panelPageOpen').textContent = "Öppna sida";
-  document.getElementById('panelEditToggle').style.display = "";
+  document.getElementById('panelEditToggle').style.display = canEditArchive() ? "" : "none";
   document.getElementById('panelEditForm').classList.remove('open');
   const photo = document.getElementById('pPhoto');
   photo.style.display = "";
@@ -924,7 +924,7 @@ function renderPersonDetail(id){
       <div class="detail-actions">
         <img class="detail-photo" src="${escapeHtml(personPhoto(p))}" alt="">
         <button class="btn" type="button" data-show-in-tree="${escapeHtml(id)}">Visa i trädet</button>
-        <button class="btn" type="button" data-edit-person="${escapeHtml(id)}">Redigera</button>
+        ${canEditArchive() ? `<button class="btn" type="button" data-edit-person="${escapeHtml(id)}">Redigera</button>` : ""}
         <button class="btn" type="button" data-print-page>Skriv ut</button>
       </div>
     </div>
@@ -1025,7 +1025,7 @@ function renderPlaceDetail(id){
         <p class="detail-summary">${linkPersonNames(story[0])}</p>
       </div>
       <div class="detail-actions">
-        <button class="btn" type="button" data-toggle-place-edit>Redigera plats</button>
+        ${canEditArchive() ? '<button class="btn" type="button" data-toggle-place-edit>Redigera plats</button>' : ""}
         <button class="btn" type="button" data-jump-place-map="${escapeHtml(place.id)}">Visa på kartan</button>
         <button class="btn" type="button" data-print-page>Skriv ut</button>
       </div>
@@ -1157,6 +1157,7 @@ document.addEventListener('click', e=>{
   }
   const editPerson = e.target.closest('[data-edit-person]');
   if(editPerson){
+    if(!canEditArchive()){ openLoginPanel(); return; }
     openPerson(editPerson.dataset.editPerson);
     document.getElementById('panelEditForm').classList.add('open');
     fillPanelEditor(editPerson.dataset.editPerson);
@@ -2022,6 +2023,7 @@ function panelPersonEditValue(){
   };
 }
 function savePanelPersonEdit(){
+  if(!canEditArchive()){ openLoginPanel(); return; }
   const id = currentPanelPersonId;
   if(!id || !PEOPLE[id]) return;
   const name = document.getElementById('editName').value.trim();
@@ -2043,6 +2045,7 @@ function savePanelPersonEdit(){
   persistSharedEntity("person",id,personSnapshot(id),"update",panelEditMessage);
 }
 function savePanelPersonDraft(){
+  if(!canEditArchive()){ openLoginPanel(); return; }
   const id = currentPanelPersonId;
   if(!id || !PEOPLE[id]) return;
   const draft = panelPersonEditValue();
@@ -2053,6 +2056,7 @@ function savePanelPersonDraft(){
   panelEditMessage("Utkastet är sparat på den här enheten.");
 }
 function addManualPerson(form){
+  if(!canEditArchive()){ openLoginPanel(); return; }
   const name = document.getElementById('newPersonName').value.trim();
   if(!name) return;
   const id = uniqueId(slugify(name), {...PEOPLE,...manualData.people});
@@ -2121,6 +2125,7 @@ function parseCoordinate(value){
   return Number.isFinite(parsed) ? parsed : NaN;
 }
 function addManualPlace(form){
+  if(!canEditArchive()){ openLoginPanel(); return; }
   const name = document.getElementById('newPlaceName').value.trim();
   if(!name) return;
   const lat = parseCoordinate(document.getElementById('newPlaceLat').value);
@@ -2165,6 +2170,7 @@ function addManualPlace(form){
   document.getElementById('platskarta').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function savePlaceDetailEdit(){
+  if(!canEditArchive()){ openLoginPanel(); return; }
   const id = placeIdFromCurrentRoute();
   const place = PLACES.find(p=>p.id===id);
   if(!place) return;
@@ -2220,6 +2226,7 @@ function savePlaceDetailEdit(){
   });
 }
 function savePlaceDetailDraft(id){
+  if(!canEditArchive()){ openLoginPanel(); return; }
   const place = PLACES.find(p=>p.id===id); if(!place) return;
   manualData.drafts.places[id] = {
     name:document.getElementById('placeEditName').value.trim(),
@@ -2316,6 +2323,7 @@ function initEditor(){
   document.addEventListener('click', e=>{
     const togglePlaceEdit = e.target.closest('[data-toggle-place-edit]');
     if(togglePlaceEdit){
+      if(!canEditArchive()){ openLoginPanel(); return; }
       document.getElementById('placeDetailEditForm')?.classList.toggle('open');
     }
     const placeDraft = e.target.closest('[data-save-place-draft]');
@@ -2351,6 +2359,15 @@ function renderFamilyAccount(status={}){
   const form = document.getElementById('familyLoginForm');
   const signOut = document.getElementById('familySignOut');
   if(!state || !form || !signOut) return;
+  const locked = !!status.configured && !status.user;
+  document.body.classList.toggle('family-auth-required',locked);
+  document.body.classList.toggle('family-authenticated',!!status.user);
+  const editorToggle = document.getElementById('editorToggle');
+  if(editorToggle) editorToggle.innerHTML = locked ? '<span class="ico">↪</span> Logga in' : '<span class="ico">✎</span> Redigera';
+  if(locked){
+    document.getElementById('panelEditForm')?.classList.remove('open');
+    document.getElementById('placeDetailEditForm')?.classList.remove('open');
+  }
   if(!status.configured){
     state.textContent = "Lokalt läge. Databasen är ännu inte ansluten.";
     form.hidden = true;
@@ -2366,6 +2383,15 @@ function renderFamilyAccount(status={}){
     signOut.hidden = true;
   }
 }
+function canEditArchive(){
+  const status = window.FamilyData?.status?.();
+  return !status?.configured || !!status.user;
+}
+function openLoginPanel(){
+  const shell = document.getElementById('editorShell');
+  shell?.classList.add('open');
+  document.getElementById('familyEmail')?.focus();
+}
 function initFamilyAccount(){
   renderFamilyAccount(window.FamilyData?.status?.() || {});
   document.getElementById('familyLoginForm')?.addEventListener('submit',async event=>{
@@ -2379,7 +2405,11 @@ function initFamilyAccount(){
     }catch(error){ message.textContent = error.message || "Inloggningen misslyckades."; }
   });
   document.getElementById('familySignOut')?.addEventListener('click',()=>window.FamilyData?.signOut());
-  document.addEventListener('family-auth-change',event=>renderFamilyAccount(event.detail));
+  document.addEventListener('family-auth-change',event=>{
+    renderFamilyAccount(event.detail);
+    renderCurrentRoute();
+    if(currentPanelPersonId) openPerson(currentPanelPersonId);
+  });
   document.addEventListener('family-data-status',event=>{
     const badge = document.getElementById('familyDataBadge');
     if(!badge) return;
