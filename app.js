@@ -1439,6 +1439,11 @@ function placeIdFromCurrentRoute(){
   return null;
 }
 function initSiteNavigation(){
+  const adminLink = '<a class="nav-link" href="/admin/">Familjearkiv</a>';
+  const primaryNav = document.querySelector('.site-nav > .nav-links');
+  const footerNav = document.querySelector('.footer-nav');
+  if(primaryNav && !primaryNav.querySelector('a[href="/admin/"]')) primaryNav.insertAdjacentHTML('beforeend',adminLink);
+  if(footerNav && !footerNav.querySelector('a[href="/admin/"]')) footerNav.insertAdjacentHTML('beforeend',adminLink);
   document.addEventListener('click', e=>{
     const nav = e.target.closest('[data-nav]');
     if(!nav) return;
@@ -2289,10 +2294,7 @@ function initEditor(){
   const shell = document.getElementById('editorShell');
   const toggle = document.getElementById('editorToggle');
   if(!shell || !toggle) return;
-  toggle.addEventListener('click',()=>{
-    shell.classList.toggle('open');
-    if(shell.classList.contains('open')) refreshEditorSelects();
-  });
+  toggle.addEventListener('click',()=>{ location.href = '/admin/'; });
   document.getElementById('personEditorForm').addEventListener('submit', e=>{
     e.preventDefault();
     addManualPerson(e.currentTarget);
@@ -2363,7 +2365,7 @@ function renderFamilyAccount(status={}){
   document.body.classList.toggle('family-auth-required',locked);
   document.body.classList.toggle('family-authenticated',!!status.user);
   const editorToggle = document.getElementById('editorToggle');
-  if(editorToggle) editorToggle.innerHTML = locked ? '<span class="ico">↪</span> Logga in' : '<span class="ico">✎</span> Redigera';
+  if(editorToggle) editorToggle.innerHTML = '<span class="ico">✎</span> Familjearkiv';
   if(locked){
     document.getElementById('panelEditForm')?.classList.remove('open');
     document.getElementById('placeDetailEditForm')?.classList.remove('open');
@@ -2384,13 +2386,10 @@ function renderFamilyAccount(status={}){
   }
 }
 function canEditArchive(){
-  const status = window.FamilyData?.status?.();
-  return !status?.configured || !!status.user;
+  return false;
 }
 function openLoginPanel(){
-  const shell = document.getElementById('editorShell');
-  shell?.classList.add('open');
-  document.getElementById('familyEmail')?.focus();
+  location.href = '/admin/';
 }
 function initFamilyAccount(){
   renderFamilyAccount(window.FamilyData?.status?.() || {});

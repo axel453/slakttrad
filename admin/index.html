@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Familjearkiv · Nilsson/Bengtsson</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+  <a class="skip-link" href="#adminMain">Hoppa till innehållet</a>
+  <section class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <a class="brand" href="/" aria-label="Till publika webbplatsen"><span class="brand-mark">N/B</span><span><strong>Nilsson/Bengtsson</strong><small>Familjearkiv</small></span></a>
+      <p class="eyebrow">Skyddad arbetsyta</p>
+      <h1>Logga in i familjearkivet</h1>
+      <p class="login-copy">Hantera personer, gårdar, källor och familjens gemensamma historia. Du får en säker inloggningslänk via e-post.</p>
+      <form id="adminLoginForm" class="login-form">
+        <label for="adminEmail">E-postadress</label>
+        <input id="adminEmail" type="email" autocomplete="email" required placeholder="namn@exempel.se">
+        <button class="primary-button" type="submit">Skicka inloggningslänk</button>
+      </form>
+      <p class="form-message" id="loginMessage" aria-live="polite"></p>
+      <a class="back-link" href="/">Tillbaka till släktträdet</a>
+    </div>
+  </section>
+
+  <div class="admin-app" id="adminApp" hidden>
+    <aside class="sidebar" id="sidebar">
+      <a class="brand sidebar-brand" href="/admin/" data-route="dashboard"><span class="brand-mark">N/B</span><span><strong>Familjearkiv</strong><small>Nilsson/Bengtsson</small></span></a>
+      <nav class="admin-nav" aria-label="Administration">
+        <a href="/admin/" data-route="dashboard" data-icon="layout-dashboard">Översikt</a>
+        <a href="/admin/personer/" data-route="people" data-icon="users">Personer</a>
+        <a href="/admin/gardar/" data-route="places" data-icon="landmark">Gårdar och platser</a>
+        <a href="/admin/andringar/" data-route="changes" data-icon="history">Ändringar</a>
+        <a href="/admin/anvandare/" data-route="members" data-icon="user-cog" data-admin-only>Användare</a>
+      </nav>
+      <div class="sidebar-foot">
+        <a href="/" data-icon="external-link">Öppna webbplatsen</a>
+        <button type="button" id="adminSignOut" data-icon="log-out">Logga ut</button>
+      </div>
+    </aside>
+
+    <div class="admin-shell">
+      <header class="topbar">
+        <button class="icon-button menu-button" id="menuButton" type="button" aria-label="Öppna meny" title="Öppna meny"><i data-lucide="menu"></i></button>
+        <div class="topbar-title"><span id="pageEyebrow">Familjearkiv</span><strong id="pageTitle">Översikt</strong></div>
+        <div class="topbar-actions">
+          <button class="icon-button" id="refreshButton" type="button" aria-label="Uppdatera data" title="Uppdatera data"><i data-lucide="refresh-cw"></i></button>
+          <div class="account-chip"><span class="account-avatar" id="accountAvatar">A</span><span><strong id="accountName">Familjemedlem</strong><small id="accountRole">Inloggad</small></span></div>
+        </div>
+      </header>
+      <main class="admin-main" id="adminMain" tabindex="-1">
+        <div class="loading-state" id="loadingState"><span class="spinner"></span> Hämtar familjearkivet...</div>
+        <div id="adminContent"></div>
+      </main>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script src="/data.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/supabase-config.js"></script>
+  <script src="/shared-data.js"></script>
+  <script src="/admin/admin.js"></script>
+</body>
+</html>

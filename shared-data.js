@@ -76,6 +76,62 @@
   }
   async function signOut(){ if(state.client) await state.client.auth.signOut(); }
 
+  async function loadAdminOverview(){
+    if(!state.client || !state.user) throw new Error('Du behöver logga in först.');
+    const role = state.profile?.role || 'contributor';
+    const ownOnly = role === 'contributor';
+    let changesQuery = state.client
+      .from('change_requests')
+      .select('id,entity_type,entity_id,operation,status,proposed_data,review_note,created_at,reviewed_at,submitted_by')
+      .order('created_at',{ascending:false})
+      .limit(100);
+    if(ownOnly) changesQuery = changesQuery.eq('submitted_by',state.user.id);
+    const requests = [changesQuery];
+    if(role === 'editor' || role === 'admin'){
+      requests.push(state.client.from('revisions').select('id,entity_type,entity_id,action,changed_by,created_at').order('created_at',{ascending:false}).limit(40));
+    }
+    if(role === 'admin'){
+      requests.push(state.client.from('profiles').select('id,display_name,role,created_at,updated_at').order('display_name'));
+    }
+    const results = await Promise.all(requests);
+    const error = results.find(result=>result.error)?.error;
+    if(error) throw error;
+    return {
+      changes:results[0].data || [],
+      revisions:(role === 'editor' || role === 'admin') ? (results[1]?.data || []) : [],
+      profiles:role === 'admin' ? (results.at(-1)?.data || []) : []
+    };
+  }
+
+  async function reviewChange(id,statusValue,note=''){
+    if(!state.client || !state.user) throw new Error('Du behöver logga in först.');
+    if(!['editor','admin'].includes(state.profile?.role)) throw new Error('Du saknar behörighet att granska ändringar.');
+    if(!['approved','rejected'].includes(statusValue)) throw new Error('Ogiltig granskningsstatus.');
+    const {data:request,error:loadError} = await state.client.from('change_requests').select('*').eq('id',id).single();
+    if(loadError) throw loadError;
+    if(statusValue === 'approved'){
+      if(request.operation === 'delete'){
+        const table = request.entity_type === 'person' ? 'people' : request.entity_type === 'place' ? 'places' : null;
+        if(!table) throw new Error('Den här typen av radering stöds inte ännu.');
+        const {error:deleteError} = await state.client.from(table).delete().eq('id',request.entity_id);
+        if(deleteError) throw deleteError;
+      }else{
+        await submitChange(request.entity_type,request.entity_id,request.proposed_data,request.operation);
+      }
+    }
+    const {error} = await state.client.from('change_requests').update({
+      status:statusValue,reviewed_by:state.user.id,reviewed_at:new Date().toISOString(),review_note:note || null
+    }).eq('id',id);
+    if(error) throw error;
+  }
+
+  async function updateMemberRole(id,role){
+    if(!state.client || state.profile?.role !== 'admin') throw new Error('Endast administratörer kan ändra roller.');
+    if(!['contributor','editor','admin'].includes(role)) throw new Error('Ogiltig roll.');
+    const {error} = await state.client.from('profiles').update({role}).eq('id',id);
+    if(error) throw error;
+  }
+
   async function submitChange(entityType, entityId, payload, operation='update'){
     if(!state.client || !state.user) return {mode:'local'};
     const role = state.profile?.role || 'contributor';
@@ -106,8 +162,7 @@
     return {mode:'pending'};
   }
 
-  window.FamilyData = {init,status,loadSnapshot,sendMagicLink,signOut,submitChange};
+  window.FamilyData = {init,status,loadSnapshot,loadAdminOverview,sendMagicLink,signOut,submitChange,reviewChange,updateMemberRole};
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded',init,{once:true});
   else init();
 })();
-

@@ -12,12 +12,19 @@ En interaktiv släktträdssida för Nilsson/Bengtsson-släkten, byggd för att s
 - `sitemap.xml` och `robots.txt` – grund för indexering i sökmotorer
 - `scripts/generate-sitemap.mjs` – bygger statiska HTML-sidor och sitemap när personer och gårdar ändras
 - `personer/`, `gardar/` och `personarkiv/` – förhandsrenderade sidor som kan läsas direkt av sökmotorer
+- `admin/` – skyddat Familjearkiv för personer, gårdar, ändringar och användare
 
-## Arkivsidor och redigering
+## Arkivsidor och administration
 
 Person- och gårdssidorna har separata avsnitt för berättelse, tidslinje, relationer, bilder, källor och osäkerheter. Personarkivet kan filtreras på söktext, århundrade, plats, släktled och bevisstatus. Gårdsarkivet kan filtreras på söktext, typ och kartstatus.
 
-Redigeringar, utkast och ändringshistorik sparas tills vidare lokalt på den enhet där de görs. JSON-exporten är därför viktig som säkerhetskopia. Riktig inloggning, gemensam lagring och bilduppladdning kräver en framtida server- och databasanslutning.
+Den publika webbplatsen är en ren läsvy. Redigering sker i Familjearkivet på `/admin/`, där Supabase-inloggning och databasens RLS-regler styr åtkomsten.
+
+- `contributor` kan skapa ändringsförslag som skickas för granskning.
+- `editor` kan redigera, granska och publicera personer och platser.
+- `admin` kan dessutom hantera familjemedlemmarnas roller.
+
+Adminadresser som `/admin/personer/` och `/admin/gardar/` skrivs om till adminappen av Vercel utan att URL:en ändras. Administrationsdelen har `noindex` och är även blockerad i `robots.txt`.
 
 ## Publicering
 
@@ -26,7 +33,7 @@ Det här är en statisk sida. På Vercel ska projektet publiceras utan build com
 Kör generatorn igen efter ändringar i grunddatan. Den skapar en HTML-sida för varje person och gård samt uppdaterar sitemap. Sätt `SITE_URL` till den riktiga domänen om sidan flyttas från Vercels standardadress.
 ## Gemensam databas
 
-Webbplatsen är förberedd för Supabase. Utan konfiguration fortsätter den att fungera i lokalt läge med `data.js` och webbläsarens lokala lagring.
+Webbplatsen använder Supabase för inloggning, gemensamma poster, roller och ändringshistorik. `data.js` ligger kvar som publicerbar grunddata och reserv för den publika läsvyn.
 
 1. Skapa ett Supabase-projekt.
 2. Öppna SQL Editor och kör `supabase/migrations/001_family_archive.sql`.
