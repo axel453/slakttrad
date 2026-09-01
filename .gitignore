@@ -1,4 +1,6 @@
 .DS_Store
+supabase/.service-role-key
+.env
+.env.*
 node_modules/
 .vercel/
-

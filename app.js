@@ -45,7 +45,11 @@ const viewport = document.getElementById('viewport');
 const branchState = { mother:true, father:true };
 let currentPlaceId = null;
 const MANUAL_STORAGE_KEY = "axels-slakt-manual-data-v1";
-const manualData = { people:{}, edits:{}, units:[], places:[] };
+const ACCESS_STORAGE_KEY = "nilsson-bengtsson-accessibility-v1";
+const manualData = { people:{}, edits:{}, units:[], places:[], placeEdits:{}, drafts:{people:{},places:{}}, history:[] };
+const BASE_PERSON_REFERENCE_NAMES = Object.fromEntries(Object.entries(PEOPLE).map(([id,person])=>[id,{name:person.name,alt:person.alt || ""}]));
+const BASE_PLACE_REFERENCE_NAMES = Object.fromEntries(PLACES.map(place=>[place.id,{name:place.name,aliases:[...(place.aliases || [])]}]));
+let entityReferenceCache = null;
 let currentPanelPersonId = null;
 const collapsedUnitIds = new Set();
 const compactExpandedUnitIds = new Set();
@@ -470,16 +474,72 @@ const scrim = document.getElementById('scrim');
 function findPersonByName(name){
   return Object.entries(PEOPLE).find(([,p])=>p.name===name || p.alt===name)?.[0] || null;
 }
-function personNameTargets(){
-  return Object.entries(PEOPLE).flatMap(([id,p])=>[[p.name,id],p.alt?[p.alt,id]:null]).filter(Boolean).sort((a,b)=>b[0].length-a[0].length);
+function referenceNameVariants(value){
+  const name = String(value || "").trim();
+  if(!name) return [];
+  const variants = new Set([name]);
+  const slash = [...name.matchAll(/([\p{L}-]+)\s*\/\s*([\p{L}-]+)/gu)];
+  slash.forEach(match=>{
+    variants.add(name.replace(match[0],match[1]).replace(/\s+/g," "));
+    variants.add(name.replace(match[0],match[2]).replace(/\s+/g," "));
+    variants.add(name.replace(match[0],`${match[1]} eller ${match[2]}`).replace(/\s+/g," "));
+  });
+  [...variants].forEach(variant=>{
+    const words = variant.split(/\s+/);
+    if(words.length >= 3) variants.add(`${words[0]} ${words.at(-1)}`);
+  });
+  return [...variants].filter(variant=>variant.length >= 4);
+}
+function entityReferenceTargets(){
+  if(entityReferenceCache) return entityReferenceCache;
+  const targets = new Map();
+  const add = (alias,target,replaceLabel=false)=>{
+    const key = alias.toLocaleLowerCase('sv');
+    if(!targets.has(key)) targets.set(key,{alias,target:{...target,replaceLabel}});
+    else if(targets.get(key)?.target?.id !== target.id || targets.get(key)?.target?.type !== target.type) targets.set(key,null);
+    else if(replaceLabel) targets.get(key).target.replaceLabel = true;
+  };
+  Object.entries(PEOPLE).forEach(([id,person])=>{
+    const historical = BASE_PERSON_REFERENCE_NAMES[id] || {};
+    const historyNames = (manualData.history || []).filter(item=>item.type === "person" && item.id === id).flatMap(item=>[item.before?.name,item.after?.name]);
+    [person.name,historical.name,...historyNames].filter(Boolean).flatMap(referenceNameVariants).forEach(alias=>add(alias,{type:"person",id,label:person.name},true));
+    [person.alt,historical.alt].filter(Boolean).flatMap(referenceNameVariants).filter(alias=>alias.includes(" ")).forEach(alias=>add(alias,{type:"person",id,label:person.name},false));
+  });
+  PLACES.forEach(place=>{
+    const historical = BASE_PLACE_REFERENCE_NAMES[place.id] || {};
+    const historyNames = (manualData.history || []).filter(item=>item.type === "place" && item.id === place.id).flatMap(item=>[item.before?.name,item.after?.name]);
+    [place.name,historical.name,...historyNames].filter(Boolean).flatMap(referenceNameVariants).forEach(alias=>add(alias,{type:"place",id:place.id,label:place.name},true));
+    [...(place.aliases || []),...(historical.aliases || [])].filter(Boolean).flatMap(referenceNameVariants).forEach(alias=>add(alias,{type:"place",id:place.id,label:place.name},false));
+  });
+  entityReferenceCache = [...targets.values()].filter(Boolean).sort((a,b)=>b.alias.length-a.alias.length);
+  return entityReferenceCache;
+}
+function invalidateEntityReferenceCache(){ entityReferenceCache = null; }
+function linkEntityReferences(value){
+  const text = String(value ?? "");
+  const targets = entityReferenceTargets();
+  if(!targets.length) return escapeHtml(text);
+  const byAlias = new Map(targets.map(row=>[row.alias.toLocaleLowerCase('sv'),row.target]));
+  const pattern = targets.map(row=>escapeRegExp(row.alias)).join("|");
+  const re = new RegExp(`(^|[^\\p{L}\\p{N}])(${pattern})(?=$|[^\\p{L}\\p{N}])`,"giu");
+  let cursor = 0, html = "", match;
+  while((match = re.exec(text))){
+    const prefixLength = match[1].length;
+    const entityStart = match.index + prefixLength;
+    html += escapeHtml(text.slice(cursor,entityStart));
+    const target = byAlias.get(match[2].toLocaleLowerCase('sv'));
+    const currentLabel = target?.type === "person" ? PEOPLE[target.id]?.name : PLACES.find(place=>place.id === target?.id)?.name;
+    const label = target?.replaceLabel ? (currentLabel || target.label) : match[2];
+    if(!target){ html += escapeHtml(match[2]); }
+    else if(target.type === "person") html += `<a class="entity-link" href="${escapeHtml(routePersonUrl(target.id))}" data-open-person="${escapeHtml(target.id)}">${escapeHtml(label)}</a>`;
+    else html += `<a class="entity-link place-reference" href="${escapeHtml(routePlaceUrl(target.id))}" data-open-place="${escapeHtml(target.id)}">${escapeHtml(label)}</a>`;
+    cursor = entityStart + match[2].length;
+  }
+  html += escapeHtml(text.slice(cursor));
+  return html;
 }
 function linkPersonNames(value){
-  let html = escapeHtml(value);
-  personNameTargets().forEach(([name,id])=>{
-    const re = new RegExp(`(^|[^\\p{L}\\p{N}])(${escapeRegExp(escapeHtml(name))})(?=$|[^\\p{L}\\p{N}])`,"gu");
-    html = html.replace(re, `$1<button class="person-link" type="button" data-id="${id}">$2</button>`);
-  });
-  return html;
+  return linkEntityReferences(value);
 }
 function relChip(id){
   const p = PEOPLE[id]; if(!p) return "";
@@ -533,6 +593,9 @@ function openPerson(id){
   panel.setAttribute('aria-label','Livshistoria');
   panel.classList.remove('place-mode');
   document.getElementById('pActions').style.display = "";
+  document.getElementById('panelPageOpen').dataset.route = personPath(id);
+  document.getElementById('panelPageOpen').textContent = "Öppna sida";
+  document.getElementById('panelEditToggle').style.display = "";
   document.getElementById('panelEditForm').classList.remove('open');
   const photo = document.getElementById('pPhoto');
   photo.style.display = "";
@@ -587,7 +650,10 @@ function openPlace(id){
   const relatedPeople = placePeople(place);
   panel.setAttribute('aria-label','Platskort');
   panel.classList.add('place-mode');
-  document.getElementById('pActions').style.display = "none";
+  document.getElementById('pActions').style.display = "";
+  document.getElementById('panelPageOpen').dataset.route = placePath(place.id);
+  document.getElementById('panelPageOpen').textContent = "Öppna platssida";
+  document.getElementById('panelEditToggle').style.display = "none";
   document.getElementById('panelEditForm').classList.remove('open');
   document.getElementById('pPhoto').style.display = "none";
   document.getElementById('pRole').textContent = "Platskort";
@@ -637,6 +703,476 @@ panel.addEventListener('click', e=>{
   openPerson(target.dataset.id);
 });
 
+function slugifyUrl(value){
+  return String(value || "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .toLowerCase().replace(/å/g,"a").replace(/ä/g,"a").replace(/ö/g,"o")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"") || "sida";
+}
+function personSlug(id){
+  const p = PEOPLE[id]; if(!p) return slugifyUrl(id);
+  const stableName = p.slug || BASE_PERSON_REFERENCE_NAMES[id]?.name || p.name;
+  const base = slugifyUrl(stableName);
+  const same = Object.keys(PEOPLE).filter(pid=>slugifyUrl(PEOPLE[pid]?.slug || BASE_PERSON_REFERENCE_NAMES[pid]?.name || PEOPLE[pid]?.name) === base);
+  if(same.length <= 1) return base;
+  return slugifyUrl(`${stableName}-${p.born || id}`);
+}
+function placeSlug(id){
+  const place = PLACES.find(p=>p.id===id); if(!place) return slugifyUrl(id);
+  const stableName = place.slug || BASE_PLACE_REFERENCE_NAMES[id]?.name || place.name;
+  const base = slugifyUrl(stableName);
+  const same = PLACES.filter(p=>slugifyUrl(p.slug || BASE_PLACE_REFERENCE_NAMES[p.id]?.name || p.name) === base);
+  if(same.length <= 1) return base;
+  return slugifyUrl(`${stableName}-${place.area || id}`);
+}
+function personPath(id){ return `/personer/${personSlug(id)}/`; }
+function placePath(id){ return `/gardar/${placeSlug(id)}/`; }
+function findPersonBySlug(slug){
+  return Object.keys(PEOPLE).find(id=>personSlug(id) === slug || slugifyUrl(id) === slug) || null;
+}
+function findPlaceBySlug(slug){
+  return PLACES.find(place=>placeSlug(place.id) === slug || slugifyUrl(place.id) === slug)?.id || null;
+}
+function localHashForPath(path){
+  const clean = path.replace(/^\/+|\/+$/g,"");
+  return clean ? `#/${clean}` : "#/";
+}
+function navigatePath(path, {replace=false}={}){
+  if(!path) return;
+  if(location.protocol === "file:"){
+    const hash = localHashForPath(path);
+    if(location.hash === hash) renderCurrentRoute();
+    else location.hash = hash;
+    return;
+  }
+  if(replace) history.replaceState({}, "", path);
+  else history.pushState({}, "", path);
+  renderCurrentRoute();
+}
+function clearDetailRoute(){
+  const detail = document.getElementById('detailPage');
+  detail?.classList.remove('open');
+  navigatePath("/");
+}
+function routePersonUrl(id){ return personPath(id); }
+function routePlaceUrl(id){ return placePath(id); }
+function absoluteUrl(path){
+  if(location.protocol === "file:") return path;
+  return new URL(path, location.origin).href;
+}
+function setMeta(title, description, path="/", jsonLd=null){
+  document.title = title;
+  const metaDescription = document.querySelector('meta[name="description"]');
+  if(metaDescription) metaDescription.setAttribute("content", description);
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  const ogDescription = document.querySelector('meta[property="og:description"]');
+  if(ogTitle) ogTitle.setAttribute("content", title);
+  if(ogDescription) ogDescription.setAttribute("content", description);
+  const canonical = document.querySelector('link[rel="canonical"]');
+  if(canonical) canonical.setAttribute("href", absoluteUrl(path));
+  const structured = document.getElementById('structuredData');
+  if(structured) structured.textContent = jsonLd ? JSON.stringify(jsonLd) : "";
+}
+function resetMetaForPage(mode){
+  if(mode === "personarkiv"){
+    setMeta(
+      "Personarkiv - Nilsson/Bengtsson släktträd",
+      "Personarkiv för Nilsson/Bengtsson-släkten, sorterat efter gårdar, platser och släktled.",
+      "/personarkiv/"
+    );
+    return;
+  }
+  if(mode === "gardarkiv"){
+    setMeta(
+      "Gårdsarkiv - Nilsson/Bengtsson släktträd",
+      "Gårdsarkiv med gårdar, orter, platskort, kartkopplingar och personer i Nilsson/Bengtsson-släkten.",
+      "/gardar/"
+    );
+    return;
+  }
+  setMeta(
+    "Nilsson/Bengtsson släktträd",
+    "Ett interaktivt släktträd och familjearkiv för Nilsson/Bengtsson-släkten med personer, gårdar, platser, tidslinjer och källnära släktforskning.",
+    "/"
+  );
+}
+function breadcrumbsHTML(items){
+  return `<nav class="breadcrumbs" aria-label="Brödsmulor">${items.map((item,index)=>{
+    if(item.href) return `<a href="${escapeHtml(item.href)}" data-nav="${escapeHtml(item.nav || "")}">${escapeHtml(item.label)}</a><span>/</span>`;
+    return `<strong>${escapeHtml(item.label)}</strong>`;
+  }).join("")}</nav>`;
+}
+function statusBadgeHTML(status){
+  const st = status || "open";
+  return `<span class="panel-status ${escapeHtml(st)}"><span class="sd"></span>${escapeHtml(STATUS_LABEL[st] || "Öppet spår")}</span>`;
+}
+function detailFactsHTML(rows){
+  if(!rows.length) return '<p class="detail-empty">Ingen faktaruta är inlagd ännu.</p>';
+  return `<ul class="detail-facts">${rows.map(([k,v])=>`<li><span class="k">${escapeHtml(k)}</span><span class="v">${linkPersonNames(v)}</span></li>`).join("")}</ul>`;
+}
+function detailTimelineHTML(rows){
+  if(!rows.length) return '<p class="detail-empty">Ingen tidslinje är inlagd ännu.</p>';
+  return `<ol class="detail-timeline">${rows.map(([y,t])=>`<li><span class="tl-y">${escapeHtml(y)}</span><span class="tl-t">${linkPersonNames(t)}</span></li>`).join("")}</ol>`;
+}
+function textItems(value){
+  if(!value) return [];
+  if(typeof value === "string") return value.split(/\n+/).map(row=>row.trim()).filter(Boolean);
+  if(!Array.isArray(value)) return [];
+  return value.map(item=>{
+    if(typeof item === "string") return item.trim();
+    if(Array.isArray(item)) return item.filter(Boolean).join(": ");
+    if(item && typeof item === "object") return item.text || item.title || item.label || item.caption || "";
+    return "";
+  }).filter(Boolean);
+}
+function recordSources(record){
+  const explicit = textItems(record.sources);
+  if(explicit.length) return explicit;
+  const sourceFacts = (record.facts || []).filter(([key])=>/källa|kyrkbok|födelsenotis|dödnotis|bouppteckning|husförhör|mantals|grav|begrav/i.test(key));
+  return sourceFacts.map(([key,value])=>`${key}: ${value}`);
+}
+function recordUncertainties(record){
+  const explicit = textItems(record.uncertainties);
+  if(explicit.length) return explicit;
+  return (record.story || []).filter(text=>/osäker|inte (?:löst|klar|bekräft)|öppet spår|arbetsantag|möjlig|nästa steg|bör sökas|saknas/i.test(text)).slice(0,6);
+}
+function detailEvidenceHTML(items, kind="source"){
+  if(!items.length) return `<p class="detail-empty">${kind === "source" ? "Inga källhänvisningar är strukturerade ännu." : "Inga särskilda osäkerheter är noterade."}</p>`;
+  const content = item=>kind === "source" ? escapeHtml(item).replace(/https?:\/\/[^\s<]+/g, url=>`<a href="${url}" target="_blank" rel="noopener">Visa originalkälla</a>`) : linkPersonNames(item);
+  return `<ul class="evidence-list">${items.map(item=>`<li class="evidence-item${kind === "uncertain" ? " uncertain" : ""}">${content(item)}</li>`).join("")}</ul>`;
+}
+function normalizedImages(record, includeProfile=false){
+  const rows = [];
+  (record.images || []).forEach(item=>{
+    if(typeof item === "string"){
+      const [src,...caption] = item.split("|");
+      if(src.trim()) rows.push({src:src.trim(),caption:caption.join("|").trim()});
+    }else if(item?.src || item?.url){
+      rows.push({src:item.src || item.url,caption:item.caption || item.alt || ""});
+    }
+  });
+  const profile = record.photo || record.image;
+  if(includeProfile && profile && profile !== PERSON_PLACEHOLDER && !rows.some(row=>row.src === profile)) rows.unshift({src:profile,caption:`Porträtt av ${record.name || "personen"}`});
+  return rows;
+}
+function detailImagesHTML(record, includeProfile=false){
+  const images = normalizedImages(record, includeProfile);
+  if(!images.length) return '<p class="detail-empty">Inga bilder är inlagda ännu.</p>';
+  return `<div class="detail-media-grid">${images.map(item=>`<figure class="detail-media"><img src="${escapeHtml(item.src)}" alt="${escapeHtml(item.caption || record.name || "Arkivbild")}" loading="lazy" onerror="this.closest('figure').style.display='none'"><figcaption>${escapeHtml(item.caption || "Bild ur familjearkivet")}</figcaption></figure>`).join("")}</div>`;
+}
+function personGenerationNavHTML(id){
+  const p = PEOPLE[id];
+  const older = (p.parents || []).filter(pid=>PEOPLE[pid] && DIRECT_HEIRS.has(pid));
+  const younger = (p.children || []).filter(pid=>PEOPLE[pid] && DIRECT_HEIRS.has(pid));
+  const olderId = older[0] || (p.parents || []).find(pid=>PEOPLE[pid]);
+  const youngerId = younger[0] || (p.children || []).find(pid=>PEOPLE[pid]);
+  if(!olderId && !youngerId) return "";
+  const card = (pid,label)=>pid ? `<a class="detail-link-card" href="${escapeHtml(routePersonUrl(pid))}" data-open-person="${escapeHtml(pid)}"><span class="detail-link-meta">${label}</span><span class="detail-link-title">${escapeHtml(PEOPLE[pid].name)}</span></a>` : '<span></span>';
+  return `<nav class="detail-generation-nav" aria-label="Nästa och föregående i släktledet">${card(olderId,"Tidigare generation")}${card(youngerId,"Senare generation")}</nav>`;
+}
+function detailPersonLinks(ids, emptyText){
+  const filtered = ids.filter(id=>PEOPLE[id]);
+  if(!filtered.length) return `<p class="detail-empty">${escapeHtml(emptyText)}</p>`;
+  return `<div class="detail-link-grid">${filtered.map(id=>{
+    const p = PEOPLE[id];
+    return `<a class="detail-link-card" href="${escapeHtml(routePersonUrl(id))}" data-open-person="${escapeHtml(id)}">
+      <span class="detail-link-title">${escapeHtml(p.name)}${p.alt ? ` / ${escapeHtml(p.alt)}` : ""}</span>
+      <span class="detail-link-meta">${escapeHtml([p.born, p.role, p.place].filter(Boolean).join(" · ") || "Personkort")}</span>
+    </a>`;
+  }).join("")}</div>`;
+}
+function detailPlaceLinksForPerson(person){
+  const matches = PLACES.filter(place=>placeMatchesText(place, placeHaystack(person)));
+  if(!matches.length) return '<p class="detail-empty">Ingen platsmatchning hittad ännu.</p>';
+  return `<div class="detail-link-grid">${matches.slice(0,8).map(place=>`<a class="detail-link-card" href="${escapeHtml(routePlaceUrl(place.id))}" data-open-place="${escapeHtml(place.id)}">
+    <span class="detail-link-title">${escapeHtml(place.name)}</span>
+    <span class="detail-link-meta">${escapeHtml(place.area || "Plats")}${hasCoords(place) ? " · kartpunkt" : " · ingen kartpunkt"}</span>
+  </a>`).join("")}</div>`;
+}
+function renderPersonDetail(id){
+  const p = PEOPLE[id]; if(!p) return false;
+  const description = `${p.name}${p.born ? `, född ${p.born}` : ""}${p.place ? `, kopplad till ${p.place}` : ""}. Personsida i Nilsson/Bengtsson släktträd.`;
+  setMeta(`${p.name} - Nilsson/Bengtsson släktträd`, description, personPath(id), {
+    "@context":"https://schema.org",
+    "@type":"Person",
+    "name":p.name,
+    "alternateName":p.alt || undefined,
+    "birthDate":p.born || undefined,
+    "deathDate":p.died || undefined,
+    "description":(p.story || [description])[0],
+    "url":absoluteUrl(personPath(id))
+  });
+  const detail = document.getElementById('detailPage');
+  const parents = p.parents || [];
+  const spouse = PARTNER[id] ? [PARTNER[id]] : [];
+  const children = p.children || [];
+  const siblings = siblingIds(id);
+  const facts = [];
+  if(p.place) facts.push(["Gård/plats", p.place]);
+  (p.facts || []).forEach(row=>facts.push(row));
+  detail.innerHTML = `
+    <div class="detail-hero">
+      <div>
+        ${breadcrumbsHTML([{label:"Startsida",href:"/",nav:"home"},{label:"Personarkiv",href:"/personarkiv/",nav:"personarkiv"},{label:p.name}])}
+        <p class="detail-kicker">Personsida · ${escapeHtml(personBranchLabel(id).label)}</p>
+        <h2 class="detail-title">${escapeHtml(p.name)}${p.alt ? ` <span class="alt">/ ${escapeHtml(p.alt)}</span>` : ""}</h2>
+        <p class="detail-subtitle">${escapeHtml([p.role, p.born ? "född "+p.born : "", p.died ? "avliden "+p.died : ""].filter(Boolean).join(" · "))}</p>
+        ${statusBadgeHTML(p.status)}
+        <p class="detail-summary">${linkPersonNames((p.story || ["Ännu inte utforskad."])[0])}</p>
+        ${personGenerationNavHTML(id)}
+      </div>
+      <div class="detail-actions">
+        <img class="detail-photo" src="${escapeHtml(personPhoto(p))}" alt="">
+        <button class="btn" type="button" data-show-in-tree="${escapeHtml(id)}">Visa i trädet</button>
+        <button class="btn" type="button" data-edit-person="${escapeHtml(id)}">Redigera</button>
+        <button class="btn" type="button" data-print-page>Skriv ut</button>
+      </div>
+    </div>
+    <div class="detail-layout">
+      <main class="detail-main">
+        <section class="detail-section">
+          <h3>Livshistoria</h3>
+          <div class="detail-story">${(p.story || ["Ännu inte utforskad."]).map(s=>`<p>${linkPersonNames(s)}</p>`).join("")}</div>
+        </section>
+        <section class="detail-section">
+          <h3>Livslinje</h3>
+          ${detailTimelineHTML(buildTimeline(p))}
+        </section>
+        <section class="detail-section">
+          <h3>Kopplade platser</h3>
+          ${detailPlaceLinksForPerson(p)}
+        </section>
+        <section class="detail-section">
+          <h3>Bilder</h3>
+          ${detailImagesHTML(p, true)}
+        </section>
+        <section class="detail-section">
+          <h3>Källor</h3>
+          ${detailEvidenceHTML(recordSources(p), "source")}
+        </section>
+        <section class="detail-section">
+          <h3>Osäkerheter och öppna spår</h3>
+          ${detailEvidenceHTML(recordUncertainties(p), "uncertain")}
+        </section>
+      </main>
+      <aside class="detail-side">
+        <section class="detail-section">
+          <h3>Fakta</h3>
+          ${detailFactsHTML(facts)}
+        </section>
+        <section class="detail-section">
+          <h3>Föräldrar</h3>
+          ${detailPersonLinks(parents, "Inga föräldrar inlagda ännu.")}
+        </section>
+        <section class="detail-section">
+          <h3>Make/maka</h3>
+          ${detailPersonLinks(spouse, "Ingen make eller maka inlagd ännu.")}
+        </section>
+        <section class="detail-section">
+          <h3>Barn</h3>
+          ${detailPersonLinks(children, "Inga barn inlagda ännu.")}
+        </section>
+        <section class="detail-section">
+          <h3>Syskon och sidospår</h3>
+          ${detailPersonLinks(siblings, "Inga syskon inlagda ännu.")}
+        </section>
+      </aside>
+    </div>`;
+  detail.classList.add('open');
+  detail.scrollIntoView({behavior:'smooth',block:'start'});
+  return true;
+}
+function factsFromPlace(place){
+  const rows = [
+    ["Område", place.area || "Ej angivet"],
+    ["Kartstatus", hasCoords(place) ? `${place.lat.toFixed(3)}, ${place.lng.toFixed(3)}` : "Exakt kartpunkt saknas"]
+  ];
+  if(place.aliases?.length) rows.push(["Namnvarianter", place.aliases.join(", ")]);
+  (place.facts || []).forEach(row=>rows.push(row));
+  return rows;
+}
+function placeTimelineToText(timeline){
+  return timelineToText(timeline || []);
+}
+function renderPlaceDetail(id){
+  const place = PLACES.find(p=>p.id===id); if(!place) return false;
+  const placeDraft = manualData.drafts.places[id] ? {...place, ...manualData.drafts.places[id]} : place;
+  const description = `${place.name}${place.area ? ` i ${place.area}` : ""}. Gårdssida med historik, tidslinje och kopplade personer i Nilsson/Bengtsson släktträd.`;
+  setMeta(`${place.name} - gårdssida`, description, placePath(id), {
+    "@context":"https://schema.org",
+    "@type":"Place",
+    "name":place.name,
+    "alternateName":place.aliases || undefined,
+    "description":place.note || description,
+    "geo":hasCoords(place) ? {"@type":"GeoCoordinates","latitude":place.lat,"longitude":place.lng} : undefined,
+    "url":absoluteUrl(placePath(id))
+  });
+  const detail = document.getElementById('detailPage');
+  const related = placePeople(place);
+  const story = place.story?.length ? place.story : [place.note || "Ingen längre platsbeskrivning är inlagd ännu."];
+  const timeline = place.timeline?.length ? place.timeline : related.flatMap(row=>row.texts.map((text,index)=>[
+    index === 0 ? PEOPLE[row.id].name : "Fler spår",
+    text
+  ])).slice(0,16);
+  detail.innerHTML = `
+    <div class="detail-hero">
+      <div>
+        ${breadcrumbsHTML([{label:"Startsida",href:"/",nav:"home"},{label:"Gårdsarkiv",href:"/gardar/",nav:"gardarkiv"},{label:place.name}])}
+        <p class="detail-kicker">Platssida · ${hasCoords(place) ? "kartlagd" : "utan exakt kartpunkt"}</p>
+        <h2 class="detail-title">${escapeHtml(place.name)}</h2>
+        <p class="detail-subtitle">${escapeHtml([place.area, related.length ? `${related.length} kopplade personer` : ""].filter(Boolean).join(" · "))}</p>
+        <span class="panel-status ${hasCoords(place) ? "confirmed" : "working"}"><span class="sd"></span>${hasCoords(place) ? "Kartlagd plats" : "Plats utan exakt punkt"}</span>
+        <p class="detail-summary">${linkPersonNames(story[0])}</p>
+      </div>
+      <div class="detail-actions">
+        <button class="btn" type="button" data-toggle-place-edit>Redigera plats</button>
+        <button class="btn" type="button" data-jump-place-map="${escapeHtml(place.id)}">Visa på kartan</button>
+        <button class="btn" type="button" data-print-page>Skriv ut</button>
+      </div>
+    </div>
+    <div class="detail-layout">
+      <main class="detail-main">
+        <form class="place-edit-form" id="placeDetailEditForm">
+          <div class="place-edit-grid">
+            <label class="panel-edit-label">Namn<input class="panel-edit-field" id="placeEditName" required value="${escapeHtml(placeDraft.name)}"></label>
+            <label class="panel-edit-label">Område<input class="panel-edit-field" id="placeEditArea" value="${escapeHtml(placeDraft.area || "")}"></label>
+            <label class="panel-edit-label">Latitud<input class="panel-edit-field" id="placeEditLat" value="${hasCoords(placeDraft) ? escapeHtml(placeDraft.lat) : ""}"></label>
+            <label class="panel-edit-label">Longitud<input class="panel-edit-field" id="placeEditLng" value="${hasCoords(placeDraft) ? escapeHtml(placeDraft.lng) : ""}"></label>
+            <label class="panel-edit-label full">Namnvarianter<input class="panel-edit-field" id="placeEditAliases" value="${escapeHtml((placeDraft.aliases || []).join(", "))}"></label>
+            <label class="panel-edit-label full">Kort notering<textarea class="panel-edit-field" id="placeEditNote">${escapeHtml(placeDraft.note || "")}</textarea></label>
+            <label class="panel-edit-label full">Platsens historia<textarea class="panel-edit-field" id="placeEditStory">${escapeHtml((placeDraft.story || []).join("\n"))}</textarea></label>
+            <label class="panel-edit-label full">Tidslinje<textarea class="panel-edit-field" id="placeEditTimeline">${escapeHtml(placeTimelineToText(placeDraft.timeline))}</textarea></label>
+            <label class="panel-edit-label full">Bilder<textarea class="panel-edit-field" id="placeEditImages" placeholder="En per rad: bildadress | bildtext">${escapeHtml(imagesToText(placeDraft.images))}</textarea></label>
+            <label class="panel-edit-label full">Källor<textarea class="panel-edit-field" id="placeEditSources" placeholder="En källa per rad">${escapeHtml(textItems(placeDraft.sources).join("\n"))}</textarea></label>
+            <label class="panel-edit-label full">Osäkerheter och öppna spår<textarea class="panel-edit-field" id="placeEditUncertainties">${escapeHtml(textItems(placeDraft.uncertainties).join("\n"))}</textarea></label>
+          </div>
+          <div class="panel-edit-actions"><button class="btn" type="submit">Spara plats</button><button class="btn" type="button" data-save-place-draft="${escapeHtml(place.id)}">Spara utkast</button><span class="panel-edit-message" id="placeEditMessage"></span></div>
+        </form>
+        <section class="detail-section">
+          <h3>Platsens historia</h3>
+          <div class="detail-story">${story.map(s=>`<p>${linkPersonNames(s)}</p>`).join("")}</div>
+        </section>
+        <section class="detail-section">
+          <h3>Tidslinje</h3>
+          ${detailTimelineHTML(timeline)}
+        </section>
+        <section class="detail-section">
+          <h3>Bilder</h3>
+          ${detailImagesHTML(place)}
+        </section>
+        <section class="detail-section">
+          <h3>Källor</h3>
+          ${detailEvidenceHTML(recordSources(place), "source")}
+        </section>
+        <section class="detail-section">
+          <h3>Osäkerheter och öppna spår</h3>
+          ${detailEvidenceHTML(recordUncertainties(place), "uncertain")}
+        </section>
+      </main>
+      <aside class="detail-side">
+        <section class="detail-section">
+          <h3>Fakta</h3>
+          ${detailFactsHTML(factsFromPlace(place))}
+        </section>
+        <section class="detail-section">
+          <h3>Kopplade personer</h3>
+          ${detailPersonLinks(related.map(row=>row.id), "Inga personer är kopplade hit ännu.")}
+        </section>
+      </aside>
+    </div>`;
+  detail.classList.add('open');
+  detail.scrollIntoView({behavior:'smooth',block:'start'});
+  return true;
+}
+function setPageMode(mode){
+  document.body.classList.remove("page-home","page-personarkiv","page-gardarkiv","page-detail");
+  document.body.classList.add(`page-${mode}`);
+  if(mode !== "detail") resetMetaForPage(mode);
+  if(mode === "gardarkiv") refreshPlaceMapLayout();
+}
+function currentRoute(){
+  const rawHash = decodeURIComponent(location.hash.slice(1));
+  if(location.protocol === "file:" && rawHash.startsWith("/")){
+    const clean = rawHash.replace(/^\/+|\/+$/g,"");
+    return clean ? "/" + clean + "/" : "/";
+  }
+  if(rawHash === "hem") return "/";
+  if(rawHash === "personarkiv") return "/personarkiv/";
+  if(rawHash === "gardarkiv") return "/gardar/";
+  if(rawHash.startsWith("person/")) return `/personer/${rawHash.slice(7)}/`;
+  if(rawHash.startsWith("plats/")) return `/gardar/${rawHash.slice(6)}/`;
+  return location.pathname || "/";
+}
+function renderCurrentRoute(){
+  updateActiveNav();
+  const detail = document.getElementById('detailPage');
+  detail?.classList.remove('open');
+  const path = currentRoute();
+  const parts = path.replace(/^\/+|\/+$/g,"").split("/").filter(Boolean);
+  if(!parts.length || parts[0] === "index.html"){
+    setPageMode("home");
+    return;
+  }
+  if(parts[0] === "personarkiv"){
+    setPageMode("personarkiv");
+    document.getElementById('personarkiv')?.scrollIntoView({behavior:'auto',block:'start'});
+    return;
+  }
+  if(parts[0] === "gardar" && parts.length === 1){
+    setPageMode("gardarkiv");
+    document.getElementById('platskarta')?.scrollIntoView({behavior:'auto',block:'start'});
+    return;
+  }
+  if(parts[0] === "personer" && parts[1]){
+    const id = findPersonBySlug(parts[1]);
+    if(id){ setPageMode("detail"); if(renderPersonDetail(id)) return; }
+  }
+  if(parts[0] === "gardar" && parts[1]){
+    const id = findPlaceBySlug(parts[1]);
+    if(id){ setPageMode("detail"); if(renderPlaceDetail(id)) return; }
+  }
+  setPageMode("home");
+}
+window.addEventListener('hashchange', renderCurrentRoute);
+window.addEventListener('popstate', renderCurrentRoute);
+document.addEventListener('click', e=>{
+  const personBtn = e.target.closest('[data-open-person]');
+  if(personBtn){ e.preventDefault(); navigatePath(personPath(personBtn.dataset.openPerson)); return; }
+  const placeBtn = e.target.closest('[data-open-place]');
+  if(placeBtn){ e.preventDefault(); navigatePath(placePath(placeBtn.dataset.openPlace)); return; }
+  const closeBtn = e.target.closest('[data-close-detail]');
+  if(closeBtn){ clearDetailRoute(); return; }
+  const printBtn = e.target.closest('[data-print-page]');
+  if(printBtn){ window.print(); return; }
+  const showInTree = e.target.closest('[data-show-in-tree]');
+  if(showInTree){
+    const id = showInTree.dataset.showInTree;
+    navigatePath("/");
+    window.setTimeout(()=>{
+      renderTree({preserveView:true});
+      focusPerson(id);
+      openPerson(id);
+    }, 40);
+    return;
+  }
+  const editPerson = e.target.closest('[data-edit-person]');
+  if(editPerson){
+    openPerson(editPerson.dataset.editPerson);
+    document.getElementById('panelEditForm').classList.add('open');
+    fillPanelEditor(editPerson.dataset.editPerson);
+    return;
+  }
+  const mapJump = e.target.closest('[data-jump-place-map]');
+  if(mapJump){
+    const id = mapJump.dataset.jumpPlaceMap;
+    navigatePath("/gardar/");
+    window.setTimeout(()=>{
+      document.getElementById('platskarta').scrollIntoView({behavior:'smooth',block:'start'});
+      selectPlace(id);
+    }, 40);
+  }
+});
+
 function focusPerson(id){
   const unit = UNIT_BY_ID[PERSON_TO_UNIT[id]]; if(!unit?._el) return;
   const cx = unit._el.offsetLeft + unit._el.offsetWidth/2;
@@ -656,6 +1192,7 @@ function initBranchFilters(){
     setAll(fatherInputs, branchState.father);
     renderTree();
     renderPlaceList();
+    renderArchives();
     refreshSelectedPlace();
   }
   [...motherInputs,...fatherInputs].forEach(input=>input.addEventListener('change',()=>sync(input)));
@@ -708,7 +1245,7 @@ function currentSearchMode(){
   return document.querySelector('input[name="searchMode"]:checked')?.value || "person";
 }
 function placeSearchText(place){
-  return [place.name,place.area,place.note,...(place.aliases||[])].filter(Boolean).join(" ").toLocaleLowerCase('sv');
+  return [place.name,place.area,place.note,...(place.aliases||[]),...(place.facts||[]).flat(),...(place.story||[]),...(place.timeline||[]).flat()].filter(Boolean).join(" ").toLocaleLowerCase('sv');
 }
 function runSearch(query){
   const results = document.getElementById('searchResults');
@@ -751,6 +1288,173 @@ function runPlaceSearch(q, results){
     </button>`;
   }).join("");
 }
+function archiveBranchKey(id){
+  const branch = personBranch(id);
+  if(branch === "mother") return "Bengtsson-ledet";
+  if(branch === "father") return "Nilsson-ledet";
+  return "Ej placerat släktled";
+}
+function archivePlaceKey(person){
+  if(!person.place) return "Plats saknas";
+  const match = PLACES.find(place=>placeMatchesText(place, placeHaystack(person)));
+  return match?.name || person.place.split("/")[0].split(",")[0].trim() || "Plats saknas";
+}
+function archiveValue(id){ return document.getElementById(id)?.value?.trim() || ""; }
+function personCentury(person){
+  const match = `${person.born || ""} ${person.died || ""}`.match(/(1[5-9]\d{2}|20\d{2})/);
+  if(!match) return "";
+  return `${Math.floor(Number(match[1]) / 100) + 1}00-talet`;
+}
+function isFarmPlace(place){
+  return /gård|hemman|nilsgård|valagård|wahlagård|skultagård|klockaregård|prästgård/i.test(`${place.name} ${(place.aliases || []).join(" ")}`);
+}
+function archivePersonRows(){
+  const query = archiveValue('personArchiveSearch').toLocaleLowerCase('sv');
+  const century = archiveValue('personArchiveCentury');
+  const placeFilter = archiveValue('personArchivePlace');
+  const status = archiveValue('personArchiveStatus');
+  return Object.entries(PEOPLE)
+    .filter(([id])=>personMatchesActiveBranches(id))
+    .map(([id,p])=>({id,person:p,branch:archiveBranchKey(id),place:archivePlaceKey(p)}))
+    .filter(row=>!query || personSearchText(row.id,row.person).includes(query))
+    .filter(row=>!century || personCentury(row.person) === century)
+    .filter(row=>!placeFilter || row.place === placeFilter)
+    .filter(row=>!status || (row.person.status || "open") === status)
+    .sort((a,b)=>a.branch.localeCompare(b.branch,'sv') || a.place.localeCompare(b.place,'sv') || a.person.name.localeCompare(b.person.name,'sv'));
+}
+function renderPersonArchive(){
+  const el = document.getElementById('personArchive');
+  const count = document.getElementById('personArchiveCount');
+  if(!el) return;
+  const rows = archivePersonRows();
+  if(count) count.textContent = `${rows.length} personer i aktivt filter`;
+  const byBranch = new Map();
+  rows.forEach(row=>{
+    if(!byBranch.has(row.branch)) byBranch.set(row.branch, new Map());
+    const byPlace = byBranch.get(row.branch);
+    if(!byPlace.has(row.place)) byPlace.set(row.place, []);
+    byPlace.get(row.place).push(row);
+  });
+  const branchOrder = ["Bengtsson-ledet","Nilsson-ledet","Ej placerat släktled"];
+  el.innerHTML = branchOrder.filter(branch=>byBranch.has(branch)).flatMap(branch=>{
+    const byPlace = byBranch.get(branch);
+    return [...byPlace.entries()].map(([place, people])=>`
+      <article class="archive-group">
+        <p class="archive-section-label">${escapeHtml(branch)}</p>
+        <h3>${escapeHtml(place)}</h3>
+        <p class="archive-group-meta">${people.length} person${people.length === 1 ? "" : "er"}</p>
+        <div class="archive-list">
+          ${people.map(({id,person})=>`<a class="archive-item" href="${escapeHtml(routePersonUrl(id))}" data-open-person="${escapeHtml(id)}">
+            <span class="archive-item-name">${escapeHtml(person.name)}${person.alt ? ` / ${escapeHtml(person.alt)}` : ""}</span>
+            <span class="archive-item-meta">${escapeHtml([person.born, person.role, DIRECT_HEIRS.has(id) ? "direkt led" : ""].filter(Boolean).join(" · ") || "Person")}</span>
+          </a>`).join("")}
+        </div>
+      </article>`);
+  }).join("") || '<p class="detail-empty">Inga personer matchar valt filter.</p>';
+}
+function renderPlaceArchive(){
+  const el = document.getElementById('placeArchive');
+  const count = document.getElementById('placeArchiveCount');
+  if(!el) return;
+  const query = archiveValue('placeArchiveSearch').toLocaleLowerCase('sv');
+  const typeFilter = archiveValue('placeArchiveType');
+  const mapFilter = archiveValue('placeArchiveMap');
+  const places = visiblePlaces().filter(place=>{
+    if(query && !placeSearchText(place).includes(query)) return false;
+    if(typeFilter === "farm" && !isFarmPlace(place)) return false;
+    if(typeFilter === "place" && isFarmPlace(place)) return false;
+    if(mapFilter === "mapped" && !hasCoords(place)) return false;
+    if(mapFilter === "unmapped" && hasCoords(place)) return false;
+    return true;
+  }).slice().sort((a,b)=>a.name.localeCompare(b.name,'sv'));
+  if(count) count.textContent = `${places.length} platser i aktivt filter`;
+  el.innerHTML = places.map(place=>{
+    const related = placePeople(place);
+    const type = isFarmPlace(place) ? "Gård" : "Plats";
+    return `<article class="archive-group">
+      <p class="archive-section-label">${escapeHtml(type)}</p>
+      <h3>${escapeHtml(place.name)}</h3>
+      <p class="archive-group-meta">${escapeHtml(place.area || "Område saknas")} · ${related.length} kopplade personer${hasCoords(place) ? " · kartpunkt" : ""}</p>
+      <p class="place-note">${escapeHtml(place.note || "Ingen platsbeskrivning ännu.")}</p>
+      <div class="archive-list" style="margin-top:12px">
+        <a class="archive-item" href="${escapeHtml(routePlaceUrl(place.id))}" data-open-place="${escapeHtml(place.id)}">
+          <span class="archive-item-name">Öppna gårdssida</span>
+          <span class="archive-item-meta">${escapeHtml((place.aliases || []).slice(0,4).join(" · ") || place.name)}</span>
+        </a>
+      </div>
+    </article>`;
+  }).join("") || '<p class="detail-empty">Inga platser matchar valt filter.</p>';
+}
+function renderArchives(){
+  renderPersonArchive();
+  renderPlaceArchive();
+  refreshStructuredArchive();
+}
+function buildStructuredArchive(){
+  const events = [];
+  const sources = [];
+  const images = [];
+  const relationships = [];
+  Object.entries(PEOPLE).forEach(([personId,person])=>{
+    buildTimeline(person).forEach(([date,note],index)=>events.push({id:`person:${personId}:event:${index}`,ownerType:"person",ownerId:personId,date,note}));
+    recordSources(person).forEach((text,index)=>sources.push({id:`person:${personId}:source:${index}`,ownerType:"person",ownerId:personId,text}));
+    normalizedImages(person,true).forEach((image,index)=>images.push({id:`person:${personId}:image:${index}`,ownerType:"person",ownerId:personId,...image}));
+    (person.parents || []).filter(parentId=>PEOPLE[parentId]).forEach(parentId=>relationships.push({type:"parent",from:parentId,to:personId}));
+    if(PARTNER[personId] && personId.localeCompare(PARTNER[personId]) < 0) relationships.push({type:"partner",from:personId,to:PARTNER[personId]});
+  });
+  PLACES.forEach(place=>{
+    (place.timeline || []).forEach(([date,note],index)=>events.push({id:`place:${place.id}:event:${index}`,ownerType:"place",ownerId:place.id,date,note}));
+    recordSources(place).forEach((text,index)=>sources.push({id:`place:${place.id}:source:${index}`,ownerType:"place",ownerId:place.id,text}));
+    normalizedImages(place).forEach((image,index)=>images.push({id:`place:${place.id}:image:${index}`,ownerType:"place",ownerId:place.id,...image}));
+    placePeople(place).forEach(row=>relationships.push({type:"place",from:row.id,to:place.id}));
+  });
+  return {people:PEOPLE,places:PLACES,events,sources,images,relationships};
+}
+function refreshStructuredArchive(){
+  window.NILSSON_BENGTSSON_ARCHIVE = buildStructuredArchive();
+}
+function setSelectOptions(id, values, firstLabel){
+  const select = document.getElementById(id); if(!select) return;
+  const current = select.value;
+  select.innerHTML = `<option value="">${escapeHtml(firstLabel)}</option>` + values.map(value=>`<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
+  if(values.includes(current)) select.value = current;
+}
+function initArchiveFilters(){
+  const rows = Object.entries(PEOPLE).map(([id,person])=>({id,person,place:archivePlaceKey(person)}));
+  const centuries = [...new Set(rows.map(row=>personCentury(row.person)).filter(Boolean))].sort();
+  const places = [...new Set(rows.map(row=>row.place).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'sv'));
+  setSelectOptions('personArchiveCentury', centuries, 'Alla århundraden');
+  setSelectOptions('personArchivePlace', places, 'Alla platser');
+  ['personArchiveSearch','personArchiveCentury','personArchivePlace','personArchiveStatus','placeArchiveSearch','placeArchiveType','placeArchiveMap'].forEach(id=>{
+    const field = document.getElementById(id);
+    field?.addEventListener(field.tagName === 'INPUT' ? 'input' : 'change', renderArchives);
+  });
+}
+function placeIdFromCurrentRoute(){
+  const parts = currentRoute().replace(/^\/+|\/+$/g,"").split("/").filter(Boolean);
+  if(parts[0] === "gardar" && parts[1]) return findPlaceBySlug(parts[1]);
+  const hash = decodeURIComponent(location.hash.slice(1));
+  if(hash.startsWith("plats/")) return hash.slice(6);
+  return null;
+}
+function initSiteNavigation(){
+  document.addEventListener('click', e=>{
+    const nav = e.target.closest('[data-nav]');
+    if(!nav) return;
+    e.preventDefault();
+    const target = nav.dataset.nav === "personarkiv" ? "/personarkiv/" : nav.dataset.nav === "gardarkiv" ? "/gardar/" : "/";
+    closePanel();
+    navigatePath(target);
+  });
+}
+function updateActiveNav(){
+  const route = currentRoute();
+  document.querySelectorAll('[data-nav]').forEach(link=>{
+    const key = link.dataset.nav;
+    const active = (key === "home" && route === "/") || (key === "personarkiv" && route.startsWith("/personarkiv")) || (key === "gardarkiv" && route.startsWith("/gardar"));
+    link.classList.toggle('active', active);
+  });
+}
 function initPersonSearch(){
   const input = document.getElementById('personSearch'), clear = document.getElementById('searchClear'), results = document.getElementById('searchResults');
   const modes = [...document.querySelectorAll('input[name="searchMode"]')];
@@ -776,6 +1480,21 @@ function initPersonSearch(){
 let placeMap = null;
 const placeMarkers = {};
 function hasCoords(place){ return Number.isFinite(place.lat) && Number.isFinite(place.lng); }
+function refreshPlaceMapLayout(){
+  if(!placeMap) return;
+  window.requestAnimationFrame(()=>{
+    placeMap.invalidateSize({pan:false});
+    const selected = PLACES.find(place=>place.id === currentPlaceId);
+    if(selected && hasCoords(selected)){
+      placeMap.setView([selected.lat,selected.lng],selected.zoom || 13,{animate:false});
+      return;
+    }
+    const mappedPlaces = visiblePlaces().filter(hasCoords);
+    if(mappedPlaces.length){
+      placeMap.fitBounds(L.latLngBounds(mappedPlaces.map(place=>[place.lat,place.lng])),{padding:[24,24],animate:false});
+    }
+  });
+}
 function ensurePlaceMarker(place){
   if(!placeMap || !window.L || !hasCoords(place) || placeMarkers[place.id]) return;
   const marker = L.circleMarker([place.lat,place.lng],{radius:7,color:'#245A3B',weight:2,fillColor:'#3F7D5A',fillOpacity:.78}).addTo(placeMap);
@@ -791,6 +1510,16 @@ function placeMatchesText(place, text){
   return (place.aliases || [place.name]).some(alias=>hay.includes(String(alias).toLocaleLowerCase('sv')));
 }
 function placePeople(place){
+  if(Array.isArray(place.relatedPersonIds)){
+    return place.relatedPersonIds.filter(id=>PEOPLE[id] && personMatchesActiveBranches(id)).map(id=>({
+      id,
+      labels:new Set(["Uttrycklig platskoppling"]),
+      texts:[PEOPLE[id].place || `Kopplad till ${place.name}`]
+    })).sort((a,b)=>{
+      const direct = Number(DIRECT_HEIRS.has(b.id)) - Number(DIRECT_HEIRS.has(a.id));
+      return direct || PEOPLE[a.id].name.localeCompare(PEOPLE[b.id].name,'sv');
+    });
+  }
   const byPerson = new Map();
   Object.entries(PEOPLE).forEach(([id,p])=>{
     if(!personMatchesActiveBranches(id)) return;
@@ -842,6 +1571,7 @@ function initPlaceMap(){
   const mappedPlaces = PLACES.filter(hasCoords);
   if(mappedPlaces.length) placeMap.fitBounds(L.latLngBounds(mappedPlaces.map(p=>[p.lat,p.lng])),{padding:[24,24]});
   selectPlace('munkaskog');
+  if(document.body.classList.contains('page-gardarkiv')) refreshPlaceMapLayout();
 }
 function refreshSelectedPlace(){
   const places = visiblePlaces();
@@ -903,6 +1633,34 @@ function safeLocalStorageSet(key, value){
 function safeLocalStorageRemove(key){
   try{ localStorage.removeItem(key); return true; }catch{ return false; }
 }
+function applyAccessibilityPrefs(prefs){
+  document.body.classList.toggle("large-text", !!prefs.largeText);
+  document.body.classList.toggle("high-contrast", !!prefs.highContrast);
+  const large = document.getElementById('largeTextToggle');
+  const contrast = document.getElementById('contrastToggle');
+  if(large) large.classList.toggle("active", !!prefs.largeText);
+  if(contrast) contrast.classList.toggle("active", !!prefs.highContrast);
+}
+function loadAccessibilityPrefs(){
+  try{ return JSON.parse(safeLocalStorageGet(ACCESS_STORAGE_KEY) || "{}"); }catch{ return {}; }
+}
+function saveAccessibilityPrefs(prefs){
+  safeLocalStorageSet(ACCESS_STORAGE_KEY, JSON.stringify(prefs));
+}
+function initAccessibilityControls(){
+  const prefs = loadAccessibilityPrefs();
+  applyAccessibilityPrefs(prefs);
+  document.getElementById('largeTextToggle')?.addEventListener('click', ()=>{
+    prefs.largeText = !prefs.largeText;
+    applyAccessibilityPrefs(prefs);
+    saveAccessibilityPrefs(prefs);
+  });
+  document.getElementById('contrastToggle')?.addEventListener('click', ()=>{
+    prefs.highContrast = !prefs.highContrast;
+    applyAccessibilityPrefs(prefs);
+    saveAccessibilityPrefs(prefs);
+  });
+}
 function applyManualUnit(unit){
   if(UNIT_BY_ID[unit.id]) return;
   const normalized = {
@@ -931,7 +1689,9 @@ function applyManualUnit(unit){
 }
 function applyManualPerson(id, person){
   if(PEOPLE[id]) return;
+  person.slug ||= slugifyUrl(person.name || id);
   PEOPLE[id] = person;
+  invalidateEntityReferenceCache();
   if(person.direct) DIRECT_HEIRS.add(id);
   (person.parents || []).forEach(parentId=>{
     if(PEOPLE[parentId]){
@@ -972,6 +1732,7 @@ function addPersonRelationLinks(id, person){
 }
 function applyManualPersonEdit(id, edit){
   const person = PEOPLE[id]; if(!person) return;
+  invalidateEntityReferenceCache();
   const beforeParents = [...(person.parents || [])];
   const beforePartner = PARTNER[id] || person.partner || "";
   removePersonRelationLinks(id, beforeParents, beforePartner);
@@ -981,6 +1742,9 @@ function applyManualPersonEdit(id, edit){
   person.facts = edit.facts || [];
   person.story = edit.story?.length ? edit.story : ["Ännu inte utforskad."];
   person.timeline = edit.timeline || [];
+  person.images = edit.images || [];
+  person.sources = edit.sources || [];
+  person.uncertainties = edit.uncertainties || [];
   person.parents = edit.parents || [];
   person.partner = edit.partner || "";
   person.direct = !!edit.direct;
@@ -998,8 +1762,26 @@ function applyManualPersonEdit(id, edit){
 }
 function applyManualPlace(place){
   if(PLACES.some(p=>p.id===place.id)) return;
+  place.slug ||= slugifyUrl(place.name || place.id);
   PLACES.push(place);
+  invalidateEntityReferenceCache();
   ensurePlaceMarker(place);
+}
+function applyManualPlaceEdit(id, edit){
+  const place = PLACES.find(p=>p.id===id); if(!place) return;
+  invalidateEntityReferenceCache();
+  if(edit.lat === null) delete place.lat;
+  if(edit.lng === null) delete place.lng;
+  Object.assign(place, edit);
+  if(place.lat === null) delete place.lat;
+  if(place.lng === null) delete place.lng;
+  if(!place.aliases?.includes(place.name)) place.aliases = [place.name, ...(place.aliases || [])];
+  if(placeMarkers[id] && hasCoords(place)){
+    placeMarkers[id].setLatLng([place.lat, place.lng]);
+    placeMarkers[id].setPopupContent(`<strong>${escapeHtml(place.name)}</strong><br>${escapeHtml(place.area)}<br><button type="button" data-place-card="${escapeHtml(place.id)}">Öppna platskort</button>`);
+  }else{
+    ensurePlaceMarker(place);
+  }
 }
 function loadManualData(){
   const raw = safeLocalStorageGet(MANUAL_STORAGE_KEY);
@@ -1010,16 +1792,69 @@ function loadManualData(){
     Object.assign(manualData.edits, parsed.edits || {});
     manualData.units.push(...(parsed.units || []));
     manualData.places.push(...(parsed.places || []));
+    Object.assign(manualData.placeEdits, parsed.placeEdits || {});
+    manualData.drafts = parsed.drafts || {people:{},places:{}};
+    manualData.drafts.people ||= {};
+    manualData.drafts.places ||= {};
+    manualData.history.push(...(parsed.history || []));
   }catch{
     return;
   }
   Object.entries(manualData.people).forEach(([id,person])=>applyManualPerson(id,person));
   manualData.units.forEach(applyManualUnit);
   manualData.places.forEach(applyManualPlace);
+  Object.entries(manualData.placeEdits).forEach(([id,edit])=>applyManualPlaceEdit(id,edit));
   Object.entries(manualData.edits).forEach(([id,edit])=>applyManualPersonEdit(id,edit));
 }
 function saveManualData(){
   return safeLocalStorageSet(MANUAL_STORAGE_KEY, JSON.stringify(manualData, null, 2));
+}
+function sharedSaveMessage(result){
+  if(result?.mode === "published") return "Ändringen är publicerad för alla.";
+  if(result?.mode === "pending") return "Ändringen är skickad för granskning.";
+  return "Ändringen är sparad lokalt. Logga in för att dela den med familjen.";
+}
+async function persistSharedEntity(type, id, payload, operation="update", showMessage=editorMessage){
+  if(!window.FamilyData) return {mode:"local"};
+  try{
+    const result = await window.FamilyData.submitChange(type,id,cloneRecord(payload),operation);
+    showMessage(sharedSaveMessage(result));
+    return result;
+  }catch(error){
+    showMessage(`Lokalt sparad, men delningen misslyckades: ${error.message || "okänt fel"}`);
+    return {mode:"error",error};
+  }
+}
+function applySharedSnapshot(snapshot){
+  if(!snapshot) return;
+  Object.entries(snapshot.people || {}).forEach(([id,person])=>{
+    if(PEOPLE[id]) Object.assign(PEOPLE[id], person);
+    else applyManualPerson(id, person);
+    if(person.direct) DIRECT_HEIRS.add(id);
+  });
+  (snapshot.units || []).forEach(unit=>{
+    if(UNIT_BY_ID[unit.id]){
+      Object.assign(UNIT_BY_ID[unit.id], unit);
+      (unit.persons || []).forEach(personId=>{ PERSON_TO_UNIT[personId] = unit.id; });
+    }else applyManualUnit(unit);
+  });
+  (snapshot.places || []).forEach(place=>{
+    const current = PLACES.find(row=>row.id === place.id);
+    if(current) Object.assign(current, place);
+    else applyManualPlace(place);
+  });
+  Object.entries(manualData.people).forEach(([id,person])=>applyManualPerson(id,person));
+  manualData.units.forEach(applyManualUnit);
+  manualData.places.forEach(applyManualPlace);
+  Object.entries(manualData.placeEdits).forEach(([id,edit])=>applyManualPlaceEdit(id,edit));
+  Object.entries(manualData.edits).forEach(([id,edit])=>applyManualPersonEdit(id,edit));
+  invalidateEntityReferenceCache();
+  refreshEditorSelects();
+  renderTree({preserveView:true});
+  renderPlaceList();
+  renderArchives();
+  refreshSelectedPlace();
+  renderCurrentRoute();
 }
 function selectOptions(){
   const rows = Object.entries(PEOPLE).sort((a,b)=>a[1].name.localeCompare(b[1].name,'sv'));
@@ -1041,7 +1876,8 @@ function renderManualList(){
   const people = Object.entries(manualData.people);
   const edits = Object.entries(manualData.edits || {}).filter(([id])=>!manualData.people[id]);
   const places = manualData.places || [];
-  if(!people.length && !edits.length && !places.length){ list.innerHTML = '<p class="editor-note">Inga manuella personer, platser eller redigeringar är tillagda ännu.</p>'; return; }
+  const history = (manualData.history || []).map((item,index)=>({...item,index})).slice(-12).reverse();
+  if(!people.length && !edits.length && !places.length && !history.length){ list.innerHTML = '<p class="editor-note">Inga manuella personer, platser eller redigeringar är tillagda ännu.</p>'; return; }
   list.innerHTML = people.map(([id,p])=>`<div class="manual-item">
     <div class="manual-name">${escapeHtml(p.name)}</div>
     <div class="manual-meta">${escapeHtml([p.born, p.role, p.place].filter(Boolean).join(" · "))}</div>
@@ -1051,7 +1887,7 @@ function renderManualList(){
   </div>`).join("") + places.map(place=>`<div class="manual-item">
     <div class="manual-name">${escapeHtml(place.name)}</div>
     <div class="manual-meta">Manuell plats · ${escapeHtml(place.area || "Område saknas")}${hasCoords(place) ? " · kartpunkt" : ""}</div>
-  </div>`).join("");
+  </div>`).join("") + (history.length ? `<p class="editor-subtitle">Senaste ändringar</p>${history.map(item=>`<div class="manual-item"><div class="manual-name">${escapeHtml(item.label || item.id)}</div><div class="manual-meta">${escapeHtml(item.action || "Ändrad")} · ${escapeHtml(new Date(item.at).toLocaleString('sv-SE'))}</div>${Object.keys(item.before || {}).length ? `<button class="btn" type="button" data-restore-change="${item.index}">Återställ föregående version</button>` : ""}</div>`).join("")}` : "");
 }
 function editorMessage(text){
   const el = document.getElementById('editorMessage');
@@ -1073,6 +1909,52 @@ function textToFacts(text){
 function textToStory(text){
   return String(text || "").split(/\n+/).map(row=>row.trim()).filter(Boolean);
 }
+function imagesToText(images){
+  return (images || []).map(item=>{
+    if(typeof item === "string") return item;
+    return `${item.src || item.url || ""}${item.caption ? ` | ${item.caption}` : ""}`;
+  }).filter(Boolean).join("\n");
+}
+function textToImages(text){
+  return String(text || "").split(/\n+/).map(row=>row.trim()).filter(Boolean).map(row=>{
+    const [src,...caption] = row.split("|");
+    return {src:src.trim(),caption:caption.join("|").trim()};
+  }).filter(item=>item.src);
+}
+function cloneRecord(value){
+  return JSON.parse(JSON.stringify(value || {}));
+}
+function personSnapshot(id){
+  return {...cloneRecord(PEOPLE[id]),partner:PARTNER[id] || "",direct:DIRECT_HEIRS.has(id)};
+}
+function recordChange(type, id, label, before, after, action="Sparad ändring"){
+  manualData.history.push({type,id,label,action,at:new Date().toISOString(),before:cloneRecord(before),after:cloneRecord(after)});
+  if(manualData.history.length > 100) manualData.history.splice(0, manualData.history.length - 100);
+}
+function restoreChange(index){
+  const item = manualData.history[index];
+  if(!item || !Object.keys(item.before || {}).length) return;
+  if(item.type === "person" && PEOPLE[item.id]){
+    const current = personSnapshot(item.id);
+    manualData.edits[item.id] = cloneRecord(item.before);
+    applyManualPersonEdit(item.id, item.before);
+    recordChange("person", item.id, item.before.name || item.label, current, item.before, "Återställd version");
+  }else if(item.type === "place" && PLACES.some(place=>place.id === item.id)){
+    const place = PLACES.find(row=>row.id === item.id);
+    const current = cloneRecord(place);
+    manualData.placeEdits[item.id] = cloneRecord(item.before);
+    applyManualPlaceEdit(item.id, item.before);
+    recordChange("place", item.id, item.before.name || item.label, current, item.before, "Återställd version");
+  }else return;
+  saveManualData();
+  renderManualList();
+  renderTree({preserveView:true});
+  renderPlaceList();
+  renderArchives();
+  refreshSelectedPlace();
+  renderCurrentRoute();
+  editorMessage("Den föregående versionen är återställd.");
+}
 function timelineToText(timeline){
   return (timeline || []).map(([date,note])=>`${date}: ${note}`).join("\n");
 }
@@ -1088,7 +1970,8 @@ function setSelectValue(id, value){
   if(el) el.value = value || "";
 }
 function fillPanelEditor(id){
-  const person = PEOPLE[id]; if(!person) return;
+  const basePerson = PEOPLE[id]; if(!basePerson) return;
+  const person = manualData.drafts.people[id] ? {...basePerson, ...manualData.drafts.people[id]} : basePerson;
   refreshEditorSelects();
   document.getElementById('editName').value = person.name || "";
   document.getElementById('editAlt').value = person.alt || "";
@@ -1102,6 +1985,9 @@ function fillPanelEditor(id){
   document.getElementById('editFacts').value = factsToText(person.facts);
   document.getElementById('editStory').value = (person.story || []).join("\n");
   document.getElementById('editTimeline').value = timelineToText(person.timeline);
+  document.getElementById('editImages').value = imagesToText(person.images);
+  document.getElementById('editSources').value = textItems(person.sources).join("\n");
+  document.getElementById('editUncertainties').value = textItems(person.uncertainties).join("\n");
   setSelectValue('editParent1', person.parents?.[0] || "");
   setSelectValue('editParent2', person.parents?.[1] || "");
   setSelectValue('editPartner', PARTNER[id] || person.partner || "");
@@ -1114,13 +2000,9 @@ function panelEditMessage(text){
   window.clearTimeout(panelEditMessage._timer);
   panelEditMessage._timer = window.setTimeout(()=>{ el.textContent = ""; }, 4200);
 }
-function savePanelPersonEdit(){
-  const id = currentPanelPersonId;
-  if(!id || !PEOPLE[id]) return;
-  const name = document.getElementById('editName').value.trim();
-  if(!name){ panelEditMessage("Namn behövs för att spara."); return; }
-  const edit = {
-    name,
+function panelPersonEditValue(){
+  return {
+    name:document.getElementById('editName').value.trim(),
     alt:document.getElementById('editAlt').value.trim(),
     role:document.getElementById('editRole').value.trim(),
     born:document.getElementById('editBorn').value.trim(),
@@ -1131,11 +2013,23 @@ function savePanelPersonEdit(){
     facts:textToFacts(document.getElementById('editFacts').value),
     story:textToStory(document.getElementById('editStory').value),
     timeline:textToTimeline(document.getElementById('editTimeline').value),
+    images:textToImages(document.getElementById('editImages').value),
+    sources:textToStory(document.getElementById('editSources').value),
+    uncertainties:textToStory(document.getElementById('editUncertainties').value),
     parents:[document.getElementById('editParent1').value, document.getElementById('editParent2').value].filter(Boolean),
     partner:document.getElementById('editPartner').value,
     direct:document.getElementById('editDirect').value === "yes"
   };
+}
+function savePanelPersonEdit(){
+  const id = currentPanelPersonId;
+  if(!id || !PEOPLE[id]) return;
+  const name = document.getElementById('editName').value.trim();
+  if(!name){ panelEditMessage("Namn behövs för att spara."); return; }
+  const edit = panelPersonEditValue();
+  recordChange("person", id, name, personSnapshot(id), edit);
   manualData.edits[id] = edit;
+  delete manualData.drafts.people[id];
   if(manualData.people[id]) manualData.people[id] = {...manualData.people[id], ...edit};
   applyManualPersonEdit(id, edit);
   saveManualData();
@@ -1143,8 +2037,20 @@ function savePanelPersonEdit(){
   renderManualList();
   renderTree({preserveView:true});
   renderPlaceList();
+  renderArchives();
   refreshSelectedPlace();
   openPerson(id);
+  persistSharedEntity("person",id,personSnapshot(id),"update",panelEditMessage);
+}
+function savePanelPersonDraft(){
+  const id = currentPanelPersonId;
+  if(!id || !PEOPLE[id]) return;
+  const draft = panelPersonEditValue();
+  if(!draft.name){ panelEditMessage("Namn behövs för att spara utkastet."); return; }
+  manualData.drafts.people[id] = draft;
+  saveManualData();
+  renderManualList();
+  panelEditMessage("Utkastet är sparat på den här enheten.");
 }
 function addManualPerson(form){
   const name = document.getElementById('newPersonName').value.trim();
@@ -1171,6 +2077,7 @@ function addManualPerson(form){
   };
   const person = {
     name,
+    slug:slugifyUrl(name),
     role:document.getElementById('newPersonRole').value.trim() || "Manuellt tillagd",
     born:document.getElementById('newPersonBorn').value.trim(),
     died:document.getElementById('newPersonDied').value.trim(),
@@ -1179,6 +2086,9 @@ function addManualPerson(form){
     photo:document.getElementById('newPersonPhoto').value.trim(),
     facts:[["Tillagd","Manuellt i redigeringsläget"]],
     story:storyText ? storyText.split(/\n+/).map(s=>s.trim()).filter(Boolean) : ["Manuellt tillagd person. Fyll på med mer släkthistoria när källorna är klara."],
+    images:textToImages(document.getElementById('newPersonImages').value),
+    sources:textToStory(document.getElementById('newPersonSources').value),
+    uncertainties:textToStory(document.getElementById('newPersonUncertainties').value),
     parents:parentIds,
     children:[],
     partner,
@@ -1186,6 +2096,7 @@ function addManualPerson(form){
   };
   Object.keys(person).forEach(key=>{ if(person[key] === "" || (Array.isArray(person[key]) && !person[key].length)) delete person[key]; });
   manualData.people[id] = person;
+  recordChange("person", id, name, {}, person, "Ny person");
   manualData.units.push(unit);
   applyManualPerson(id, person);
   applyManualUnit(unit);
@@ -1198,9 +2109,11 @@ function addManualPerson(form){
   renderManualList();
   renderTree({preserveView:true});
   renderPlaceList();
+  renderArchives();
   refreshSelectedPlace();
   focusPerson(id);
   openPerson(id);
+  persistSharedEntity("person",id,personSnapshot(id),"create");
 }
 function parseCoordinate(value){
   if(!String(value || "").trim()) return null;
@@ -1226,23 +2139,105 @@ function addManualPlace(form){
   const place = {
     id,
     name,
+    slug:slugifyUrl(name),
     area:document.getElementById('newPlaceArea').value.trim() || "Område saknas",
     note:document.getElementById('newPlaceNote').value.trim() || "Ingen längre platsbeskrivning är inlagd ännu.",
-    aliases:[name, ...aliases].filter((alias,index,array)=>array.indexOf(alias)===index)
+    aliases:[name, ...aliases].filter((alias,index,array)=>array.indexOf(alias)===index),
+    images:textToImages(document.getElementById('newPlaceImages').value),
+    sources:textToStory(document.getElementById('newPlaceSources').value),
+    uncertainties:textToStory(document.getElementById('newPlaceUncertainties').value)
   };
   if(lat !== null && lng !== null){
     place.lat = lat;
     place.lng = lng;
   }
   manualData.places.push(place);
+  recordChange("place", id, name, {}, place, "Ny plats");
   applyManualPlace(place);
   saveManualData();
   form.reset();
   renderManualList();
   renderPlaceList();
+  renderArchives();
   selectPlace(place.id);
   editorMessage(`${name} är tillagd som plats.`);
+  persistSharedEntity("place",id,place,"create");
   document.getElementById('platskarta').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function savePlaceDetailEdit(){
+  const id = placeIdFromCurrentRoute();
+  const place = PLACES.find(p=>p.id===id);
+  if(!place) return;
+  const name = document.getElementById('placeEditName').value.trim();
+  if(!name){
+    document.getElementById('placeEditMessage').textContent = "Platsnamn behövs.";
+    return;
+  }
+  const lat = parseCoordinate(document.getElementById('placeEditLat').value);
+  const lng = parseCoordinate(document.getElementById('placeEditLng').value);
+  if(Number.isNaN(lat) || Number.isNaN(lng)){
+    document.getElementById('placeEditMessage').textContent = "Koordinaterna behöver vara siffror.";
+    return;
+  }
+  if((lat === null) !== (lng === null)){
+    document.getElementById('placeEditMessage').textContent = "Fyll i både latitud och longitud, eller lämna båda tomma.";
+    return;
+  }
+  const aliases = document.getElementById('placeEditAliases').value.split(",").map(alias=>alias.trim()).filter(Boolean);
+  const edit = {
+    name,
+    area:document.getElementById('placeEditArea').value.trim(),
+    note:document.getElementById('placeEditNote').value.trim(),
+    aliases:[name, ...aliases].filter((alias,index,array)=>array.indexOf(alias)===index),
+    story:textToStory(document.getElementById('placeEditStory').value),
+    timeline:textToTimeline(document.getElementById('placeEditTimeline').value),
+    images:textToImages(document.getElementById('placeEditImages').value),
+    sources:textToStory(document.getElementById('placeEditSources').value),
+    uncertainties:textToStory(document.getElementById('placeEditUncertainties').value)
+  };
+  if(lat !== null && lng !== null){
+    edit.lat = lat;
+    edit.lng = lng;
+  }else{
+    edit.lat = null;
+    edit.lng = null;
+  }
+  recordChange("place", id, name, place, edit);
+  manualData.placeEdits[id] = edit;
+  delete manualData.drafts.places[id];
+  const manualPlace = manualData.places.find(p=>p.id===id);
+  if(manualPlace) Object.assign(manualPlace, edit);
+  applyManualPlaceEdit(id, edit);
+  saveManualData();
+  renderManualList();
+  renderPlaceList();
+  renderArchives();
+  refreshSelectedPlace();
+  renderPlaceDetail(id);
+  persistSharedEntity("place",id,place,"update",text=>{
+    const message = document.getElementById('placeEditMessage');
+    if(message) message.textContent = text;
+  });
+}
+function savePlaceDetailDraft(id){
+  const place = PLACES.find(p=>p.id===id); if(!place) return;
+  manualData.drafts.places[id] = {
+    name:document.getElementById('placeEditName').value.trim(),
+    area:document.getElementById('placeEditArea').value.trim(),
+    lat:parseCoordinate(document.getElementById('placeEditLat').value),
+    lng:parseCoordinate(document.getElementById('placeEditLng').value),
+    aliases:document.getElementById('placeEditAliases').value.split(',').map(value=>value.trim()).filter(Boolean),
+    note:document.getElementById('placeEditNote').value.trim(),
+    story:textToStory(document.getElementById('placeEditStory').value),
+    timeline:textToTimeline(document.getElementById('placeEditTimeline').value),
+    images:textToImages(document.getElementById('placeEditImages').value),
+    sources:textToStory(document.getElementById('placeEditSources').value),
+    uncertainties:textToStory(document.getElementById('placeEditUncertainties').value)
+  };
+  saveManualData();
+  renderManualList();
+  const message = document.getElementById('placeEditMessage');
+  if(message) message.textContent = "Utkastet är sparat på den här enheten.";
 }
 function exportManualData(){
   const blob = new Blob([JSON.stringify(manualData, null, 2)], {type:"application/json"});
@@ -1261,17 +2256,20 @@ function importManualFile(file){
       const parsed = JSON.parse(reader.result);
       Object.assign(manualData.people, parsed.people || {});
       Object.assign(manualData.edits, parsed.edits || {});
+      Object.assign(manualData.placeEdits, parsed.placeEdits || {});
       manualData.units.push(...(parsed.units || []).filter(unit=>!manualData.units.some(existing=>existing.id===unit.id)));
       manualData.places.push(...(parsed.places || []).filter(place=>!manualData.places.some(existing=>existing.id===place.id)));
       Object.entries(parsed.people || {}).forEach(([id,person])=>applyManualPerson(id,person));
       (parsed.units || []).forEach(applyManualUnit);
       (parsed.places || []).forEach(applyManualPlace);
+      Object.entries(parsed.placeEdits || {}).forEach(([id,edit])=>applyManualPlaceEdit(id,edit));
       Object.entries(parsed.edits || {}).forEach(([id,edit])=>applyManualPersonEdit(id,edit));
       saveManualData();
       refreshEditorSelects();
       renderManualList();
       renderTree({preserveView:true});
       renderPlaceList();
+      renderArchives();
       refreshSelectedPlace();
       editorMessage("Importen är inläst och sparad lokalt.");
     }catch{
@@ -1306,8 +2304,28 @@ function initEditor(){
     e.preventDefault();
     savePanelPersonEdit();
   });
+  document.getElementById('panelDraftSave').addEventListener('click', savePanelPersonDraft);
   document.getElementById('panelEditCancel').addEventListener('click', ()=>{
     document.getElementById('panelEditForm').classList.remove('open');
+  });
+  document.getElementById('panelPageOpen').addEventListener('click', e=>{
+    const route = e.currentTarget.dataset.route;
+    closePanel();
+    navigatePath(route);
+  });
+  document.addEventListener('click', e=>{
+    const togglePlaceEdit = e.target.closest('[data-toggle-place-edit]');
+    if(togglePlaceEdit){
+      document.getElementById('placeDetailEditForm')?.classList.toggle('open');
+    }
+    const placeDraft = e.target.closest('[data-save-place-draft]');
+    if(placeDraft) savePlaceDetailDraft(placeDraft.dataset.savePlaceDraft);
+  });
+  document.addEventListener('submit', e=>{
+    if(e.target?.id === "placeDetailEditForm"){
+      e.preventDefault();
+      savePlaceDetailEdit();
+    }
   });
   document.getElementById('exportManualData').addEventListener('click', exportManualData);
   document.getElementById('importManualData').addEventListener('change', e=>{
@@ -1320,15 +2338,68 @@ function initEditor(){
     safeLocalStorageRemove(MANUAL_STORAGE_KEY);
     editorMessage("Lokala tillägg är rensade. Ladda om sidan för en helt ren vy.");
   });
+  document.getElementById('manualList').addEventListener('click', e=>{
+    const button = e.target.closest('[data-restore-change]');
+    if(button) restoreChange(Number(button.dataset.restoreChange));
+  });
   refreshEditorSelects();
   renderManualList();
 }
 
+function renderFamilyAccount(status={}){
+  const state = document.getElementById('familyAccountState');
+  const form = document.getElementById('familyLoginForm');
+  const signOut = document.getElementById('familySignOut');
+  if(!state || !form || !signOut) return;
+  if(!status.configured){
+    state.textContent = "Lokalt läge. Databasen är ännu inte ansluten.";
+    form.hidden = true;
+    signOut.hidden = true;
+  }else if(status.user){
+    const role = status.profile?.role === "admin" ? "administratör" : status.profile?.role === "editor" ? "redaktör" : "familjemedlem";
+    state.textContent = `${status.profile?.display_name || status.user.email} · ${role}`;
+    form.hidden = true;
+    signOut.hidden = false;
+  }else{
+    state.textContent = "Logga in med e-postlänk för att dela ändringar.";
+    form.hidden = false;
+    signOut.hidden = true;
+  }
+}
+function initFamilyAccount(){
+  renderFamilyAccount(window.FamilyData?.status?.() || {});
+  document.getElementById('familyLoginForm')?.addEventListener('submit',async event=>{
+    event.preventDefault();
+    const email = document.getElementById('familyEmail').value.trim();
+    const message = document.getElementById('familyAccountMessage');
+    if(!email) return;
+    try{
+      await window.FamilyData.sendMagicLink(email);
+      message.textContent = "Inloggningslänken är skickad. Kontrollera din e-post.";
+    }catch(error){ message.textContent = error.message || "Inloggningen misslyckades."; }
+  });
+  document.getElementById('familySignOut')?.addEventListener('click',()=>window.FamilyData?.signOut());
+  document.addEventListener('family-auth-change',event=>renderFamilyAccount(event.detail));
+  document.addEventListener('family-data-status',event=>{
+    const badge = document.getElementById('familyDataBadge');
+    if(!badge) return;
+    badge.textContent = event.detail.message;
+    badge.dataset.mode = event.detail.mode;
+  });
+  document.addEventListener('family-data-ready',event=>applySharedSnapshot(event.detail));
+}
+
 loadManualData();
+initAccessibilityControls();
 renderTree();
 initTreeControls();
 initEditor();
+initFamilyAccount();
 initBranchFilters();
 initPersonSearch();
 initPlaceMap();
+initSiteNavigation();
+initArchiveFilters();
+renderArchives();
+renderCurrentRoute();
 document.getElementById('mapJump').onclick = ()=>document.getElementById('platskarta').scrollIntoView({behavior:'smooth',block:'start'});

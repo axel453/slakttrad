@@ -3954,3 +3954,1430 @@ Tidigare kontroll av 1731 års begravningsföljd gav ingen säker Helge Svensson
 4. **Mårten + Helena → Valagård** – fastställ exakt när och hur de tar över gården.
 5. **Karin Börgesdotter på Valagård** – knyt äldre Börge-familjer till gårdshistorien och testa eventuell släktkoppling.
 
+
+## Skultagården – sammanhållen gårdshistorik och koppling till Polin-linjen
+
+> **Status:** Denna sektion är en sammanhållen arbetsöversikt över de hittills granskade originalbilderna för **N:o 39 Skultagården**. Den ska väga tyngre än äldre, preliminära deltolkningar i filen där de motsäger denna sammanställning.
+
+### Gården i källmaterialet
+
+Gårdsavsnittet är uttryckligen rubricerat:
+
+> **“N:o 39 Skultagården”**
+
+Det visar att Skultagården behandlas som en egen gårdsmiljö i den aktuella Träslövsvolymen. Användaren uppger att gården är en närliggande gård till Valagården och att **Skultagården finns kvar ännu i dag**. Den moderna uppgiften är tills vidare noterad som användaruppgift; den historiska gårdsidentiteten bygger på originalbilderna.
+
+Själva gårdssidan innehåller både:
+
+- en äldre hushålls-/åldersförteckning,
+- och löpande daterade notiser om dop, vigslar och begravningar från slutet av 1600-talet och början av 1700-talet.
+
+De hittills granskade notiserna sträcker sig åtminstone över perioden **1690–1713**.
+
+### Hushåll på Skultagården omkring sekelskiftet 1700
+
+I hushållsförteckningen kan bland annat följande personer läsas:
+
+#### Hushåll 1
+- **Börge Andersson**, 62 år
+- **Inger Larsdotter** – namnformen är mycket sannolik
+- **Anna Börgesdotter**
+- **Anders Börjesson/Börgeson**
+
+#### Hushåll 2
+- **Lars Jönsson**, 59 år
+- **Börta/Brita Börgesdotter**, 49 år
+- **Anders Larsson**, 31 år
+- **Gunnel Larsdotter**, 26 år
+- **Jöns Larsson**, 18 år
+- **Börge Larsson**, 15 år
+- **Sven Larsson**, 10 år
+- **Börta/Brita Larsdotter**, 7 år
+
+Personlistan visar alltså en etablerad Börge-/Lars-/Jöns-miljö på gården innan den senare Polin–Helgesdotter-kopplingen blir synlig.
+
+### Daterade familjehändelser på gården
+
+Flera notiser kan kopplas till Skultagårdens hushåll:
+
+- **1690-05-05:** en notis som mycket sannolikt avser en vigsel för **Börge Andersson**.
+- **1691-01-18:** en tydlig kristningsnotis för **Börge Anderssons barn i Skultagården**. Detta är ett direkt originalbelägg för familjens hemvist på gården.
+- **1692-11-23:** en begravningsnotis som mycket sannolikt avser **Lars Jönsson**; åldern verkar passa mannen i hushållslistan.
+- **1693-02-26:** ytterligare en kristningsnotis som sannolikt gäller **Börge Anderssons familj**.
+- **1693-10-29:** en mycket sannolik vigselnotis för **Anders Larsson**.
+- **1694-09-02:** en kristningsnotis som förefaller avse ett barn till **Anders Larsson**.
+- **1697-04-18** och **1698-03-06:** ytterligare gårdsanknutna familjehändelser; fullständig transkription återstår.
+- **1701-01-20:** en kristningsnotis där formuleringen ser ut att ange ett **barn till Sven Andersson i Skultagården**. Barnets namn och hela fadderlistan behöver fortfarande detaljkontrolleras.
+- **1701-05-05:** en begravningsnotis på samma gårdssida; exakt personrelation är ännu inte tillräckligt säker för slutlig registrering.
+- **1704-07-10:** en kristningsnotis med en fadderlista där namnet **Jöns Polin** ser ut att stå mycket tydligt. Detta är ett viktigt möjligt direkt samband mellan Polin och Skultagårdens sociala nätverk.
+- **1713-02-22:** ytterligare en daterad gårdsnotis; texten är delvis svårläst och ska inte övertolkas.
+
+### Jöns Polin – första konkreta Skultagårdsspåret
+
+Den potentiellt viktigaste nya detaljen är notisen från **1704-07-10**.
+
+I fadder-/vittnesdelen läses namnet med hög sannolikhet som:
+
+> **Jöns Polin**
+
+Om läsningen står sig innebär detta att Jöns Polin förekommer som **fadder/vittne i en familjehändelse knuten till Skultagården redan 1704**.
+
+Det är viktigt eftersom detta är **året före** hans vigsel med **Karin/Kari Helgesdotter 1705-03-19**.
+
+Detta ska dock tolkas rätt:
+
+- det bevisar **inte** att Jöns Polin bodde på Skultagården 1704,
+- men det visar sannolikt att han redan då ingick i **Skultagårdens sociala/familjära nätverk**,
+- och det ger en möjlig förklaring till hur kontakten med Karin Helgesdotters familj kan ha uppstått.
+
+Notisen bör senare kontrolleras mot en renare originalbild eller parallellindex innan den får status **helt säker**.
+
+### Polin → Helgesdotter → Skultagården
+
+Den hittillsvarande arbetskedjan kan nu beskrivas så här:
+
+1. **Jöns Polin** förekommer sannolikt som fadder/vittne i Skultagårdens material **1704**.
+2. Jöns Polin gifter sig **1705-03-19** i Träslöv med **Karin/Kari Helgesdotter**.
+3. Karin Helgesdotter anges i Leif Lundquists antavla som dotter till:
+   - **Helge Svensson**
+   - **Kerstin Olsdotter**
+4. Helge Svensson anges i samma antavla ha avlidit **1731-04-02 på Skultagården**.
+5. Jöns och Karins dotter **Helena Jönsdotter**, född **1713-10-07** och döpt **1713-10-08**, anges vid vigseln med Mårten Andersson **1731-04-25** som **piga från Skultagården**.
+
+Det ger en tydlig men fortfarande delvis sekundärkällestödd familje- och nätverkskedja mellan **Polin-familjen och Skultagården**.
+
+### Viktig korrigering om Helge Svensson och Kerstin Olsdotter
+
+Leif Lundquists *Halländsk antavla 4* anger:
+
+- **Helge Svensson**, född omkring 1650, död **1731-04-02 på Skultagården**.
+- **Kerstin Olsdotter**, född omkring 1642, **begravd 1729-12-21 i Träslöv – nu originalbekräftat**.
+
+Detta betyder att uppgiften från Ancestry om att **båda** skulle ha avlidit i april 1731 måste behandlas som osäker. För Kerstin bör **1729-12-21** vara huvudspåret tills originalnotisen kontrollerats.
+
+### Vad vi ännu inte kan säga
+
+Vi har ännu inte originalbelagt:
+
+- när **Helge Svensson** först kom till Skultagården,
+- om han ägde, brukade eller endast bodde på gården,
+- om **Kerstin Olsdotter** bodde där vid sin död,
+- om Karin Helgesdotter själv föddes eller växte upp på Skultagården,
+- varför Helena Jönsdotter bodde på Skultagården 1731,
+- om Jöns Polins förekomst 1704 beror på släktskap, vänskap, kyrklig roll eller annan lokal relation.
+
+### Nästa steg för Skultagården
+
+1. Kontrollera **Jöns Polin** i fadderlistan 1704-07-10 mot bästa möjliga originalbild/index.
+2. Leta efter **Helge Svensson** på Skultagården i mantalslängder mellan ca **1705 och 1731**.
+3. Leta efter **Kerstin Olsdotters begravningsnotis 1729-12-21**.
+4. Fortsätt kontrollen av **Helge Svenssons uppgivna död 1731-04-02**.
+5. Följ Helena Jönsdotter bakåt från hennes säkra hemvist på Skultagården vid vigseln 1731.
+6. Bygg en separat kronologisk gårdstabell för Skultagården med **år – hushåll – händelser – koppling till vår släkt**.
+
+### Koppling till Valagårdens historia
+
+Skultagården ska fortsättningsvis behandlas som en **separat men närliggande gårdsmiljö** till Valagården. Personer kan röra sig mellan gårdarna eller ingå i samma lokala nätverk, men gårdarna får inte blandas ihop utan källstöd.
+
+För släktträdet bör varje personkort därför ange gårdsanknytning kronologiskt, exempelvis:
+
+- födelsegård,
+- gård vid vigsel,
+- senare hemvist,
+- dödsgård,
+
+så att **Skultagården och Valagården hålls tydligt åtskilda**.
+
+
+## Viktigt originalfynd – Kerstin Olsdotters begravning 1729
+
+En zoomad originalbild ur **Träslövs död-/begravningsbok 1729** har nu gjort det möjligt att identifiera den notis som gäller **Kerstin/Kiersten Olsdotter**, hustru till **Helge Svensson**.
+
+Notisen är daterad:
+
+> **21 december 1729**
+
+Kärnan i texten kan läsas med hög säkerhet som:
+
+> **“… begrofs … Helge Svenssons hustru Kiersten Olsdotter … uti 87 åhr …”**
+
+### Det som nu är originalbekräftat
+
+Följande kan föras in som säkra eller mycket starka originaluppgifter:
+
+- **Person:** Kerstin/Kiersten Olsdotter
+- **Make:** Helge Svensson
+- **Händelse:** begravning
+- **Datum:** **1729-12-21**
+- **Församling:** Träslöv
+- **Ålder:** omkring **87 år**
+
+Åldersuppgiften passar mycket väl med ett beräknat födelseår omkring **1642**:
+
+> 1729 − 87 = **1642**
+
+Detta ger ett starkt originalstöd för Leif Lundquists uppgift om att Kerstin Olsdotter var född omkring 1642 och begravdes 1729-12-21.
+
+### Källkritisk konsekvens
+
+En tidigare Ancestry-uppgift som placerade Kerstin Olsdotters död i **april 1731** ska därför betraktas som felaktig eller sammanblandad.
+
+**1729-12-21 är nu den primära och originalstödda uppgiften.**
+
+### Vad notisen inte bevisar
+
+Någon säker gårdsangivelse **Skultagården** kan inte utläsas ur just denna begravningsnotis.
+
+Notisen bevisar därför:
+
+**Helge Svensson ↔ Kerstin Olsdotter**
+
+men ännu inte direkt:
+
+**Helge Svensson/Kerstin Olsdotter ↔ Skultagården**
+
+Skultagårdskopplingen måste fortsatt byggas genom andra originalkällor, i första hand Helge Svenssons egen dödsnotis, mantalslängder och andra gårdsanknutna notiser.
+
+### Betydelse för Polin-linjen
+
+Eftersom **Karin Helgesdotter** enligt den accepterade arbetsgenealogin är dotter till **Helge Svensson och Kerstin Olsdotter**, stärker detta fynd föräldraparet i Polin-linjen:
+
+**Helge Svensson + Kerstin Olsdotter**  
+→ **Karin Helgesdotter**  
+→ gift 1705-03-19 med **Jöns Polin**  
+→ deras dotter **Helena Jönsdotter**
+
+Detta är därför ett viktigt steg i arbetet med att bygga en originalkällestödd kedja mellan **Polin-familjen och Skultagården**.
+
+### Nästa kontroll
+
+Nästa högprioriterade originalkälla är:
+
+1. **Helge Svenssons döds-/begravningsnotis 1731**
+2. särskilt kontroll av uppgiften **1731-04-02**
+3. sök efter uttrycklig gårdsangivelse **Skultagården / Börge Andersgård**
+4. därefter Karin Helgesdotters födelse-/dopuppgift för att fastställa familjens tidigare hemvist
+
+
+- **Nytt originalfynd:** Kerstin/Kiersten Olsdotter, hustru till Helge Svensson, är nu identifierad i Träslövs begravningsbok med datum **1729-12-21** och ålder omkring **87 år**.
+- Detta ersätter Ancestry-uppgiften om april 1731 för Kerstin.
+- Någon säker Skultagård-angivelse kan ännu inte läsas i just denna notis.
+
+
+## N:o 26 Niels Olufs Hemman – Helge Svenssons familj och Karin Helgesdotters barndomsmiljö
+
+> **Status:** Mycket viktigt originalfynd för den direkta släktlinjen. Hushållet på **N:o 26 Niels Olufs Hemman i Träslöf** innehåller med hög sannolikhet **Helge Svensson, Kerstin Olsdotter och deras barn, inklusive Karin Helgesdotter**.
+
+### Gårdsrubriken
+
+Originalsidan är rubricerad:
+
+> **“N:o 26 Niels Olufs Hemman i Träslöf”**
+
+Detta är den äldre gårdsbeteckning som i vår fortsatta forskning motsvarar **Nils Olsgård / Nils Ols gård**.
+
+Det är viktigt att behålla båda formerna i dokumentationen:
+
+- **Niels Olufs Hemman** – originalets äldre benämning
+- **Nils Olsgård** – den moderniserade/identifierade gårdsformen vi använder för att följa gården över tid
+
+### Hushållet med Helge Svensson
+
+Längst ned på gårdssidan finns ett hushåll som med hög sannolikhet kan läsas:
+
+- **Helge Svensson** – omkring **40 år**
+- **Kerstin/Kirstin Olsdotter** – omkring **46 år**
+- **Olof Helgesson** – omkring **20 år**
+- **Simon Helgesson** – omkring **10 år**
+- **Inger Helgesdotter** – omkring **12 år**
+- en dotter vars namn sannolikt är **Margreta/Margareta Helgesdotter** – omkring **11 år**
+- **Anders Helgesson** – omkring **7 år**
+- **Karin Helgesdotter** – omkring **4 år**
+
+Den sista raden är särskilt viktig och läses mycket starkt som:
+
+> **“Karin Helges dotter 4 åhr”**
+
+### Betydelse för den direkta släktlinjen
+
+Detta fynd knyter vår direkta linje till en konkret gårdsmiljö i Träslöv innan Polin-familjen blir fullt synlig.
+
+Den direkta linjen i detta avsnitt är:
+
+**Helge Svensson + Kerstin Olsdotter**  
+→ **Karin Helgesdotter**  
+→ gift 1705-03-19 med **Jöns Polin**  
+→ deras dotter **Helena Jönsdotter**
+
+Karin Helgesdotter är därmed inte bara känd som dotter till Helge Svensson och Kerstin Olsdotter genom sekundär forskning, utan kan nu med mycket stark sannolikhet placeras som barn i deras hushåll på **Niels Olufs Hemman / Nils Olsgård**.
+
+### Åldrarna passar den övriga källbilden
+
+Åldersuppgifterna på gårdssidan harmonierar mycket väl med de senare originalfynden:
+
+- **Helge Svensson**, omkring 40 år i den äldre hushållsförteckningen, bör vara född omkring **1650** om listan ligger kring sekelskiftet 1690.
+- Helge begravs **1731-04-16**, då han uppges vara omkring **80 år**, vilket ger ett födelseår omkring **1650–1651**.
+- **Kerstin Olsdotter**, omkring 46 år i hushållet, bör vara född omkring **1643–1644**.
+- Kerstin begravs **1729-12-21**, omkring **87 år gammal**, vilket pekar mot ett födelseår omkring **1642**.
+- **Karin Helgesdotter**, omkring 4 år, bör vara född omkring **1685–1686**, vilket passar väl med att hon gifter sig med Jöns Polin 1705.
+
+Åldrarna ska fortfarande behandlas som ungefärliga eftersom gamla åldersförteckningar kan innehålla avvikelser, men samstämmigheten mellan flera olika källor är stark.
+
+### En viktig förändring i vår bild av Skultagården
+
+Fyndet innebär att vi bör skilja tydligare mellan **Karins barndomsmiljö** och familjens **senare koppling till Skultagården**.
+
+Nuvarande arbetsbild är:
+
+1. **Helge Svensson och Kerstin Olsdotter bor med sina barn på Niels Olufs Hemman / Nils Olsgård** när Karin är liten.
+2. **Karin Helgesdotter** växer alltså sannolikt upp där under åtminstone en del av sin barndom.
+3. Karin gifter sig **1705-03-19** med **Jöns Polin**.
+4. Senare blir familjens koppling till **Skultagården** tydlig:
+   - Helge Svensson är knuten dit vid sin begravning 1731.
+   - Helena Jönsdotter, Jöns och Karins dotter, anges som piga från Skultagården vid vigseln med Mårten Andersson 1731.
+
+Detta gör det sannolikt att Helge Svensson och/eller delar av familjen **flyttade från Nils Olsgård till Skultagården någon gång efter Karins barndom**.
+
+### Ny central forskningsfråga
+
+En ny prioriterad fråga är därför:
+
+> **När flyttar Helge Svensson och familjen från Nils Olsgård till Skultagården, och varför?**
+
+För att lösa detta bör vi försöka följa Helge Svensson i:
+
+- mantalslängder
+- gårdsvisa kyrkoboksanteckningar
+- domböcker
+- eventuella jordeböcker eller andra bruknings-/ägarhandlingar
+
+Målet är att hitta den första källan där Helge Svensson lämnar **Nils Olsgård** och den första där han uttryckligen står på **Skultagården**.
+
+### Källkritisk status
+
+**Mycket starkt/originalnära:**
+- N:o 26 är rubricerad **Niels Olufs Hemman i Träslöf**
+- Helge Svensson förekommer i hushållet
+- Kerstin Olsdotter förekommer i samma hushåll
+- Karin Helgesdotter, omkring 4 år, förekommer i samma hushåll
+
+**Stark men fortfarande preliminär detaljläsning:**
+- några av syskonens exakta namn och åldrar, särskilt den rad som sannolikt gäller Margreta/Margareta Helgesdotter
+
+**Arbetshypotes:**
+- att Niels Olufs Hemman är samma gårdsmiljö som senare kallas Nils Olsgård; denna identifikation ska fortsatt följas och stärkas med fler gårdskällor.
+
+
+### Senaste fynd – Nils Olsgård / Niels Olufs Hemman
+
+- På **N:o 26 Niels Olufs Hemman i Träslöf** har ett hushåll identifierats med **Helge Svensson, Kerstin Olsdotter och flera barn**.
+- **Karin Helgesdotter, omkring 4 år**, står med i hushållet och är därmed mycket starkt placerad i familjen på denna gård.
+- Fyndet visar att Karins tidiga gårdsanknytning sannolikt är **Nils Olsgård**, medan **Skultagården** verkar vara en senare familjeanknytning.
+- Nästa fråga är att fastställa **när Helge Svensson flyttar från Nils Olsgård till Skultagården**.
+
+
+## N:o 26 Niels Olufs Hemman – löpande gårdsanteckningar 1690–1701
+
+> **Status:** Nytt originalmaterial från den löpande text som hör till **N:o 26 Niels Olufs Hemman i Träslöf / Nils Olsgård**. Anteckningarna dokumenterar människor och familjehändelser på eller i direkt anslutning till gården under åren omkring 1690–1701. De flesta personerna i dessa notiser är **inte ännu identifierade som personer i vår direkta släktlinje** och hålls därför tydligt åtskilda från Helge Svenssons familj.
+
+Det här materialet är värdefullt även när personerna inte tillhör huvudlinjen, eftersom det visar hur gården fungerade som en levande social miljö. På samma gårdssida antecknas begravningar, dop/kristningar och andra familjehändelser, ofta tillsammans med faddrar och grannar.
+
+### 1690-08-31 – begravningsnotis
+
+En notis börjar tydligt:
+
+> **“Anno 1690 d. 31 Augusti begrofs …”**
+
+Därefter nämns en **Anders** och ett **litet barn/dotter**. Den fullständiga personbestämningen är ännu för svårläst för säker registrering.
+
+**Källstatus:** datum och begravningskaraktär säkra; namnrelationen preliminär.
+
+### 1694-12-28 – ytterligare begravningsnotis
+
+En ny notis börjar:
+
+> **“Anno 1694 d. 28 Decembr begrofs …”**
+
+Texten verkar åter avse en familjehändelse knuten till N:o 26. Ett barn eller en yngre person nämns, men namnen kan inte ännu läsas med tillräcklig säkerhet.
+
+### 1697-10-24 – begravning av en Anders
+
+Anteckningen börjar tydligt:
+
+> **“Anno 1697 d. 24 October begrofs Anders …”**
+
+Efter förnamnet följer ett patronymikon/efternamn som ännu inte är säkert avläst. Notisen innehåller även en åldersangivelse på omkring **31 år** samt ytterligare tidsdelar.
+
+Detta är en möjlig person att senare jämföra mot hushållsförteckningen på N:o 26, men han ska **inte** kopplas till Helge Svenssons familj utan ytterligare belägg.
+
+### 1698-12-26 – vigsel-/familjenotis
+
+Den följande notisen är daterad:
+
+> **1698-12-26**
+
+Texten verkar innehålla namnet **Nils/Nielsson** och en kvinna samt en formulering som ser ut att vara vigsel- eller familjerelaterad. Exakt namnpar behöver en bättre bild eller parallellkälla innan det registreras som säker vigsel.
+
+### 1699-11-05 – begravning av barn
+
+En tydlig ny notis börjar:
+
+> **“A:o 1699 d. 5 Novembr begrofs …”**
+
+Den ser ut att avse ett **drängebarn/pojkbarn** knutet till en man med namnet **Hans Nilsson/Nielsson**. Gårdsanknytningen ligger på N:o 26-sidan, vilket visar att även denna familj hörde till gårdens eller dess närmaste hushållsmiljö.
+
+### 1700-09-23 – kristningsnotis
+
+Notisen börjar:
+
+> **“A:o 1700 d. 23 Septembr Christnades …”**
+
+Jag läser därefter med relativt god säkerhet att det rör sig om:
+
+> **“… Niels/Nils barn med namn Bengt …”**
+
+I den följande fadderdelen förekommer flera namn. Några ser ut som **Kirsti/Kerstin** och ytterligare personer från Träslöv, men fullständig fadderlista är ännu osäker.
+
+### Fortsättning av fadderlista
+
+Överst på nästa bild fortsätter sannolikt föregående notis. Där kan bland annat följande namn anas:
+
+- **Måns Wetter**
+- **Anders Andersson**
+- **Simon**
+- **Olof …**
+- samtliga eller flera med anknytning till **Träslöv**
+
+Dessa namn är värdefulla för framtida nätverksanalys: återkommande faddrar kan hjälpa oss skilja gårdens olika familjer åt och eventuellt binda Helge Svenssons familj till andra hushåll.
+
+### 1701-05-26 – begravning av barn
+
+Den sista nya notisen börjar tydligt:
+
+> **“A:o 1701 d. 26 May begrofs …”**
+
+Därefter läses sannolikt:
+
+> **“… Niels barn M:N: Bengt …”**
+
+alltså ett barn med namnet **Bengt**, knutet till en Nils/Niels-familj på eller omkring N:o 26. Åldersuppgiften i slutet är svårläst.
+
+### Vad materialet säger om Nils Olsgård som miljö
+
+De löpande anteckningarna visar att **Niels Olufs Hemman/Nils Olsgård inte bestod av ett enda kärnhushåll**. Under 1690-talet och runt 1700 förekommer flera familjer och namn på samma gårdssida.
+
+Det är viktigt när vi arbetar med vår direkta linje:
+
+- **Helge Svensson + Kerstin Olsdotter + Karin Helgesdotter** är ett tydligt identifierat hushåll på N:o 26.
+- De övriga Anders-, Nils-, Hans- och Bengt-personerna i de daterade notiserna ska tills vidare behandlas som **gårdsgrannar, andra brukare eller närstående hushåll**, inte som släktingar.
+- Fadder- och vittnesnamn kan senare bli avgörande för att förstå hur hushållen hängde ihop.
+
+### Forskningsvärde
+
+Det här materialet gör gården mer levande och ger oss en kronologisk bakgrund till Karin Helgesdotters barndom. Hon växer inte bara upp på ett anonymt “hemman”, utan i en gårdsmiljö där flera familjer föder barn, begraver anhöriga och står faddrar åt varandra under samma årtionden.
+
+**Nästa lämpliga kontroll:** jämför de återkommande namnen i dessa notiser mot hushållslistan på N:o 26 och mot senare mantalslängder. Särskilt intressant blir att se om någon av faddrarna återkommer kring Helge Svenssons barn.
+
+
+### Senaste källmaterial – N:o 26
+
+- Löpande gårdsanteckningar för **Niels Olufs Hemman / Nils Olsgård** har nu dokumenterats för perioden **1690–1701**.
+- Materialet innehåller flera begravningar, en möjlig vigsel-/familjenotis och kristningar.
+- Inga av de nya daterade notiserna har ännu säkert identifierats som en ny händelse för **Helge Svensson, Kerstin Olsdotter eller Karin Helgesdotter**.
+- Personerna hålls därför utanför den direkta släktlinjen tills en uttrycklig koppling kan bevisas.
+
+
+## Kontroll av födelse-/dopnotiser 1706 – Jöns Polin och Karin Helgesdotter
+
+> **Status:** De bilder som nu granskats från Träslövs födelse-/dopbok för **1706** innehåller flera dopnotiser från årets första del och fram till åtminstone september. I de insända sidorna har **ingen säker notis ännu identifierats för Jöns/Jonas Polin och Karin Helgesdotter**, och inget barn kan säkert läsas som deras son **Simon**.
+
+### Vad som faktiskt syns i 1706-materialet
+
+De insända sidorna innehåller ett stort antal dop-/kristningsnotiser och parallella döds-/begravningsnotiser. Bland de tydliga datumen på födelsesidan finns bland annat:
+
+- januari 1706
+- februari 1706
+- mars 1706
+- april 1706
+- maj 1706
+- juni 1706
+- juli 1706
+- september 1706
+
+Flera familjer från Träslöv och närliggande gårdsmiljöer förekommer, men **Jöns Polin / Jonas Polin / Polijn** kan inte med säkerhet identifieras som far i någon av de hittills granskade notiserna.
+
+Inte heller **Karin/Kari Helgesdotter** kan säkert identifieras i dessa notiser.
+
+### Simon 1706 – fortfarande obekräftad
+
+Ett Ancestry-medlemsträd har tidigare angett ett barn:
+
+> **Simon, född 1706**
+
+som barn till Jöns Polin och Karin Helgesdotter.
+
+Efter genomgången av de nu insända originalbilderna ska denna uppgift **inte betraktas som originalbekräftad**.
+
+Det finns flera möjliga förklaringar:
+
+1. Simons födelse kan ligga på en 1706-sida som ännu inte är insänd.
+2. Årtalet 1706 kan vara en senare beräkning från åldersuppgift snarare än ett exakt födelseår.
+3. Dopnotisen kan vara skadad, svårläst eller saknas.
+4. Uppgiften i medlemsträdet kan vara fel.
+
+Simon ska därför ligga kvar som **möjligt barn/kandidat** och inte användas som säker del av barnserien förrän en originalkälla eller annan stark oberoende källa hittas.
+
+### Viktig sekundär ledtråd inför 1707
+
+Ett publicerat ortnamnsregister till samlingen *50 halländska antavlor* placerar:
+
+> **Beata Jönsdotter Polin (1707–1781)** vid **Träslöv, Klockaregården**
+
+Detta är en **sekundär uppgift**, inte ett ersättningsbevis för födelsenotisen, men den gör **1707 och Klockaregården** till nästa mycket lovande kontrollpunkt.
+
+Det passar också väl med att Jöns/Jonas Polin var **klockare** och att Klockaregården därför är en naturlig gårdsmiljö att undersöka för familjen.
+
+### Källkritisk slutsats efter 1706
+
+Det vi nu kan säga är:
+
+- vigseln **1705-03-19** mellan Jöns Polin och Karin Helgesdotter är säker,
+- deras hemvist direkt efter vigseln är ännu inte fastställd genom 1706 års insända dopnotiser,
+- **Simon 1706 är inte originalbekräftad**,
+- nästa starka kontrollpunkt är **1707**, särskilt efter **Beata Jönsdotter Polin** och en möjlig uttrycklig koppling till **Klockaregården**.
+
+### Nästa steg
+
+1. Gå igenom **1707 års födelse-/dopnotiser**.
+2. Sök efter **Beata**, dotter till Jöns/Jonas Polin och Karin/Kari Helgesdotter.
+3. Notera exakt gårdsangivelse.
+4. Transkribera faddrarna så fullständigt som möjligt.
+5. Jämför faddrarna med:
+   - Helge Svenssons familj på Nils Olsgård,
+   - Skultagårdens hushåll,
+   - personer som redan förekommer runt Jöns Polin som klockare.
+
+
+## Kompletterande kontroll av 1706 – årets sista bevarade dopnotiser
+
+Två ytterligare originalsidor från **Träslövs födelse-/dopbok 1706** har nu granskats. De fortsätter den tidigare genomgången och innehåller bland annat daterade dop-/kristningsnotiser från:
+
+- **7 oktober 1706**
+- **28 oktober 1706**
+- **11 november 1706**
+- **12 november 1706**
+
+På den sista av de nu granskade sidorna är resten av sidan tom efter novembernotisen, vilket talar för att vi nu åtminstone har kommit mycket nära slutet av årets bevarade födelse-/dopanteckningar i denna svit.
+
+### Ingen säker Polin-notis i de kompletterande sidorna
+
+Inte heller på dessa två kompletterande sidor kan någon säker notis identifieras för:
+
+- **Jöns/Jonas Polin / Polijn**
+- **Karin/Kari Helgesdotter**
+- ett barn till paret som säkert kan identifieras som **Simon**
+
+Det innebär att vår tidigare källkritiska bedömning stärks:
+
+> Uppgiften om **Simon, född 1706**, är fortfarande **inte originalbekräftad**.
+
+Om de nu granskade bilderna verkligen täcker hela den bevarade födelse-/dopföljden för 1706 blir det dessutom mer sannolikt att uppgiften om Simon antingen:
+1. bygger på ett beräknat födelseår,
+2. kommer från en annan källa,
+3. avser ett annat år,
+4. eller är felaktig i sekundärträdet.
+
+Simon ska därför **inte flyttas in som säker person i den direkta familjebilden** förrän ytterligare källstöd hittas.
+
+## Klockaregården / Lars Tungård – nytt prioriterat gårdsspår
+
+Användaren har identifierat att **Klockaregården även kallas Lars Tungård och hör till Träslöv 1**.
+
+Denna uppgift är mycket intressant eftersom Jöns Polin var **klockare**. Om familjen faktiskt bodde på eller var knuten till Klockaregården efter vigseln 1705 kan gårdsmaterialet ge oss sådant som en vanlig dopnotis inte alltid gör:
+
+- hushållets sammansättning,
+- Jöns Polins ålder och ställning,
+- Karin Helgesdotters närvaro,
+- barn som ännu inte säkert identifierats i födelseboken,
+- personer som tjänade eller bodde på gården,
+- förändringar i hushållet över tid,
+- och eventuella kopplingar tillbaka till **Nils Olsgård** eller **Skultagården**.
+
+### Arbetsidentifikation
+
+Tills ett original med båda namnen har jämförts sida vid sida används följande arbetsidentifikation:
+
+> **Klockaregården = Lars Tungård = Träslöv 1**
+
+Detta är i nuläget en användaruppgift/arbetsidentifikation och ska inte blandas ihop med ett nytt originalbelägg förrän gårdssidan själv har granskats.
+
+### Ny forskningsprioritering
+
+Nästa huvudspår bör därför vara:
+
+1. slå upp **Träslöv 1 / Lars Tungård / Klockaregården** i samma gårdsvisa material,
+2. identifiera vilka personer som står där omkring **1704–1715**,
+3. leta särskilt efter **Jöns/Jonas Polin**, **Karin/Kari Helgesdotter** och barnen,
+4. dokumentera alla daterade notiser på gården,
+5. jämföra faddrar och grannar med Nils Olsgård och Skultagården.
+
+Om Jöns Polin dyker upp där kan detta bli den första tydliga gårdsplaceringen för paret **efter vigseln 1705**.
+
+
+## 1707 – full genomgång av födelse-/dopåret och J. A. Polins årsslutssignatur
+
+> **Status – KORRIGERAD 2026-08-29:** Den tidigare bedömningen nedan att ingen säker Beata-notis hade hittats är **överspelad av senare, tydligare detaljbilder ur specialavsnittet för Klockaregården/Prästgården**. Där finns nu en mycket stark originalkandidat från **1707-04-15/17** där barnet **Beata** uttryckligen kan läsas och där familjenamnet med hög sannolikhet är **Polin**. Den äldre genomgången bevaras nedan som forskningshistorik. Årssignaturen **“J. A. Polin”** är fortfarande ett separat och viktigt fynd.
+
+### Genomgång av årets dopnotiser
+
+De granskade 1707-sidorna innehåller födelse-/dopnotiser från bland annat:
+
+- januari
+- februari
+- mars
+- april
+- augusti
+- oktober
+- november/december
+
+De sista bevarade dopnotiserna följs av årsslutstexten, vilket gör att materialet förefaller representera den bevarade födelse-/dopföljden för hela året.
+
+Bland de lästa familjerna finns flera Anders-, Nils-, Jöns- och Olof-hushåll, men ingen notis kan med säkerhet identifieras som ett barn till:
+
+- **Jöns/Jonas Andersson Polin**
+- **Karin/Kari Helgesdotter**
+
+Inte heller förekommer ett barn vars namn säkert kan läsas **Beata** i kombination med dessa föräldrar.
+
+### Beata Jönsdotter Polin – 1707 ska tills vidare inte betraktas som originalbekräftat födelseår
+
+Sekundära uppgifter har placerat **Beata Jönsdotter Polin** år 1707, men den nu genomgångna originalföljden har inte gett någon motsvarande dopnotis.
+
+Detta betyder inte att Beata kan avföras som barn till Jöns och Karin, men just **1707 som födelseår är ännu inte originalbekräftat**.
+
+Möjliga förklaringar:
+
+1. födelseåret 1707 kan vara beräknat från en senare åldersuppgift,
+2. Beata kan vara född i en annan församling,
+3. en enskild notis kan ha fallit bort eller aldrig förts in,
+4. sekundärkällans årtal kan vara fel med något år.
+
+Det är särskilt intressant att Jöns Polin själv sannolikt hade en roll i kyrkobokens förande under året, vilket gör det mindre sannolikt – men inte omöjligt – att en egen dotters dop medvetet skulle ha utelämnats. Därför bör även **1708 och närliggande år** kontrolleras.
+
+### Årets mest betydelsefulla fynd: “Finis hujus Anni. J. A. Polin”
+
+Längst ned efter den sista 1707-notisen står:
+
+> **“Finis hujus Anni.”**
+
+Latin för ungefär:
+
+> **“Slut på detta år.”**
+
+Direkt därefter finns en tydlig namn-/initialsignatur som med mycket hög sannolikhet läses:
+
+> **“J. A. Polin”**
+
+Detta passar exakt med namnet:
+
+> **Jöns Andersson Polin**
+
+Bokstavsformerna kan i tidens skrift även återges som **I. A. Polin**, eftersom I/J ofta används omväxlande. Identifikationen med vår Jöns Andersson Polin är ändå mycket stark genom kombinationen av initialerna och det ovanliga släktnamnet **Polin**.
+
+### Historisk betydelse
+
+Detta är ett ovanligt levande originalspår efter Jöns Polin.
+
+Om signaturen verkligen är hans innebär det att vi inte bara ser honom omnämnd av prästen eller en indexerare – vi kan mycket väl se **hans egen namnteckning/skrivarsignatur i kyrkoboken vid avslutningen av år 1707**.
+
+Eftersom Jöns Polin var **klockare** passar detta mycket väl in i hans yrkesroll. En klockare kunde vara skrivkunnig och bistå prästen med praktiska och administrativa kyrkliga uppgifter. Att en person med signaturen “J. A. Polin” avslutar årets kyrkoboksanteckningar är därför ett starkt indicium på att Jöns deltog i **förandet eller sammanställningen av kyrkoboken**.
+
+Det ska dock skiljas mellan två nivåer:
+
+**Mycket starkt:**
+- signaturen/namnet **J. A. Polin** finns vid slutet av 1707 års anteckningar,
+- initialerna passar **Jöns Andersson Polin**.
+
+**Stark tolkning men ännu inte absolut bevisad:**
+- att signaturen är skriven med Jöns egen hand,
+- exakt vilken del av kyrkoboken han själv förde,
+- om hans roll här uttryckligen var kopplad till tjänsten som klockare.
+
+### En människa bakom namnet
+
+Fyndet ger en särskild dimension till Jöns Polin som person. Han framträder inte längre bara som en man som gifter sig, får barn och senare förekommer i släktleden. Han verkar ha varit en **skrivkunnig kyrklig funktionär** som själv hade kontakt med de böcker där socknens födslar, dop och dödsfall dokumenterades.
+
+Det är möjligt att flera av de sidor vi nu sitter och läser faktiskt har passerat genom hans händer omkring 1707.
+
+Detta bör bevaras som en central del av hans personkort.
+
+### Klockaregården / Lars Tungård / Träslöv 1
+
+Användaren har samtidigt identifierat:
+
+> **Klockaregården = Lars Tungård = Träslöv 1**
+
+Detta blir nu ännu mer prioriterat.
+
+Eftersom Jöns Andersson Polin med mycket hög sannolikhet signerar kyrkoboken 1707 och är känd som klockare bör gårdsmaterialet för **Lars Tungård/Klockaregården** granskas systematiskt.
+
+Målet är att fastställa:
+
+1. om Jöns Andersson Polin står som boende där,
+2. om Karin Helgesdotter finns i samma hushåll,
+3. vilka barn som står tillsammans med dem,
+4. om ett barn Beata kan beläggas där trots att dopnotisen 1707 saknas,
+5. när familjen först kan placeras på Klockaregården,
+6. hur länge de stannar,
+7. hur deras nätverk kopplas till Nils Olsgård och Skultagården.
+
+### Direktlinjen hålls tydlig
+
+Den direkta släktlinjen ändras inte av 1707-genomgången:
+
+**Jöns Andersson Polin + Karin Helgesdotter**  
+→ **Helena Jönsdotter**  
+→ senare direktlinje
+
+**Beata Jönsdotter Polin** behandlas som syster/sidoperson i familjen och får inte påverka huvudlinjen.
+
+### Nästa steg
+
+**Prioritet 1:** slå upp **Träslöv 1 – Lars Tungård/Klockaregården** i det gårdsvisa materialet.
+
+**Prioritet 2:** kontrollera **1708 års dopbok** efter Beata och andra Polin-barn.
+
+**Prioritet 3:** jämför handstilen i “J. A. Polin”-signaturen med andra säkra förekomster av Jöns Polins namn för att stärka bedömningen att detta är hans egen signatur.
+
+
+## N:o 38 “Börge Anders Hemman i Träslöf” – möjlig Klockaregård/Lars Tungård-miljö
+
+> **Status:** Ny originalbild av grundhushållen på **N:o 38**. Sidan är rubricerad **“Börge Anders Hemman i Träslöf”**. N:o 38 har tidigare prövats som möjlig kandidat till **Lars Tungård/Klockaregården**, men den nya sidan för **N:o 1** visar att bokens interna N:o-numrering inte säkert får likställas med de senare jordeboks-/fastighetsnumren i Träslöv. Kopplingen N:o 38 = Träslöv 1 får därför inte längre användas utan ett oberoende gårdsbelägg. Den slutliga identifikationen bör bekräftas med de löpande gårdsanteckningarna eller ytterligare registermaterial.
+
+### Första hushållet – Börge Andersson
+
+Överst står ett äldre hushåll. Följande läsningar är tydliga eller mycket starka:
+
+- **Börge Andersson**, omkring **75 år**
+- **Anna Arvidsdotter**, omkring **70 år**
+- **Bernt Börgesson**, omkring **35 år**
+- **Inger Olsdotter**, omkring **26 år**
+- flera yngre barn, där åtminstone:
+  - en **Anna Berntsdotter**, omkring **7 år**
+  - ytterligare ett barn omkring **5 år**, namnet osäkert
+  - en **Inger Berntsdotter**, omkring **1 år**
+
+Detta visar att den gård som i rubriken kallas Börge Anders hemman hade ett flergenerationshushåll, med den äldre Börge Andersson och Anna Arvidsdotter tillsammans med sonen Bernt Börgesson, hans hustru Inger Olsdotter och barn.
+
+### Andra hushållet – sannolikt Jöns/Jens Jönsson med familj
+
+I nästa hushåll läses preliminärt:
+
+- **Jöns/Jens Jönsson**, omkring **27 år**
+- **Kirsti/Kerstin Andersdotter**, omkring **27 år**
+- **Kirsti/Kerstin Jönsdotter**, omkring **4 år**
+- **Börta Jönsdotter**, omkring **1½ år**
+
+Detta är **inte Jöns Andersson Polin**. Patronymikonet ser ut att vara **Jönsson**, och familjebilden passar inte vår Polin-familj.
+
+Detta är viktigt att dokumentera uttryckligen så att denne Jöns inte senare blandas ihop med klockaren Jöns Andersson Polin.
+
+### Tredje hushållet – Karin Börgesdotter förekommer, men sannolikt inte vår Valagårdskandidat
+
+Längre ned förekommer ett hushåll där en kvinna mycket tydligt ser ut att heta:
+
+> **Karin Börgesdotter**, omkring **38 år**
+
+I samma grupp finns flera yngre personer, bland annat en **Anna Persdotter** omkring 12 år och en **Kirsti/Kerstin Olsdotter** omkring 9 år; övriga läsningar är ännu osäkra.
+
+Denna Karin Börgesdotter är intressant eftersom vi samtidigt forskar på en **Karin Börgesdotter, född omkring 1673, död 1705 på Valagården**.
+
+Men de ska **inte kopplas samman** utan ytterligare belägg. Grundlistorna i denna volym förefaller ligga omkring 1690. Om kvinnan på N:o 38 verkligen är omkring 38 år vid denna tid skulle hon vara född ungefär på 1650-talet, vilket talar starkt emot att hon är samma kvinna som Valagårdskandidaten född omkring 1673.
+
+Hon registreras därför endast som:
+
+> **Karin Börgesdotter på N:o 38 – separat person tills motsatsen bevisats.**
+
+### Vad sidan säger om Polin-spåret
+
+Grundhushållet på N:o 38 innehåller **ingen säker Jöns Andersson Polin och ingen Karin Helgesdotter**.
+
+Detta är inte oväntat om hushållsförteckningen upprättades omkring 1690:
+- Jöns Polin var då ännu mycket ung,
+- han gifte sig först **1705**,
+- och hans klockartjänst och eventuella bosättning på Klockaregården kan därför ha tillkommit senare.
+
+Det avgörande materialet är alltså **de löpande anteckningarna till N:o 38 efter cirka 1704–1705**, inte bara grundhushållet.
+
+### Nästa kontroll för N:o 38
+
+Sök i de löpande gårdsanteckningarna efter:
+
+- **Jöns / Jonas Andersson Polin / Polijn / Paulin**
+- **Karin / Kari Helgesdotter**
+- ordet **klockare / klockaren**
+- barn med namn som **Beata, Inger, Helena, Anders, Petter, Kerstin/Christina, Anna**
+- daterade notiser efter vigseln **1705-03-19**
+
+Om Jöns Polin dyker upp i N:o 38 efter 1705 skulle det naturligtvis bli viktigt, men **N:o 38 får inte identifieras som Klockaregården/Lars Tungård enbart genom numreringen**. Först ett uttryckligt gårdsnamn, klockartitel eller annan oberoende koppling kan säkra identifikationen.
+
+
+## N:o 38 – löpande gårdsanteckningar 1691–1694
+
+> **Status:** Tre nya originalbilder visar de löpande anteckningarna som hör till **N:o 38 “Börge Anders Hemman i Träslöf”**. Materialet ligger tidsmässigt omkring **1691–1694**, alltså före Jöns Andersson Polins vigsel 1705 och före den period då vi väntar oss att han eventuellt ska dyka upp på Klockaregården/Lars Tungård. Någon säker Polin-notis finns därför inte i just dessa bilder.
+
+### 1691-07-20 – kristningsnotis
+
+Den första tydliga dateringen är:
+
+> **“Anno 1691 d. 20 July …”**
+
+och därefter följer en **kristnings-/dopnotis**. Texten innehåller flera namn och faddrar, men de är ännu för svårlästa för att säkert kopplas till något av de hushåll som redan identifierats på N:o 38.
+
+Det viktiga för gårdshistoriken är att notisen bekräftar att N:o 38-sidan användes som en levande gårdssida där familjehändelser noterades löpande över tid.
+
+### 1692-07-02 – ny kristningsnotis
+
+Nästa daterade notis börjar:
+
+> **“Anno 1692 d. 2 July Christnades …”**
+
+Även denna rör ett barn på eller i direkt anslutning till N:o 38. Flera faddrar nämns. Enstaka namn går att ana, men läsningen är ännu inte tillräckligt säker för att föra in personerna som identifierade individer.
+
+### 1693-03-19 – begravningsnotis
+
+Följande anteckning börjar tydligt:
+
+> **“Anno 1693 d. 19 Martij begrofs …”**
+
+Notisen gäller en person eller ett barn knutet till N:o 38-miljön. Åldersuppgifter anges i år/månader/dagar, vilket visar att prästen i vissa av gårdsanteckningarna registrerade relativt detaljerad livslängd även när personnamnen i dag är svåra att läsa.
+
+### 1693-05-20 – begravningsnotis
+
+Ytterligare en notis börjar:
+
+> **“Anno 1693 d. 20 May begrofs …”**
+
+Texten innehåller en längre åldersangivelse och ett personnamn, men exakt identifikation är ännu osäker. Den ska därför inte kopplas till något av de tidigare hushållen utan ytterligare stöd.
+
+### 1694-04-16 – familje-/begravningsnotis
+
+Den tredje bilden börjar:
+
+> **“Anno 1694 d. 16 April …”**
+
+Notisen är svagare i bildkvalitet men innehåller ett antal namn och familjerelationer. Något säkert Jöns Polin-namn kan inte urskiljas.
+
+Längre ned kommer ytterligare en daterad rad omkring den **24:e samma månad**, följd av fler personuppgifter.
+
+### Viktig kronologisk slutsats
+
+De nya anteckningarna visar att den bevarade löpande texten för N:o 38 i nuläget fortfarande befinner sig i **1690-talets början**.
+
+Det betyder:
+
+- vi är ännu **för tidigt** för att förvänta oss den gifte klockaren **Jöns Andersson Polin** på gården,
+- grundhushållen och 1690-talets familjehändelser ska dokumenteras som **gårdshistorik**, men inte blandas med Polin-linjen,
+- för Polin-spåret måste vi fortsätta framåt i N:o 38-materialet tills vi når **1705 och därefter**.
+
+### Direktlinjen påverkas inte
+
+Ingen person i dessa 1691–1694-notiser flyttas in i den direkta släktlinjen.
+
+De utgör i nuläget bakgrund till **N:o 38 / möjliga Lars Tungård-Klockaregården** och hjälper oss förstå vilka hushåll som föregick Jöns Polins eventuella bosättning där.
+
+### Nästa kontroll på N:o 38
+
+Fortsätt bläddra i de löpande anteckningarna tills följande år nås:
+
+- **1704–1705**
+- **1706–1708**
+- därefter vidare genom 1710-talet
+
+Särskilt söks:
+
+- **Jöns / Jonas Andersson Polin / Polijn**
+- **Karin / Kari Helgesdotter**
+- **klockare / klockaren**
+- Polin-barn
+- eventuell uttrycklig övergång från äldre brukare till Jöns Polins hushåll.
+
+
+## N:o 38 – fortsatt löpande gårdsmaterial 1695–1702
+
+> **Status:** Ytterligare tre originalbilder från de löpande anteckningarna till **N:o 38 “Börge Anders Hemman i Träslöf”** har granskats. Materialet för oss nu fram till **1702**. Fortfarande finns **ingen säker Jöns Andersson Polin, Karin Helgesdotter eller klockare-notis** på de hittills granskade sidorna.
+
+### 1695-05-26 – familje-/begravningsnotis
+
+Överst på den första bilden står tydligt:
+
+> **“A:o 1695 d. 26 Maij …”**
+
+Därefter följer en familjehändelse som verkar röra en person/barn i ett av hushållen på N:o 38. Flera ord är svårlästa och inget namn kan ännu med säkerhet knytas till den direkta släktlinjen.
+
+### 1695-07-28 – dop/kristning
+
+Längre ned står:
+
+> **“A:o 1695 d. 28 July Christnades …”**
+
+Här kan namnet **Anders Andersson** läsas i samband med barnet/familjen. Ett antal faddrar följer. Notisen är viktig för gårdens sociala nätverk men ger inget säkert Polin-spår.
+
+### 1698-03-20 – kristning
+
+Nästa bild börjar:
+
+> **“A:o 1698 d. 20 Martij Christnades …”**
+
+Barnet hör till en familj där faderns namn ser ut att vara **Casper/Casper ...**. Bland faddrarna syns flera namn, däribland kvinnor med förnamn som **Maria** och **Kirstin/Kerstin**. Exakta patronymikon är ännu osäkra.
+
+### 1699-04-30 – Anders Anderssons barn
+
+Därefter kommer en tydligare notis:
+
+> **“Anno 1699 d. 30 Aprilis Christnades Anders Anderssons barn …”**
+
+Fadern **Anders Andersson** är tydlig. Barnets namn och hela fadderlistan är svårare att läsa, men notisen bekräftar att Anders Anderssons familj fortfarande hör till gårdsmiljön under slutet av 1690-talet.
+
+### 1701-06-29 – kristningsnotis
+
+Överst på den tredje bilden står:
+
+> **“A:o 1701 d. 29 Junij Christnades …”**
+
+Flera personer och faddrar nämns. Bland de tydligare elementen finns återkommande gårdsfolk från Träslöv, men **ingen Polin** kan identifieras.
+
+### 1702-09-04 – kristningsnotis
+
+Den sista tydliga notisen börjar:
+
+> **“A:o 1702 d. 4 Septembris Christnades …”**
+
+Notisen innehåller faddrar och flera personnamn, men inget som med säkerhet motsvarar **Jöns Andersson Polin** eller **Karin Helgesdotter**.
+
+### Kronologisk betydelse
+
+Vi har nu följt N:o 38 genom löpande anteckningar från början av 1690-talet till **1702** utan att Jöns Polin dyker upp.
+
+Det är fortfarande förenligt med hypotesen att N:o 38 är **Lars Tungård/Klockaregården**, eftersom:
+
+- Jöns Polin gifter sig först **1705-03-19**,
+- hans eventuella bosättning som gift klockare kan ha skett **efter 1702**,
+- de mest avgörande sidorna är därför fortfarande de som följer efter **1702**, särskilt **1704–1708**.
+
+### Viktig försiktighetsregel
+
+De återkommande personerna Anders Andersson och andra hushåll på N:o 38 ska inte förväxlas med **Jöns Andersson Polin** enbart på grund av patronymikonet Andersson.
+
+Först när namnet **Polin/Polijn/Paulin**, klockartiteln eller en entydig familjekonstellation förekommer får personen kopplas till direktlinjen.
+
+### Nästa steg på N:o 38
+
+Fortsätt direkt vidare efter 1702 och leta särskilt efter:
+
+- **1703–1705**
+- **vigselåret 1705**
+- **1706–1708**
+- namnformen **Jöns/Jonas Andersson Polin**
+- **Karin/Kari Helgesdotter**
+- ordet **klockare**
+- barn till paret
+
+Målet är att hitta den första daterade notisen där Polin-familjen säkert kan placeras på N:o 38.
+
+
+## N:o 1 – Jöns Larssons hemman i Lunden i Träslöv: viktig kontroll av numreringen och en Karin Börgesdotter
+
+> **Status:** Ny originalbild av **N:o 1**. Sidan är rubricerad ungefär:
+>
+> **“N:o 1 – Hemman Jöns Larsson i Lunden i Träslöf”**
+>
+> Bilden är viktig av två skäl: dels visar den att bokens **N:o-numrering måste behandlas som en intern ordnings-/registerföljd tills motsatsen bevisats**, dels finns här en **Karin Börgesdotter, omkring 8 år**, som måste hållas i minnet men ännu inte får kopplas till Karin Börgesdotter på Valagården.
+
+### Första hushållet
+
+Hushållet kan läsas ungefär:
+
+- **Börje Jönsson**, omkring **40 år**
+- **Karin Olsdotter**, omkring **41 år**
+- **Börta Börgesdotter**, omkring **11 år**
+- **Karin Börgesdotter**, omkring **8 år**
+- **Olof Börjesson**, omkring **6 år**
+- **Kerstin/Kirsti Börgesdotter**, omkring **5 år**
+- ytterligare en son, sannolikt **Jörgen/Jöns Börjesson**, omkring **4 år**
+- därefter en senare tillagd notis om ytterligare ett barn **Börta**, med datum **1690-12-26**
+
+Några namnformer är fortfarande preliminära, men **Karin Börgesdotter 8 år** är tydlig.
+
+### Kan denna Karin Börgesdotter vara kvinnan på Valagården?
+
+Vi har ett separat forskningsspår efter:
+
+> **Karin Börgesdotter, född omkring 1673 i Träslöv, död 1705 på Valagården.**
+
+Den Karin Börgesdotter som nu finns på N:o 1 är därför **intressant**, men identiteten är ännu långt ifrån bevisad.
+
+Det viktigaste problemet är åldern. Om grundförteckningen på sidan ligger nära 1690 skulle en åttaårig Karin vara född ungefär **1681–1682**, alltså klart senare än sekundäruppgiften omkring 1673.
+
+Samtidigt visar tillägget **1690-12-26** att grundhushållet kan vara upprättat tidigare och sedan kompletterat. Därför ska födelseåret inte räknas fram för hårt innan vi vet exakt när ålderslistan upprättades.
+
+**Nuvarande status:**
+- samma namn: **ja**
+- rätt socken: **ja**
+- tidsmässigt möjlig i bred mening: **ja**
+- åldern passar sekundäruppgiften 1673: **inte särskilt väl**
+- säker koppling till Valagården: **nej**
+
+Hon registreras därför som **separat kandidat** och får inte föras in i direktlinjen.
+
+### Ett äldre hushåll med fler Ols-/Börges-namn
+
+Längre ned på samma sida finns ytterligare en grupp. Första raden ser ut att avse en äldre änka:
+
+- sannolikt **änkan Börta Börgesdotter**, omkring **82 år**
+
+Därefter följer flera personer med patronymikon som ser ut att vara **Olsdotter/Olsson**, bland annat:
+- en kvinna med Andersdotter-patronymikon (förnamn osäkert),
+- **Börta Olsdotter**
+- **Inger Olsdotter**
+- **Jöns Olsson**
+- **Anders Olsson**
+- ytterligare en Olsdotter
+- ytterligare en Olsson
+
+Dessa personer är värdefulla för gårdens och familjenätverkets historia men ska tills vidare behandlas som **sidopersoner**.
+
+### Viktig metodisk korrigering – N:o-numren
+
+Tidigare gjordes en arbetsmässig inferens:
+
+> N:o 38 → Träslöv nr 1 → Lars Tungård/Klockaregården
+
+Den nya N:o 1-sidan visar att detta är **för osäkert**. Bokens “N:o” kan vara en intern ordningsföljd över hemman/hushåll och behöver inte motsvara de senare fasta numren **Träslöv 1, Träslöv 2 osv.**
+
+Därför gäller framåt:
+
+- **N:o 38 = Börge Anders hemman** är ett säkert originalfynd.
+- **Lars Tungård = Klockaregården = Träslöv 1** är ett separat gårdsfynd.
+- **N:o 38 får inte längre automatiskt identifieras som Lars Tungård/Klockaregården.**
+- För att hitta Klockaregården måste vi söka efter **gårdsnamnet, klockartiteln, Jöns Polin eller en annan oberoende identifierande uppgift**.
+
+Detta är en viktig källkritisk korrigering och skyddar oss från att bygga vidare på en felaktig gårdsidentifikation.
+
+### Nästa steg från denna sida
+
+1. Följ den **Karin Börgesdotter, 8 år**, som finns i Börje Jönssons hushåll och se vad som händer med henne i senare notiser.
+2. Leta efter vigsel/död/flytt som kan avgöra om hon kan vara Valagårdskvinnan.
+3. Fortsätt separat sökning efter **Lars Tungård/Klockaregården** utan att använda N:o 38-numreringen som bevis.
+
+
+## Specialavsnittet för Klockaregården/Prästgården – kontroll 1701–1711
+
+> **Status – KORRIGERAD/FÖRDJUPAD 2026-08-29:** Användaren har via bokens innehållsförteckning lokaliserat ett särskilt avsnitt som anges för **födelse- och dödbok kopplad till Klockaregården samt Prästgården**. De första bilderna gav ingen säker Polin-identifikation, men senare närbilder och fortsatta sidor visar nu **tydliga Polin-familjehändelser**, bland annat en mycket stark Beata-post 1707, den direkta anmodern **Helena 1713** och en stark Petter-post 1721. Den äldre första bedömningen nedan ska därför läsas som forskningshistorik, inte som aktuell slutsats.
+
+### Viktig strukturell slutsats
+
+Detta är ett mycket bättre spår för Polin-familjen än den tidigare arbetsidén att försöka identifiera Klockaregården genom N:o 38.
+
+Bokens innehållsförteckning visar att Klockaregården/Prästgården har ett **eget särskilt kyrkoboksavsnitt**. Därför ska sökningen efter Jöns Polin i första hand göras här, inte genom att försöka likställa bokens interna N:o-numrering med senare gårdsnummer.
+
+Det stärker den källkritiska korrigeringen:
+
+- **N:o 38 = Börge Anders hemman** är ett säkert originalfynd.
+- N:o 38 ska **inte** användas som synonym för Klockaregården.
+- **Klockaregården söks nu i det uttryckligt rubricerade specialavsnittet.**
+
+### Vad de granskade sidorna innehåller
+
+De hittills granskade posterna är ovanligt detaljerade och gäller i flera fall personer ur den kyrkliga, militära eller högre sociala miljön runt Varberg/Träslöv.
+
+Bland de tydliga eller starkt läsbara namnen/titlarna finns exempelvis:
+
+- personer ur familjen **Brinck**
+- **Lars Dahlberg**
+- militära/officiella titlar och faddrar
+- flera långa fadderlistor med personer från Varberg
+
+Detta passar med att Träslöv under perioden hörde samman med **Varbergs slottsförsamling** i samma pastorat och att prästgårdsmaterialet naturligt kan innehålla personer ur den kyrkliga och officiella Varbergsmiljön.
+
+### 1701
+
+En lång notis daterad:
+
+> **1701-07-27**
+
+gäller ett barn i en högrestånds-/ämbetsmannafamilj. Bland namnen kan **Olof/Oluf Brinck** läsas och en lång fadderlista följer.
+
+Ingen säker **Jöns Andersson Polin**, **Karin Helgesdotter** eller Polin-barn identifieras.
+
+### 1703–1704
+
+På nästa sida finns en längre notis från **1703-05-31** och därefter poster från **1704**.
+
+Även här förekommer personer från den kyrkliga/ämbetsmannamässiga miljön. Någon säker Polin-familjehändelse kan ännu inte identifieras.
+
+### 1706–1707
+
+En notis från **1706** innehåller bland annat namnet **Lars Dahlberg**.
+
+Nedanför följer en notis daterad ungefär:
+
+> **1707-07-25**
+
+Ingen säker Jöns/Jonas Polin eller Karin Helgesdotter kan ännu läsas i denna 1707-post.
+
+Det är viktigt eftersom sekundärmaterial placerar **Beata Jönsdotter Polin** på Klockaregården och anger 1707 som födelseår. Den nu granskade 1707-posten ska emellertid **inte** identifieras som Beatas födelsenotis utan ett läsbart namn/föräldrapar.
+
+### 1709–1711
+
+Ytterligare poster finns från:
+
+- **1709-06-30**
+- **1711-02-24**
+
+Även dessa har omfattande namn- och fadderuppgifter, men ingen Polin-identifikation är ännu säker.
+
+### Varför Lars Dahlberg är relevant för förståelsen av avsnittet
+
+Lars Dahlberg var prost/kyrklig person i Varberg och förekommer i material från denna tid. Att hans namn återfinns i just detta specialavsnitt stärker tolkningen att vi befinner oss i en **prästgårds-/kyrklig specialmiljö**, inte på en vanlig gårdssida.
+
+Det hjälper oss att förstå varför flera poster gäller högrestånds- och ämbetsmannafamiljer.
+
+### Polin-spåret – vad som fortfarande är öppet
+
+Det externa ortnamnsregistret till *50 halländska antavlor* placerar:
+
+- **Beata Jönsdotter Polin (1707–1781)** vid **Träslöv, Klockaregården**
+- **Petter Jönsson Polin (1721–1784)** vid **Träslöv, Klockaregården**
+
+Detta är en stark sekundär ledtråd, men originalposterna måste fortfarande hittas.
+
+Därför är nästa mål i detta specialavsnitt:
+
+1. fortsätt **efter 1711**, hela vägen mot **1721**,
+2. leta särskilt efter **Petter Jönsson Polin** omkring 1721,
+3. gå även bakåt/omkring **1707** efter en eventuell separat Beata-post,
+4. sök inte bara efter namnet Polin utan även:
+   - **Jöns / Jonas**
+   - **klockaren**
+   - **Karin Helgesdotter**
+   - patronymikon **Jönsdotter/Jönsson**
+5. dokumentera varje möjlig Polin-post med full fadderlista.
+
+### Direktlinjen
+
+Inget av de fyra nya bilderna ändrar den direkta linjen.
+
+**Jöns Andersson Polin + Karin Helgesdotter**
+→ **Helena Jönsdotter**
+→ fortsatt direktlinje
+
+De nya sidorna är i stället viktiga därför att de lokaliserar **rätt del av kyrkoboken** för att kunna hitta familjens Klockaregårdsperiod.
+
+
+# Fadderregister och Polin-nätverk 1704–1728 – fördjupad genomgång
+
+> **NYTT 2026-08-29.** Detta avsnitt samlar de fadder- och vittnesuppgifter som framkommit i de nya närbilderna från **Skultagårdens material** och det särskilda **Klockaregården/Prästgården-avsnittet**. Läsningarna delas medvetet upp i **säkra/mycket starka**, **sannolika** och **osäkra kandidater**. En person förs aldrig in i den direkta släktlinjen enbart för att han eller hon förekommer som fadder.
+
+## Direktlinjen – hålls separat
+
+Den direkta linjen i detta material är:
+
+**Jöns Andersson Polin** + **Karin Helgesdotter**  
+→ **Helena Jönsdotter**, född mellan 6 och 7 oktober 1713, döpt 8 oktober 1713  
+→ gift 1731 med **Mårten Andersson**  
+→ fortsatt direktlinje mot Valagården.
+
+Syskon, faddrar och andra personer nedan är **sidopersoner/nätverk** om inget annat uttryckligen anges.
+
+---
+
+## 1704-07-10 – Jöns Polin sannolikt fadder vid Skultagården
+
+Det tidigare Skultagårdsmaterialet innehåller en kristningsnotis från **1704-07-10** där en fadder/vittnesperson med mycket hög sannolikhet kan läsas som:
+
+> **Jöns Polin**
+
+Detta ligger **före vigseln 1705-03-19** med Karin Helgesdotter och är därför ett viktigt socialt nätverksfynd.
+
+### Betydelse
+
+Fyndet bevisar inte att Jöns bodde på Skultagården 1704, men visar sannolikt att han redan före sitt äktenskap ingick i den krets av människor som hade anknytning dit. Det är särskilt intressant eftersom:
+
+- Karin Helgesdotters far **Helge Svensson** senare är knuten till Skultagården,
+- Jöns och Karins dotter **Helena** 1731 anges som **piga från Skultagården**,
+- Jöns själv senare blir tydligt dokumenterad som klockare.
+
+Detta kan alltså vara ett tidigt spår av den miljö där Jöns och Karin lärde känna varandra eller där deras familjer redan hade kontakt.
+
+---
+
+## 1707-04-15/17 – Beata, mycket stark Polin-post
+
+En ny tydlig närbild visar en post som läses ungefär:
+
+> **“Anno 1707 d. 15 Aprilis föddes Polins dotter Beata och döptes d. 17 ejusdem …”**
+
+Ordet framför/kring familjenamnet är i den gamla handstilen delvis svårt, men kombinationen av:
+
+- barnet **Beata**,
+- året **1707**,
+- Klockaregårdens specialavsnitt,
+- familjenamnet som mycket starkt ser ut som **Polin**,
+- och en fadder som sannolikt heter **Lars Polin**
+
+gör detta till en **mycket stark kandidat för originalnotisen för Beata Jönsdotter Polin**.
+
+Detta korrigerar den tidigare bedömningen i masterfilen där Beata 1707 ännu stod som ej återfunnen i original.
+
+### Faddrar 1707 – preliminär läsning
+
+**Mycket stark/sannolik:**
+- **Lars Polin** – den viktigaste fadderläsningen i posten.
+- **Sara Larsdotter** – sista kvinnliga fadderraden ser tydligt ut så.
+
+**Sannolika men ej slutligt säkrade:**
+- **Anders [Nils-/Nielsson?]**
+- **Nils [Jöransson/Jönsson?]**
+- **hustrun Bengta [efternamn/patronymikon oklart]**
+- **hustrun Anna [efternamn/patronymikon oklart]**
+
+### Varför Lars Polin är viktig
+
+Om fadderläsningen **Lars Polin** är korrekt har vi en samtida man med samma ovanliga släktnamn i den omedelbara kretsen kring Jöns Polins barn. Det är ett starkt tecken på **familje- eller åtminstone mycket nära social anknytning**, men släktskapet är ännu inte bevisat.
+
+Lars ska därför tills vidare registreras som:
+
+> **Lars Polin – möjlig nära släkting till Jöns Andersson Polin; exakt relation ej fastställd.**
+
+---
+
+## Nytt sidospår: Lars Polin och Maria Jöransdotter – vigselindex i Varberg
+
+Ett nytt indexfynd på nätet visar:
+
+> **Lars Polin**  
+> maka: **Maria Jöransdotter / Joransdotter**  
+> händelse: **vigsel**  
+> ort: **Varberg, Halland**
+
+Posten förekommer i indexmaterial kopplat till bland annat **Halland, Sweden, Church Records, 1615–1860** och **Sweden Marriages, 1630–1920**.
+
+### Källkritisk status
+
+Det exakta vigseldatumet är **inte synligt i den öppna indexträffen**; den placerar vigseln endast inom det breda intervallet **1700–1750**. Därför ska vi inte ange ett exakt år eller datum förrän originalposten eller ett fullständigare index har kontrollerats.
+
+Detta är alltså:
+
+> **starkt indexspår – inte ännu originalbekräftad vigselnotis i vår dokumentation.**
+
+### Betydelse för Polin-forskningen
+
+Fyndet är särskilt intressant eftersom **Lars Polin sannolikt förekommer som fadder vid Beatas dop 1707**.
+
+Det ger två oberoende spår efter en Lars Polin i Varberg/Träslöv-miljön:
+
+1. sannolik fadder hos Polin-familjen 1707,
+2. vigselindex med **Maria Jöransdotter** i Varberg.
+
+Det stärker att Lars är en verklig samtida person i samma regionala Polin-nätverk. Däremot är det **inte bevisat** att han är bror till Jöns Andersson Polin. Den relationen måste sökas i Varbergs kyrkböcker, bouppteckningar, mantal eller andra källor.
+
+**Prioriterad följdfråga:** hitta Lars och Marias vigsel i original och se om titel, hemvist, fäder, vittnen eller andra Polin-personer anges.
+
+---
+
+## 1713-10-06/07 och 1713-10-08 – Helena Jönsdotter, DIREKT LINJE
+
+Denna post är en av de viktigaste i hela Polin-grenen.
+
+Originalet säger i huvudsak:
+
+> **“Anno 1713 emellan d. 6 och 7 Octobris föddes klockarens d. Helena och döptes d. 8 dito …”**
+
+Detta ger:
+
+- **barn:** Helena
+- **född:** under natten/mellan **6 och 7 oktober 1713**
+- **döpt:** **8 oktober 1713**
+- **fadern identifieras genom ämbetet:** **klockaren**
+
+I vårt sammanhang är klockaren **Jöns Andersson Polin**, gift med Karin Helgesdotter. Detta är därför en **direkt originalkälla för vår anmoder Helena Jönsdotter**.
+
+### Faddrar/vittnen till Helena 1713
+
+**Mycket starka/sannolika läsningar:**
+- **Jöns Grimberg**
+- **Mathias Höök**
+- **Olof Börgesson**, med ortsangivelse som mycket sannolikt är **i Lunden**
+- **Anders Gillberg/Cillberg** – efternamnets första bokstav är svår, men -illberg är tydligt.
+- **Elisabet Bruhn**
+- en kvinna med **Olsdotter** som patronymikon, angiven **i Warberg/Varberg**
+- en kvinnlig fadder med patronymikon **Larsdotter**
+
+**Intressanta men osäkra:**
+- en **Börge Jöransson/Jörsson** med svårläst ort,
+- en kvinna vars namn mycket väl kan läsas **Agneta Bolin/Polin**.
+
+Den möjliga **Agneta Polin** är särskilt värd att kontrollera eftersom Varbergs indexmaterial också visar andra personer med namnet Polin under samma tid. Hon får dock **inte** registreras som släkting förrän läsningen och identiteten är säkrad.
+
+### Vad faddergruppen säger
+
+Helena får ett fadderlag som tydligt sträcker sig utanför ett enda bondhushåll. Där finns:
+
+- män med borgerliga/ämbetsmannamässiga namn,
+- personer från **Varberg**,
+- personer från **Lunden**,
+- och möjligen ytterligare en **Polin**.
+
+Det passar väl med Jöns Polins ställning som klockare och med hans kända ursprung från Varberg. Fadderkretsen kan därför bli ett av våra bästa verktyg för att rekonstruera hans släkt och sociala nätverk.
+
+---
+
+## 1721-10-31 / 1721-11-05 – Petter, stark Polin-familjepost
+
+En senare post lyder i huvudsak:
+
+> **“Anno 1721 d. 31 Octobris föddes … son Petter, som döptes d. 5 Novemb. ejusdem.”**
+
+Sekundärmaterial placerar **Petter Jönsson Polin (1721–1784)** vid **Träslöv, Klockaregården**, vilket gör denna post till en mycket stark kandidat för hans originalnotis.
+
+### Faddrar/vittnen 1721 – preliminär läsning
+
+Fadderlistan är lång och flera namn är svåra.
+
+**Sannolika/tydliga delar:**
+- en man vars namn ser ut som **Olof Warlius/Warenius** – stavningen osäker,
+- **Anders Nilsson**, med anknytning till **Klastorp**,
+- **Olof i Lunden**,
+- **Greta Bolin/Polin** – mycket intressant men efternamnsläsningen behöver jämföras med andra Polin-namn,
+- **Malina/Malena Larsdotter**,
+- ytterligare kvinnor och män från Klastorp/Träslöv.
+
+Det finns också en kvinnlig titel/rad som kan innehålla **Madam/Jungfru … Paulin/Polin**, men läsningen är ännu för osäker för normaliserad registrering.
+
+### Forskningsvärde
+
+Om **Greta Polin** och/eller ytterligare en kvinnlig Polin kan säkras får vi ett tydligare kluster av personer med samma släktnamn kring Jöns familj:
+
+- Jöns Andersson Polin
+- Lars Polin
+- möjlig Agneta Polin
+- möjlig Greta Polin
+- eventuellt ytterligare Polin/Paulin-person.
+
+Det kan vara nyckeln till att kartlägga **Jöns syskon eller nära släktingar i Varberg**.
+
+---
+
+## 1725-08-12/15 – dottern Kerstin/Kirsti och möjlig Mårten Andersson som fadder
+
+Posten från 1725 kan i huvudsak läsas:
+
+> **“A:o 1725 d. 12 Augusti … föddes min dotter … som döptes d. 15 dito. Kallades Kirsti/Kerstin …”**
+
+Barnets namn ser starkt ut som **Kirsti/Kerstin**. Det passar den Polin-barnserie där en Kerstin/Christina förekommer omkring 1725.
+
+### Möjligt mycket viktigt fadderfynd
+
+I den manliga fadderlistan finns en rad som **kan** läsas:
+
+> **Mårten Anders[son]**
+
+Detta är ännu **inte tillräckligt säkert för att registrera som bekräftat**.
+
+Men om läsningen visar sig vara korrekt är den genealogiskt mycket betydelsefull:
+
+- Mårten Andersson gifter sig 1731 med **Helena Jönsdotter**,
+- en fadderroll redan 1725 skulle visa att Mårten fanns i **Polin-familjens nära sociala krets minst sex år före vigseln**,
+- detta skulle kunna hjälpa oss förstå hur Mårten och Helena kom i kontakt med varandra och hur Mårten senare knöts till Skultagård/Valagårdsmiljön.
+
+**Status:** prioriterad omläsning – **inte bekräftat fynd ännu**.
+
+Andra personer i fadderlistan ser bland annat ut att ha anknytning till **Nygård** och **Klastorp**, vilket gör posten extra intressant för Mårten-spåret eftersom vi även söker honom i Nygård/Börge Börgesgård.
+
+---
+
+## 1728-01-21/26 – dottern Anna
+
+En post från 1728 anger i huvudsak:
+
+> **21 januari 1728** – en dotter **Anna** föds  
+> **26 januari** – dop
+
+Fadderlistan är lång och innehåller flera män och kvinnor från den lokala Träslöv/Varberg-miljön. De enskilda namnen är ännu inte tillräckligt säkra för en full normaliserad lista, men posten är viktig eftersom den visar att familjen fortfarande är aktiv i samma kyrkliga/klockareanknutna miljö vid slutet av 1720-talet.
+
+Anna hör till **sidolinjen**, inte till vår direkta ana.
+
+---
+
+## Samlad fadderbild – vad börjar framträda?
+
+Faddrarna kring Polin-barnen ger en allt tydligare bild av familjens sociala värld.
+
+### 1. Stark Varbergskoppling
+
+Flera vittnen/faddrar bär namn eller ortsangivelser som pekar mot **Varberg**. Detta harmonierar med uppgiften att Jöns Polin **kom från Varberg**.
+
+### 2. Flera möjliga Polin-personer
+
+Vi har nu potentiellt:
+
+- **Lars Polin** – sannolik fadder 1707 och separat vigselindex i Varberg med Maria Jöransdotter.
+- **Agneta Polin/Bolin** – möjlig fadder 1713.
+- **Greta Polin/Bolin** – möjlig/sannolik fadder 1721.
+- ytterligare möjlig kvinnlig **Paulin/Polin** i 1721 års fadderlista.
+
+Detta är ännu inte ett färdigt släktträd, men det är ett **kluster som bör undersökas systematiskt i Varberg**.
+
+### 3. Lunden återkommer
+
+**Lunden** förekommer bland faddrarna. Det är intressant eftersom flera tidigare Träslöv-källor också har personer i Lunden. Återkommande faddrar därifrån kan ge släkt- eller grannskapsband.
+
+### 4. Möjlig kontakt mellan Mårten och Polin-familjen före 1731
+
+Den möjliga **Mårten Andersson** i 1725 års fadderlista är ett av de mest spännande osäkra fynden. Detta måste granskas igen innan det får någon bevisstatus.
+
+---
+
+## Källkritisk rättelse av tidigare arbetsläge
+
+Två äldre slutsatser i masterfilen är nu överspelade:
+
+1. **“Beata 1707 har inte hittats i original.”**  
+   → Senare närbild visar en **mycket stark Beata/Polin-post 15/17 april 1707**.
+
+2. **“Inga säkra Polin-familjehändelser har identifierats i specialavsnittet för Klockaregården/Prästgården.”**  
+   → Fortsatta bilder visar nu **Beata 1707, Helena 1713 och Petter 1721** som starka Polin-familjeposter.
+
+Forskningshistoriken får stå kvar i filen, men dessa två nya slutsatser är de som gäller framåt.
+
+---
+
+## Nästa fadderrelaterade arbetsordning
+
+1. **Hitta Lars Polin + Maria Jöransdotters vigsel i original i Varberg.**
+2. Försök bekräfta om Lars är **bror/släkting** till Jöns Andersson Polin.
+3. Kontrollera den möjliga **Agneta Polin** i Helenas fadderlista 1713.
+4. Kontrollera **Greta Polin** och den möjliga ytterligare Polin-kvinnan 1721.
+5. Zooma/kontrastbehandla 1725 års notis för att avgöra om det verkligen står **Mårten Andersson**.
+6. Bygg därefter ett separat **Polin-nätverk** med kolumnerna:
+   - person
+   - första belägg
+   - relation/roll
+   - ort/gård
+   - fadder hos vilket barn
+   - källstatus
+   - möjlig relation till Jöns.
+
+
+## Versionsnotis v102
+
+Denna version kompletterar v101 med den fördjupade faddergenomgång som inte hann sparas efter den tidigare bildanalysen. Särskilt viktiga nytillskott:
+
+- Beata 1707 är nu en mycket stark originalkandidat.
+- Lars Polin identifieras som sannolik fadder och kopplas till ett separat vigselindex med Maria Jöransdotter i Varberg.
+- Helenas originalpost 1713 och hennes fadderkrets dokumenteras utförligare.
+- Petters post 1721 och möjliga Polin-faddrar dokumenteras.
+- möjlig Mårten Andersson som fadder 1725 markeras som prioriterad men **obekräftad**.
+- tidigare slutsatser som blivit överspelade markeras uttryckligen i stället för att raderas.
+
