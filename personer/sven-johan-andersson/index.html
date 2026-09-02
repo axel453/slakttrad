@@ -278,10 +278,25 @@
   .detail-summary{margin:18px 0 0;max-width:760px;font-size:1.08rem;line-height:1.62;color:var(--ink-soft)}
   .detail-generation-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}
   .detail-generation-nav .detail-link-card:last-child{text-align:right}
+  .detail-media-summary{margin:-5px 0 14px;color:var(--ink-soft);font-size:13px}
   .detail-media-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-  .detail-media{margin:0;border:1px solid var(--rule);border-radius:10px;overflow:hidden;background:var(--surface)}
-  .detail-media img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--surface-2)}
+  .detail-media{margin:0;border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--surface)}
+  .detail-media-button{display:block;width:100%;padding:0;border:0;background:transparent;color:inherit;text-align:left;cursor:zoom-in}
+  .detail-media-button:focus-visible{outline:3px solid rgba(47,106,73,.28);outline-offset:2px}
+  .detail-media img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--surface-2);transition:transform .2s ease}
+  .detail-media-button:hover img{transform:scale(1.025)}
   .detail-media figcaption{padding:9px 11px;font-size:12px;line-height:1.45;color:var(--ink-soft)}
+  .media-lightbox{position:fixed;inset:0;z-index:120;display:grid;grid-template-columns:56px minmax(0,1fr) 56px;grid-template-rows:56px minmax(0,1fr) auto;background:rgba(10,18,14,.94);color:#fff;padding:16px}
+  .media-lightbox[hidden]{display:none}
+  .media-lightbox-close,.media-lightbox-nav{border:0;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;display:grid;place-items:center;border-radius:6px;font-size:30px;line-height:1}
+  .media-lightbox-close{grid-column:3;grid-row:1;width:44px;height:44px;justify-self:end}
+  .media-lightbox-nav{grid-row:2;width:44px;height:54px;align-self:center}
+  .media-lightbox-prev{grid-column:1}.media-lightbox-next{grid-column:3}
+  .media-lightbox-figure{grid-column:2;grid-row:1/4;min-width:0;min-height:0;margin:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:14px;align-items:center}
+  .media-lightbox-image{display:block;max-width:100%;max-height:calc(100vh - 115px);width:auto;height:auto;margin:auto;object-fit:contain}
+  .media-lightbox-caption{text-align:center;max-width:780px;margin:0 auto;font-size:14px;line-height:1.5;color:#e5ebe7}
+  .media-lightbox-count{display:block;margin-top:4px;color:#aebbb3;font-size:11px}
+  body.lightbox-open{overflow:hidden}
   .evidence-list{display:grid;gap:9px;margin:0;padding:0;list-style:none}
   .evidence-item{border-left:3px solid var(--thread);padding:8px 0 8px 12px;line-height:1.55;color:var(--ink)}
   .evidence-item.uncertain{border-left-style:dashed;border-left-color:#A36A21;background:#FFF9EF;padding-right:10px}
@@ -497,7 +512,7 @@
     </div>
   </div>
 
-  <section class="detail-page open" id="detailPage" data-page="detail" aria-live="polite"><div class="detail-hero"><div><nav class="breadcrumbs" aria-label="Brödsmulor"><a href="/">Startsida</a><span>/</span><a href="/personarkiv/">Personarkiv</a><span>/</span><strong>Sven Johan Andersson</strong></nav><p class="detail-kicker">Personsida</p><h1 class="detail-title">Sven Johan Andersson</h1><p class="detail-subtitle">Syskon · född 1835-04-03</p><p class="detail-summary">Sven Johan föds 3 april 1835 inom äktenskapet. <a class="entity-link" href="/personer/johanna/">Johanna</a> var sannolikt gravid vid vigseln 1834.</p></div></div><div class="detail-layout"><main class="detail-main"><section class="detail-section"><h2>Livshistoria</h2><div class="detail-story"><p>Sven Johan föds 3 april 1835 inom äktenskapet. <a class="entity-link" href="/personer/johanna/">Johanna</a> var sannolikt gravid vid vigseln 1834.</p></div></section><section class="detail-section"><h2>Livslinje</h2><p class="detail-empty">Ingen tidslinje är inlagd ännu.</p></section></main><aside class="detail-side"><section class="detail-section"><h2>Fakta</h2><p class="detail-empty">Ingen faktaruta är inlagd ännu.</p></section><section class="detail-section"><h2>Familjerelationer</h2><div class="detail-link-grid"><a class="detail-link-card" href="/personer/anders-carlsson/"><span class="detail-link-title">Anders Carlsson</span><span class="detail-link-meta">1806-04-15 · Direkt linje</span></a><a class="detail-link-card" href="/personer/johanna-svensdotter/"><span class="detail-link-title">Johanna Svensdotter</span><span class="detail-link-meta">1808-01-12 · Maka</span></a></div></section></aside></div></section>
+  <section class="detail-page open" id="detailPage" data-page="detail" aria-live="polite"><div class="detail-hero"><div><nav class="breadcrumbs" aria-label="Brödsmulor"><a href="/">Startsida</a><span>/</span><a href="/personarkiv/">Personarkiv</a><span>/</span><strong>Sven Johan Andersson</strong></nav><p class="detail-kicker">Personsida</p><h1 class="detail-title">Sven Johan Andersson</h1><p class="detail-subtitle">Syskon · född 1835-04-03</p><p class="detail-summary">Sven Johan föds 3 april 1835 inom äktenskapet. <a class="entity-link" href="/personer/johanna/">Johanna</a> var sannolikt gravid vid vigseln 1834.</p></div></div><div class="detail-layout"><main class="detail-main"><section class="detail-section"><h2>Livshistoria</h2><div class="detail-story"><p>Sven Johan föds 3 april 1835 inom äktenskapet. <a class="entity-link" href="/personer/johanna/">Johanna</a> var sannolikt gravid vid vigseln 1834.</p></div></section><section class="detail-section"><h2>Livslinje</h2><p class="detail-empty">Ingen tidslinje är inlagd ännu.</p></section><section class="detail-section"><h2>Bilder</h2><p class="detail-empty">Inga bilder är inlagda ännu.</p></section></main><aside class="detail-side"><section class="detail-section"><h2>Fakta</h2><p class="detail-empty">Ingen faktaruta är inlagd ännu.</p></section><section class="detail-section"><h2>Familjerelationer</h2><div class="detail-link-grid"><a class="detail-link-card" href="/personer/anders-carlsson/"><span class="detail-link-title">Anders Carlsson</span><span class="detail-link-meta">1806-04-15 · Direkt linje</span></a><a class="detail-link-card" href="/personer/johanna-svensdotter/"><span class="detail-link-title">Johanna Svensdotter</span><span class="detail-link-meta">1808-01-12 · Maka</span></a></div></section></aside></div></section>
 
   <section class="block" id="personarkiv" data-page="personarkiv">
     <p class="sec-kicker">Personarkiv</p>
@@ -604,6 +619,16 @@
   </nav>
   Nilsson/Bengtsson släktträd · byggd från masterfilen 2026-07-06 · bevisstatus: bekräftat, starkt sannolikt, arbetsantagande och öppet spår
 </footer>
+
+<div class="media-lightbox" id="mediaLightbox" role="dialog" aria-modal="true" aria-label="Bildvisning" hidden>
+  <button class="media-lightbox-close" type="button" data-gallery-close aria-label="Stäng bildvisning" title="Stäng">×</button>
+  <button class="media-lightbox-nav media-lightbox-prev" type="button" data-gallery-prev aria-label="Föregående bild" title="Föregående bild">‹</button>
+  <figure class="media-lightbox-figure">
+    <img class="media-lightbox-image" id="mediaLightboxImage" alt="">
+    <figcaption class="media-lightbox-caption"><span id="mediaLightboxCaption"></span><span class="media-lightbox-count" id="mediaLightboxCount"></span></figcaption>
+  </figure>
+  <button class="media-lightbox-nav media-lightbox-next" type="button" data-gallery-next aria-label="Nästa bild" title="Nästa bild">›</button>
+</div>
 
 <div class="scrim" id="scrim"></div>
 <aside class="panel" id="panel" aria-hidden="true" role="dialog" aria-label="Livshistoria">

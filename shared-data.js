@@ -76,6 +76,37 @@
   }
   async function signOut(){ if(state.client) await state.client.auth.signOut(); }
 
+  function safeMediaName(name){
+    const parts = String(name || 'bild.jpg').split('.');
+    const extension = parts.length > 1 ? `.${parts.pop().toLowerCase()}` : '';
+    const stem = parts.join('.').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'bild';
+    return `${stem}${extension}`;
+  }
+
+  async function uploadPublicImage(file, entityType, entityId, caption=''){
+    if(!state.client || !state.user) throw new Error('Du behöver logga in först.');
+    if(!['editor','admin'].includes(state.profile?.role)) throw new Error('En redaktör behöver publicera bilder i det offentliga galleriet.');
+    if(!file || !['image/jpeg','image/png','image/webp'].includes(file.type)) throw new Error('Välj en bild i JPG-, PNG- eller WebP-format.');
+    if(file.size > 15 * 1024 * 1024) throw new Error('Bilden får vara högst 15 MB.');
+    if(!['person','place'].includes(entityType) || !entityId) throw new Error('Bilden behöver kopplas till en person eller gård.');
+    const token = crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const path = `${state.user.id}/${entityType}/${entityId}/${token}-${safeMediaName(file.name)}`;
+    const bucket = state.client.storage.from('family-public-media');
+    const {error:uploadError} = await bucket.upload(path,file,{cacheControl:'3600',upsert:false,contentType:file.type});
+    if(uploadError) throw uploadError;
+    const {data:urlData} = bucket.getPublicUrl(path);
+    const mediaRow = {
+      storage_path:`family-public-media/${path}`,caption:caption || null,visibility:'public',publish_status:'published',uploaded_by:state.user.id,
+      ...(entityType === 'person' ? {person_id:entityId} : {place_id:entityId})
+    };
+    const {error:metadataError} = await state.client.from('media').insert(mediaRow);
+    if(metadataError){
+      await bucket.remove([path]);
+      throw metadataError;
+    }
+    return {src:urlData.publicUrl,caption:caption || '',storagePath:mediaRow.storage_path};
+  }
+
   async function loadAdminOverview(){
     if(!state.client || !state.user) throw new Error('Du behöver logga in först.');
     const role = state.profile?.role || 'contributor';
@@ -162,7 +193,7 @@
     return {mode:'pending'};
   }
 
-  window.FamilyData = {init,status,loadSnapshot,loadAdminOverview,sendMagicLink,signOut,submitChange,reviewChange,updateMemberRole};
+  window.FamilyData = {init,status,loadSnapshot,loadAdminOverview,sendMagicLink,signOut,uploadPublicImage,submitChange,reviewChange,updateMemberRole};
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded',init,{once:true});
   else init();
 })();

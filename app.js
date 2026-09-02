@@ -873,8 +873,63 @@ function normalizedImages(record, includeProfile=false){
 function detailImagesHTML(record, includeProfile=false){
   const images = normalizedImages(record, includeProfile);
   if(!images.length) return '<p class="detail-empty">Inga bilder är inlagda ännu.</p>';
-  return `<div class="detail-media-grid">${images.map(item=>`<figure class="detail-media"><img src="${escapeHtml(item.src)}" alt="${escapeHtml(item.caption || record.name || "Arkivbild")}" loading="lazy" onerror="this.closest('figure').style.display='none'"><figcaption>${escapeHtml(item.caption || "Bild ur familjearkivet")}</figcaption></figure>`).join("")}</div>`;
+  return `<p class="detail-media-summary">${images.length} ${images.length === 1 ? "bild" : "bilder"} i galleriet</p><div class="detail-media-grid">${images.map((item,index)=>`<figure class="detail-media"><button class="detail-media-button" type="button" data-gallery-item data-gallery-index="${index}" data-gallery-src="${escapeHtml(item.src)}" data-gallery-caption="${escapeHtml(item.caption || "Bild ur familjearkivet")}" aria-label="Öppna bild ${index + 1} av ${images.length}"><img src="${escapeHtml(item.src)}" alt="${escapeHtml(item.caption || record.name || "Arkivbild")}" loading="lazy" onerror="this.closest('figure').style.display='none'"><figcaption>${escapeHtml(item.caption || "Bild ur familjearkivet")}</figcaption></button></figure>`).join("")}</div>`;
 }
+let activeGallery = [];
+let activeGalleryIndex = 0;
+let activeGalleryTrigger = null;
+function updateLightbox(){
+  const item = activeGallery[activeGalleryIndex];
+  const lightbox = document.getElementById('mediaLightbox');
+  if(!item || !lightbox) return;
+  const image = document.getElementById('mediaLightboxImage');
+  image.src = item.src;
+  image.alt = item.caption || `Bild ${activeGalleryIndex + 1}`;
+  document.getElementById('mediaLightboxCaption').textContent = item.caption || "Bild ur familjearkivet";
+  document.getElementById('mediaLightboxCount').textContent = `${activeGalleryIndex + 1} av ${activeGallery.length}`;
+  lightbox.querySelector('[data-gallery-prev]').hidden = activeGallery.length < 2;
+  lightbox.querySelector('[data-gallery-next]').hidden = activeGallery.length < 2;
+}
+function openLightbox(button){
+  const grid = button.closest('.detail-media-grid');
+  const buttons = [...(grid?.querySelectorAll('[data-gallery-item]') || [])];
+  activeGallery = buttons.map(item=>({src:item.dataset.gallerySrc,caption:item.dataset.galleryCaption}));
+  activeGalleryIndex = Math.max(0, buttons.indexOf(button));
+  activeGalleryTrigger = button;
+  const lightbox = document.getElementById('mediaLightbox');
+  if(!lightbox || !activeGallery.length) return;
+  updateLightbox();
+  lightbox.hidden = false;
+  document.body.classList.add('lightbox-open');
+  lightbox.querySelector('[data-gallery-close]').focus();
+}
+function closeLightbox(){
+  const lightbox = document.getElementById('mediaLightbox');
+  if(!lightbox || lightbox.hidden) return;
+  lightbox.hidden = true;
+  document.body.classList.remove('lightbox-open');
+  if(activeGalleryTrigger?.isConnected) activeGalleryTrigger.focus();
+}
+function moveLightbox(direction){
+  if(activeGallery.length < 2) return;
+  activeGalleryIndex = (activeGalleryIndex + direction + activeGallery.length) % activeGallery.length;
+  updateLightbox();
+}
+document.addEventListener('click',event=>{
+  const item = event.target.closest('[data-gallery-item]');
+  if(item){ openLightbox(item); return; }
+  if(event.target.closest('[data-gallery-close]')) closeLightbox();
+  else if(event.target.closest('[data-gallery-prev]')) moveLightbox(-1);
+  else if(event.target.closest('[data-gallery-next]')) moveLightbox(1);
+  else if(event.target.id === 'mediaLightbox') closeLightbox();
+});
+document.addEventListener('keydown',event=>{
+  const lightbox = document.getElementById('mediaLightbox');
+  if(!lightbox || lightbox.hidden) return;
+  if(event.key === 'Escape') closeLightbox();
+  else if(event.key === 'ArrowLeft') moveLightbox(-1);
+  else if(event.key === 'ArrowRight') moveLightbox(1);
+});
 function personGenerationNavHTML(id){
   const p = PEOPLE[id];
   const older = (p.parents || []).filter(pid=>PEOPLE[pid] && DIRECT_HEIRS.has(pid));

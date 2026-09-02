@@ -108,6 +108,23 @@ function evidenceList(items, uncertain=false){
   if(!items?.length) return '<p class="detail-empty">Inga uppgifter inlagda ännu.</p>';
   return `<ul class="evidence-list">${items.map(item=>`<li class="evidence-item${uncertain ? " uncertain" : ""}">${linkEntities(item)}</li>`).join("")}</ul>`;
 }
+function galleryImages(record, includeProfile=false){
+  const items=(record.images||[]).map(item=>{
+    if(typeof item === "string"){
+      const [src,...caption]=item.split("|");
+      return {src:src.trim(),caption:caption.join("|").trim()};
+    }
+    return {src:item?.src||item?.url||"",caption:item?.caption||item?.alt||""};
+  }).filter(item=>item.src);
+  const profile=record.photo||record.image;
+  if(includeProfile&&profile&&!/person-placeholder\.svg$/i.test(profile)&&!items.some(item=>item.src===profile)) items.unshift({src:profile,caption:`Porträtt av ${record.name||"personen"}`});
+  return items;
+}
+function gallerySection(record, includeProfile=false){
+  const items=galleryImages(record,includeProfile);
+  if(!items.length) return '<p class="detail-empty">Inga bilder är inlagda ännu.</p>';
+  return `<p class="detail-media-summary">${items.length} ${items.length===1?'bild':'bilder'} i galleriet</p><div class="detail-media-grid">${items.map((item,index)=>`<figure class="detail-media"><button class="detail-media-button" type="button" data-gallery-item data-gallery-index="${index}" data-gallery-src="${escapeHtml(item.src)}" data-gallery-caption="${escapeHtml(item.caption||'Bild ur familjearkivet')}" aria-label="Öppna bild ${index+1} av ${items.length}"><img src="${escapeHtml(item.src)}" alt="${escapeHtml(item.caption||record.name||'Arkivbild')}" loading="lazy"><figcaption>${escapeHtml(item.caption||'Bild ur familjearkivet')}</figcaption></button></figure>`).join('')}</div>`;
+}
 function emigrantTree(branch){
   const root = PEOPLE[branch.rootPersonId];
   const descendants = branch.knownDescendants || [];
@@ -120,7 +137,7 @@ function personArticle(id){
   const story = person.story?.length ? person.story : ["Ännu inte utforskad."];
   const relations = [...(person.parents || []),PARTNER[id],...(person.children || [])].filter(Boolean);
   const emigrantLink = EMIGRANT_BRANCHES[id] ? `<section class="detail-section"><h2>Emigrantgren</h2><div class="detail-link-grid"><a class="detail-link-card" href="${emigrantUrl(id)}"><span class="detail-link-title">Öppna sekundärt släktträd</span><span class="detail-link-meta">${escapeHtml(EMIGRANT_BRANCHES[id].destinationCountry || "Emigrantarkivet")}</span></a></div></section>` : "";
-  return `<div class="detail-hero"><div><nav class="breadcrumbs" aria-label="Brödsmulor"><a href="/">Startsida</a><span>/</span><a href="/personarkiv/">Personarkiv</a><span>/</span><strong>${escapeHtml(person.name)}</strong></nav><p class="detail-kicker">Personsida</p><h1 class="detail-title">${escapeHtml(person.name)}</h1><p class="detail-subtitle">${escapeHtml([person.role,person.born ? `född ${person.born}`:"",person.died ? `avliden ${person.died}`:""].filter(Boolean).join(" · "))}</p><p class="detail-summary">${linkEntities(story[0])}</p></div></div><div class="detail-layout"><main class="detail-main"><section class="detail-section"><h2>Livshistoria</h2><div class="detail-story">${story.map(text=>`<p>${linkEntities(text)}</p>`).join("")}</div></section><section class="detail-section"><h2>Livslinje</h2>${timelineList(person.timeline || [])}</section></main><aside class="detail-side"><section class="detail-section"><h2>Fakta</h2>${factsList(facts)}</section><section class="detail-section"><h2>Familjerelationer</h2>${listLinks(relations,"Inga relationer inlagda ännu.")}</section>${emigrantLink}</aside></div>`;
+  return `<div class="detail-hero"><div><nav class="breadcrumbs" aria-label="Brödsmulor"><a href="/">Startsida</a><span>/</span><a href="/personarkiv/">Personarkiv</a><span>/</span><strong>${escapeHtml(person.name)}</strong></nav><p class="detail-kicker">Personsida</p><h1 class="detail-title">${escapeHtml(person.name)}</h1><p class="detail-subtitle">${escapeHtml([person.role,person.born ? `född ${person.born}`:"",person.died ? `avliden ${person.died}`:""].filter(Boolean).join(" · "))}</p><p class="detail-summary">${linkEntities(story[0])}</p></div></div><div class="detail-layout"><main class="detail-main"><section class="detail-section"><h2>Livshistoria</h2><div class="detail-story">${story.map(text=>`<p>${linkEntities(text)}</p>`).join("")}</div></section><section class="detail-section"><h2>Livslinje</h2>${timelineList(person.timeline || [])}</section><section class="detail-section"><h2>Bilder</h2>${gallerySection(person,true)}</section></main><aside class="detail-side"><section class="detail-section"><h2>Fakta</h2>${factsList(facts)}</section><section class="detail-section"><h2>Familjerelationer</h2>${listLinks(relations,"Inga relationer inlagda ännu.")}</section>${emigrantLink}</aside></div>`;
 }
 function placeMatchesPerson(place, person){
   const haystack = [person.place,...(person.facts || []).flat(),...(person.story || []),...(person.timeline || []).flat()].filter(Boolean).join(" ").toLocaleLowerCase("sv");
@@ -130,7 +147,7 @@ function placeArticle(place){
   const people = Array.isArray(place.relatedPersonIds) ? place.relatedPersonIds.filter(id=>PEOPLE[id]) : Object.entries(PEOPLE).filter(([,person])=>placeMatchesPerson(place,person)).map(([id])=>id);
   const story = place.story?.length ? place.story : [place.note || "Ingen längre platsbeskrivning är inlagd ännu."];
   const facts = [["Område",place.area || "Ej angivet"],...(place.facts || [])];
-  return `<div class="detail-hero"><div><nav class="breadcrumbs" aria-label="Brödsmulor"><a href="/">Startsida</a><span>/</span><a href="/gardar/">Gårdsarkiv</a><span>/</span><strong>${escapeHtml(place.name)}</strong></nav><p class="detail-kicker">Gårdssida</p><h1 class="detail-title">${escapeHtml(place.name)}</h1><p class="detail-subtitle">${escapeHtml(place.area || "")}</p><p class="detail-summary">${linkEntities(story[0])}</p></div></div><div class="detail-layout"><main class="detail-main"><section class="detail-section"><h2>Platsens historia</h2><div class="detail-story">${story.map(text=>`<p>${linkEntities(text)}</p>`).join("")}</div></section><section class="detail-section"><h2>Tidslinje</h2>${timelineList(place.timeline || [])}</section></main><aside class="detail-side"><section class="detail-section"><h2>Fakta</h2>${factsList(facts)}</section><section class="detail-section"><h2>Kopplade personer</h2>${listLinks(people,"Inga personer är kopplade hit ännu.")}</section></aside></div>`;
+  return `<div class="detail-hero"><div><nav class="breadcrumbs" aria-label="Brödsmulor"><a href="/">Startsida</a><span>/</span><a href="/gardar/">Gårdsarkiv</a><span>/</span><strong>${escapeHtml(place.name)}</strong></nav><p class="detail-kicker">Gårdssida</p><h1 class="detail-title">${escapeHtml(place.name)}</h1><p class="detail-subtitle">${escapeHtml(place.area || "")}</p><p class="detail-summary">${linkEntities(story[0])}</p></div></div><div class="detail-layout"><main class="detail-main"><section class="detail-section"><h2>Platsens historia</h2><div class="detail-story">${story.map(text=>`<p>${linkEntities(text)}</p>`).join("")}</div></section><section class="detail-section"><h2>Tidslinje</h2>${timelineList(place.timeline || [])}</section><section class="detail-section"><h2>Bilder</h2>${gallerySection(place)}</section></main><aside class="detail-side"><section class="detail-section"><h2>Fakta</h2>${factsList(facts)}</section><section class="detail-section"><h2>Kopplade personer</h2>${listLinks(people,"Inga personer är kopplade hit ännu.")}</section></aside></div>`;
 }
 function emigrantArticle(id){
   const branch = EMIGRANT_BRANCHES[id];

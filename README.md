@@ -40,7 +40,7 @@ Kör generatorn igen efter ändringar i grunddatan. Den skapar en HTML-sida för
 Webbplatsen använder Supabase för inloggning, gemensamma poster, roller och ändringshistorik. `data.js` ligger kvar som publicerbar grunddata och reserv för den publika läsvyn.
 
 1. Skapa ett Supabase-projekt.
-2. Öppna SQL Editor och kör `supabase/migrations/001_family_archive.sql`.
+2. Öppna SQL Editor och kör migreringarna i nummerordning. För bildgallerier behövs även `supabase/migrations/004_public_media_galleries.sql`.
 3. Skapa den aktuella importfilen:
 
    ```bash
@@ -64,7 +64,9 @@ Webbplatsen använder Supabase för inloggning, gemensamma poster, roller och ä
    update public.profiles set role = 'admin' where id = 'DITT_USER_ID';
    ```
 
-Vanliga familjemedlemmar får rollen `contributor` och skickar ändringsförslag. Roller `editor` och `admin` kan publicera person- och platsändringar direkt. Bilder lagras i den privata bucketen `family-media`; metadata, synlighet och koppling till person eller plats finns i tabellen `media`.
+Vanliga familjemedlemmar får rollen `contributor` och skickar ändringsförslag. Roller `editor` och `admin` kan publicera person- och platsändringar direkt. Privata original kan lagras i `family-media`. Bilder som ska visas öppet i person- och gårdsgallerier laddas upp till `family-public-media`; metadata och koppling till person eller plats sparas i tabellen `media`.
+
+I Familjearkivets redigeringsvy visas galleriet som miniatyrer. En redaktör kan ladda upp JPG-, PNG- och WebP-bilder på högst 15 MB, skriva bildtext och därefter spara person- eller platskortet. Befintliga externa bildlänkar stöds fortfarande.
 
 ### Integritet
 
@@ -73,6 +75,7 @@ Importen märker personer utan dödsdatum och med ett modernt födelseår som le
 ### Viktiga filer
 
 - `supabase/migrations/001_family_archive.sql` - tabeller, roller, RLS och bildlagring.
+- `supabase/migrations/004_public_media_galleries.sql` - offentlig bildbehållare med skrivskydd för redaktörer.
 - `scripts/export-supabase-seed.mjs` - gör en importerbar ögonblicksbild av `data.js`.
 - `scripts/import-supabase.mjs` - importerar ögonblicksbilden till Supabase.
 - `shared-data.js` - läser gemensamma poster, sköter inloggning och skickar ändringar.
