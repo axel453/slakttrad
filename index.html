@@ -41,7 +41,7 @@
   button.nav-link{background:transparent;cursor:pointer}
   .nav-link:hover,.nav-link.active{color:var(--thread-deep);background:#F1F8F3;border-color:rgba(63,125,90,.24)}
   [data-page]{display:none}
-  body.page-home [data-page="home"],body.page-personarkiv [data-page="personarkiv"],body.page-gardarkiv [data-page="gardarkiv"],body.page-detail [data-page="detail"]{display:block}
+  body.page-home [data-page="home"],body.page-personarkiv [data-page="personarkiv"],body.page-gardarkiv [data-page="gardarkiv"],body.page-emigrantarkiv [data-page="emigrantarkiv"],body.page-detail [data-page="detail"]{display:block}
   header.masthead{padding:48px 0 28px;text-align:left}
   .eyebrow{font-family:"Spline Sans Mono",monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--thread);margin:0 0 14px}
   h1{font-weight:700;font-size:clamp(2.2rem,5vw,4.15rem);line-height:.96;letter-spacing:0;margin:0;max-width:860px}
@@ -304,6 +304,7 @@
   .place-edit-grid .full{grid-column:1/-1}
   .archive-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:20px}
   .archive-filters{display:grid;grid-template-columns:minmax(210px,1.5fr) repeat(3,minmax(150px,1fr));gap:10px;width:100%;margin-top:14px}
+  .archive-filters.emigrant-filters{grid-template-columns:minmax(210px,1.5fr) repeat(2,minmax(170px,1fr))}
   .archive-filter{display:grid;gap:5px;font-family:"Spline Sans Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
   .archive-filter input,.archive-filter select{width:100%;min-height:42px;border:1px solid var(--rule);border-radius:8px;background:var(--surface);padding:8px 10px;color:var(--ink);font:500 14px "Spline Sans",sans-serif;letter-spacing:0;text-transform:none}
   .archive-filter input:focus,.archive-filter select:focus{outline:3px solid rgba(63,125,90,.2);border-color:var(--thread)}
@@ -318,6 +319,26 @@
   .archive-item-name{display:block;font-weight:650;line-height:1.18;color:var(--thread-deep)}
   .archive-item-meta{display:block;font-family:"Spline Sans Mono",monospace;font-size:10.5px;line-height:1.35;color:var(--ink-faint);margin-top:3px}
   .archive-section-label{font-family:"Spline Sans Mono",monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--thread);margin:14px 0 8px}
+  .emigrant-route{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:12px 0;color:var(--ink-soft);font-family:"Spline Sans Mono",monospace;font-size:11px}
+  .emigrant-route strong{color:var(--thread-deep)}
+  .emigrant-route-arrow{color:var(--thread);font-size:16px}
+  .emigrant-tree-shell{overflow-x:auto;border:1px solid var(--rule);border-radius:12px;background:var(--surface-2);padding:24px 18px}
+  .emigrant-tree{min-width:560px;display:grid;justify-items:center}
+  .emigrant-tree-node{width:220px;border:1px solid var(--rule);border-radius:8px;background:var(--surface);padding:12px 14px;text-align:left;color:var(--ink);text-decoration:none;box-shadow:0 14px 30px -28px rgba(23,33,29,.5)}
+  .emigrant-tree-node.root{border:2px solid var(--thread);background:#F7FBF8}
+  .emigrant-tree-node.research{border-style:dashed;background:#FFFDF8}
+  .emigrant-tree-name{display:block;font-weight:700;line-height:1.2;color:var(--thread-deep)}
+  .emigrant-tree-meta{display:block;margin-top:5px;font-family:"Spline Sans Mono",monospace;font-size:10px;line-height:1.4;color:var(--ink-faint)}
+  .emigrant-tree-stem{width:1px;height:34px;background:var(--thread);position:relative}
+  .emigrant-tree-children{position:relative;display:grid;grid-template-columns:repeat(var(--child-count,1),220px);gap:18px;padding-top:34px}
+  .emigrant-tree-children::before{content:"";position:absolute;top:0;left:110px;right:110px;border-top:1px solid var(--thread)}
+  .emigrant-tree-child{position:relative}
+  .emigrant-tree-child::before{content:"";position:absolute;left:50%;top:-34px;height:34px;border-left:1px solid var(--thread)}
+  .emigrant-tree-note{margin:16px 0 0;color:var(--ink-faint);font-size:13px;text-align:center}
+  .emigrant-descendant-list{display:grid;gap:8px}
+  .emigrant-descendant{border-left:3px dashed #A36A21;padding:8px 0 8px 12px}
+  .emigrant-descendant strong{display:block;color:var(--ink)}
+  .emigrant-descendant span{display:block;margin-top:2px;color:var(--ink-faint);font-size:12px}
   .leads{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:24px}
   .lead{background:var(--surface);border:1px solid var(--rule);border-top:3px solid var(--st-open);border-radius:14px;padding:18px 20px;box-shadow:0 16px 40px -36px rgba(23,33,29,.28)}
   .lead h3{font-weight:700;font-size:1.08rem;margin:0 0 8px}
@@ -361,6 +382,7 @@
       <a class="nav-link" href="/" data-nav="home">Startsida</a>
       <a class="nav-link" href="/personarkiv/" data-nav="personarkiv">Personarkiv</a>
       <a class="nav-link" href="/gardar/" data-nav="gardarkiv">Gårdsarkiv</a>
+      <a class="nav-link" href="/emigranter/" data-nav="emigrantarkiv">Emigranter</a>
     </div>
     <div class="nav-links" aria-label="Tillgänglighet">
       <button class="nav-link" type="button" id="largeTextToggle">Större text</button>
@@ -496,6 +518,21 @@
     <div id="personArchive" class="archive-grid"></div>
   </section>
 
+  <section class="block" id="emigrantarkiv" data-page="emigrantarkiv">
+    <p class="sec-kicker">Emigrantarkiv</p>
+    <h2>Svenska rötter och nya familjegrenar</h2>
+    <p class="sec-lead">Här samlas släktingar med kända eller möjliga emigrantspår. Varje emigrant har en egen forskningssida och ett separat släktträd för familjen i det nya landet, utan att huvudträdet blir svårare att överblicka.</p>
+    <div class="archive-toolbar">
+      <span class="archive-count" id="emigrantArchiveCount"></span>
+    </div>
+    <div class="archive-filters emigrant-filters" aria-label="Filtrera emigrantarkivet">
+      <label class="archive-filter">Sök emigrant<input id="emigrantArchiveSearch" type="search" placeholder="Namn, land, region eller notering"></label>
+      <label class="archive-filter">Destination<select id="emigrantArchiveDestination"><option value="">Alla destinationer</option></select></label>
+      <label class="archive-filter">Forskningsstatus<select id="emigrantArchiveStatus"><option value="">Alla statusar</option><option value="confirmed">Bekräftad emigration</option><option value="working">Under utredning</option><option value="open">Öppet spår</option></select></label>
+    </div>
+    <div id="emigrantArchive" class="archive-grid"></div>
+  </section>
+
   <section class="block" id="platskarta" data-page="gardarkiv">
     <p class="sec-kicker">Platsregister</p>
     <h2>Alla orter, gårdar och socknar</h2>
@@ -562,6 +599,7 @@
     <a class="nav-link" href="/" data-nav="home">Startsida</a>
     <a class="nav-link" href="/personarkiv/" data-nav="personarkiv">Personarkiv</a>
     <a class="nav-link" href="/gardar/" data-nav="gardarkiv">Gårdsarkiv</a>
+    <a class="nav-link" href="/emigranter/" data-nav="emigrantarkiv">Emigranter</a>
   </nav>
   Nilsson/Bengtsson släktträd · byggd från masterfilen 2026-07-06 · bevisstatus: bekräftat, starkt sannolikt, arbetsantagande och öppet spår
 </footer>
@@ -625,6 +663,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="data.js"></script>
+<script src="emigrants.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
 <script src="shared-data.js"></script>

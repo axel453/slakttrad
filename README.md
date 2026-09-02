@@ -7,16 +7,20 @@ En interaktiv släktträdssida för Nilsson/Bengtsson-släkten, byggd för att s
 - `index.html` – sidan som visas i webbläsaren
 - `app.js` – interaktion, sök, personrutor, karta och zoom
 - `data.js` – personer, relationer, platser och direktlinjer
+- `emigrants.js` – separata emigrantgrenar som refererar till befintliga person-ID:n
+- `emigrantgrenar/` – en fristående arbetsmarkdown per emigrantgren
 - `slaktgrenar/` – arbetsmarkdown uppdelad på mammas sida och pappas sida
 - `vercel.json` – gör att rena URL:er som `/personer/.../` och `/gardar/.../` fungerar på Vercel
 - `sitemap.xml` och `robots.txt` – grund för indexering i sökmotorer
 - `scripts/generate-sitemap.mjs` – bygger statiska HTML-sidor och sitemap när personer och gårdar ändras
-- `personer/`, `gardar/` och `personarkiv/` – förhandsrenderade sidor som kan läsas direkt av sökmotorer
+- `personer/`, `gardar/`, `personarkiv/` och `emigranter/` – förhandsrenderade sidor som kan läsas direkt av sökmotorer
 - `admin/` – skyddat Familjearkiv för personer, gårdar, ändringar och användare
 
 ## Arkivsidor och administration
 
 Person- och gårdssidorna har separata avsnitt för berättelse, tidslinje, relationer, bilder, källor och osäkerheter. Personarkivet kan filtreras på söktext, århundrade, plats, släktled och bevisstatus. Gårdsarkivet kan filtreras på söktext, typ och kartstatus.
+
+Emigrantarkivet på `/emigranter/` håller internationella sidogrenar utanför huvudträdets familjeenheter. Varje gren återanvänder rotpersonens befintliga person-ID och får en separat sida, datamodell och markdownfil för resan, livet i det nya landet, efterkommande, källor och öppna frågor.
 
 Den publika webbplatsen är en ren läsvy. Redigering sker i Familjearkivet på `/admin/`, där Supabase-inloggning och databasens RLS-regler styr åtkomsten.
 
