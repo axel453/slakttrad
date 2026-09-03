@@ -7,6 +7,20 @@
   }
   function emit(name, detail){ document.dispatchEvent(new CustomEvent(name,{detail})); }
   function contentFromRow(row){ return {...(row.content || {}), name:row.name, slug:row.slug}; }
+  function uniqueNames(values, primaryName=''){
+    const primaryKey = String(primaryName || '').trim().toLocaleLowerCase('sv');
+    const seen = new Set();
+    return values.flatMap(value=>Array.isArray(value) ? value : [value]).map(value=>String(value || '').trim()).filter(value=>{
+      const key = value.toLocaleLowerCase('sv');
+      if(!key || key === primaryKey || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+  function personAliases(row){
+    const explicit = Array.isArray(row.content?.aliases) ? row.content.aliases : [];
+    return uniqueNames(explicit.length ? explicit : [row.alt_name || row.content?.alt || ''], row.name);
+  }
 
   async function loadSnapshot(){
     if(!state.client) return null;
@@ -18,10 +32,13 @@
     const error = peopleResult.error || placesResult.error || unitsResult.error;
     if(error) throw error;
     return {
-      people:Object.fromEntries((peopleResult.data || []).map(row=>[row.id,{
-        ...contentFromRow(row), alt:row.alt_name || row.content?.alt || '', branch:row.branch,
-        direct:row.is_direct, isLiving:row.is_living, visibility:row.visibility
-      }])),
+      people:Object.fromEntries((peopleResult.data || []).map(row=>{
+        const aliases = personAliases(row);
+        return [row.id,{
+          ...contentFromRow(row), aliases, alt:aliases.join(' / '), branch:row.branch,
+          direct:row.is_direct, isLiving:row.is_living, visibility:row.visibility
+        }];
+      })),
       places:(placesResult.data || []).map(row=>({
         ...contentFromRow(row), id:row.id, area:row.area || row.content?.area || '',
         ...(row.latitude == null ? {} : {lat:row.latitude}), ...(row.longitude == null ? {} : {lng:row.longitude}),
@@ -189,18 +206,21 @@
     const role = state.profile?.role || 'contributor';
     if(role === 'editor' || role === 'admin'){
       if(entityType === 'person'){
+        const aliases = uniqueNames(payload.aliases || payload.alt || [],payload.name);
+        const content = {...payload,aliases,alt:aliases.join(' / ')};
         const row = {
           id:entityId, slug:payload.slug || entityId.replaceAll('_','-'), name:payload.name,
-          alt_name:payload.alt || null, branch:payload.branch || 'shared', is_direct:!!payload.direct,
-          is_living:!!payload.isLiving, visibility:payload.visibility || 'public', content:payload,
+          alt_name:aliases.join(' / ') || null, branch:payload.branch || 'shared', is_direct:!!payload.direct,
+          is_living:!!payload.isLiving, visibility:payload.visibility || 'public', content,
           updated_by:state.user.id
         };
         const {error} = await state.client.from('people').upsert(row); if(error) throw error;
       }else if(entityType === 'place'){
+        const content = {...payload,aliases:uniqueNames(payload.aliases || [],payload.name)};
         const row = {
           id:entityId, slug:payload.slug || entityId.replaceAll('_','-'), name:payload.name,
           area:payload.area || null, latitude:payload.lat ?? null, longitude:payload.lng ?? null,
-          visibility:payload.visibility || 'public', content:payload, updated_by:state.user.id
+          visibility:payload.visibility || 'public', content, updated_by:state.user.id
         };
         const {error} = await state.client.from('places').upsert(row); if(error) throw error;
       }

@@ -20,6 +20,8 @@ En interaktiv släktträdssida för Nilsson/Bengtsson-släkten, byggd för att s
 
 Person- och gårdssidorna har separata avsnitt för berättelse, tidslinje, relationer, bilder, källor och osäkerheter. Personarkivet kan filtreras på söktext, århundrade, plats, släktled och bevisstatus. Gårdsarkivet kan filtreras på söktext, typ och kartstatus.
 
+Personer och platser har ett huvudnamn i `name` och flera sekundära namn i `aliases`. Namnändringar behåller postens stabila ID och slug. Det tidigare huvudnamnet sparas i `formerNames`, så äldre länkar, sökningar och automatiskt länkad löptext fortsätter hitta rätt post.
+
 Emigrantarkivet på `/emigranter/` håller internationella sidogrenar utanför huvudträdets familjeenheter. Varje gren återanvänder rotpersonens befintliga person-ID och får en separat sida, datamodell och markdownfil för resan, livet i det nya landet, efterkommande, källor och öppna frågor.
 
 Den publika webbplatsen är en ren läsvy. Redigering sker i Familjearkivet på `/admin/`, där Supabase-inloggning med e-postadress som användarnamn och lösenord samt databasens RLS-regler styr åtkomsten. Konton som tidigare använde e-postlänk kan välja lösenord via återställningslänken på inloggningssidan.

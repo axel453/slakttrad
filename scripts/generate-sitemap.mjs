@@ -13,6 +13,17 @@ function slugifyUrl(value){
     .replace(/å/g,"a").replace(/ä/g,"a").replace(/ö/g,"o")
     .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"") || "sida";
 }
+function nameKey(value){
+  return String(value || "").trim().normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("sv");
+}
+function uniqueNames(values,primaryName=""){
+  const primaryKey=nameKey(primaryName),seen=new Set();
+  return values.flatMap(value=>Array.isArray(value)?value:[value]).map(value=>String(value||"").trim()).filter(value=>{
+    const key=nameKey(value);if(!key||key===primaryKey||seen.has(key))return false;seen.add(key);return true;
+  });
+}
+function personAliases(person){const explicit=Array.isArray(person?.aliases)?person.aliases:[];return uniqueNames(explicit.length?explicit:[person?.alt||""],person?.name);}
+function placeAliases(place){return uniqueNames(place?.aliases||[],place?.name);}
 
 const code = fs.readFileSync(new URL("data.js", ROOT), "utf8") + "\n" +
   fs.readFileSync(new URL("emigrants.js", ROOT), "utf8") +
@@ -23,13 +34,15 @@ const { PEOPLE, PLACES, PARTNER, EMIGRANT_BRANCHES } = context.__siteData;
 
 function personSlug(id){
   const person = PEOPLE[id];
-  const base = slugifyUrl(person?.name || id);
-  const same = Object.keys(PEOPLE).filter(personId=>slugifyUrl(PEOPLE[personId]?.name) === base);
+  const stableName = person?.slug || person?.name || id;
+  const base = slugifyUrl(stableName);
+  const same = Object.keys(PEOPLE).filter(personId=>slugifyUrl(PEOPLE[personId]?.slug || PEOPLE[personId]?.name) === base);
   return same.length <= 1 ? base : slugifyUrl(`${person.name}-${person.born || id}`);
 }
 function placeSlug(place){
-  const base = slugifyUrl(place.name);
-  const same = PLACES.filter(row=>slugifyUrl(row.name) === base);
+  const stableName = place.slug || place.name;
+  const base = slugifyUrl(stableName);
+  const same = PLACES.filter(row=>slugifyUrl(row.slug || row.name) === base);
   return same.length <= 1 ? base : slugifyUrl(`${place.name}-${place.area || place.id}`);
 }
 function personUrl(id){ return `/personer/${personSlug(id)}/`; }
@@ -55,12 +68,12 @@ function entityTargets(){
     else if(rows.get(key)?.target?.id!==target.id || rows.get(key)?.target?.type!==target.type) rows.set(key,null);
   };
   Object.entries(PEOPLE).forEach(([id,person])=>{
-    referenceVariants(person.name).forEach(alias=>add(alias,{type:"person",id,label:person.name,replaceLabel:true}));
-    referenceVariants(person.alt).filter(alias=>alias.includes(" ")).forEach(alias=>add(alias,{type:"person",id,label:person.name,replaceLabel:false}));
+    [person.name,...(person.formerNames||[])].flatMap(referenceVariants).forEach(alias=>add(alias,{type:"person",id,label:person.name,replaceLabel:true}));
+    personAliases(person).flatMap(referenceVariants).filter(alias=>alias.includes(" ")).forEach(alias=>add(alias,{type:"person",id,label:person.name,replaceLabel:false}));
   });
   PLACES.forEach(place=>{
-    referenceVariants(place.name).forEach(alias=>add(alias,{type:"place",id:place.id,label:place.name,replaceLabel:true}));
-    (place.aliases||[]).flatMap(referenceVariants).forEach(alias=>add(alias,{type:"place",id:place.id,label:place.name,replaceLabel:false}));
+    [place.name,...(place.formerNames||[])].flatMap(referenceVariants).forEach(alias=>add(alias,{type:"place",id:place.id,label:place.name,replaceLabel:true}));
+    placeAliases(place).flatMap(referenceVariants).forEach(alias=>add(alias,{type:"place",id:place.id,label:place.name,replaceLabel:false}));
   });
   return [...rows.values()].filter(Boolean).sort((a,b)=>b.alias.length-a.alias.length);
 }
@@ -133,21 +146,21 @@ function emigrantTree(branch){
 }
 function personArticle(id){
   const person = PEOPLE[id];
-  const facts = person.place ? [["Gård/plats",person.place],...(person.facts || [])] : (person.facts || []);
+  const facts = [...(personAliases(person).length ? [["Sekundära namn",personAliases(person).join(", ")]] : []),...(person.place ? [["Gård/plats",person.place]] : []),...(person.facts || [])];
   const story = person.story?.length ? person.story : ["Ännu inte utforskad."];
   const relations = [...(person.parents || []),PARTNER[id],...(person.children || [])].filter(Boolean);
   const emigrantLink = EMIGRANT_BRANCHES[id] ? `<section class="detail-section"><h2>Emigrantgren</h2><div class="detail-link-grid"><a class="detail-link-card" href="${emigrantUrl(id)}"><span class="detail-link-title">Öppna sekundärt släktträd</span><span class="detail-link-meta">${escapeHtml(EMIGRANT_BRANCHES[id].destinationCountry || "Emigrantarkivet")}</span></a></div></section>` : "";
-  return `<div class="detail-hero"><div><nav class="breadcrumbs" aria-label="Brödsmulor"><a href="/">Startsida</a><span>/</span><a href="/personarkiv/">Personarkiv</a><span>/</span><strong>${escapeHtml(person.name)}</strong></nav><p class="detail-kicker">Personsida</p><h1 class="detail-title">${escapeHtml(person.name)}</h1><p class="detail-subtitle">${escapeHtml([person.role,person.born ? `född ${person.born}`:"",person.died ? `avliden ${person.died}`:""].filter(Boolean).join(" · "))}</p><p class="detail-summary">${linkEntities(story[0])}</p></div></div><div class="detail-layout"><main class="detail-main"><section class="detail-section"><h2>Livshistoria</h2><div class="detail-story">${story.map(text=>`<p>${linkEntities(text)}</p>`).join("")}</div></section><section class="detail-section"><h2>Livslinje</h2>${timelineList(person.timeline || [])}</section><section class="detail-section"><h2>Bilder</h2>${gallerySection(person,true)}</section></main><aside class="detail-side"><section class="detail-section"><h2>Fakta</h2>${factsList(facts)}</section><section class="detail-section"><h2>Familjerelationer</h2>${listLinks(relations,"Inga relationer inlagda ännu.")}</section>${emigrantLink}</aside></div>`;
+  return `<div class="detail-hero"><div><nav class="breadcrumbs" aria-label="Brödsmulor"><a href="/">Startsida</a><span>/</span><a href="/personarkiv/">Personarkiv</a><span>/</span><strong>${escapeHtml(person.name)}</strong></nav><p class="detail-kicker">Personsida</p><h1 class="detail-title">${escapeHtml(person.name)}</h1>${personAliases(person).length?`<p class="detail-name-aliases"><span>Även känd som</span> ${escapeHtml(personAliases(person).join(" · "))}</p>`:""}<p class="detail-subtitle">${escapeHtml([person.role,person.born ? `född ${person.born}`:"",person.died ? `avliden ${person.died}`:""].filter(Boolean).join(" · "))}</p><p class="detail-summary">${linkEntities(story[0])}</p></div></div><div class="detail-layout"><main class="detail-main"><section class="detail-section"><h2>Livshistoria</h2><div class="detail-story">${story.map(text=>`<p>${linkEntities(text)}</p>`).join("")}</div></section><section class="detail-section"><h2>Livslinje</h2>${timelineList(person.timeline || [])}</section><section class="detail-section"><h2>Bilder</h2>${gallerySection(person,true)}</section></main><aside class="detail-side"><section class="detail-section"><h2>Fakta</h2>${factsList(facts)}</section><section class="detail-section"><h2>Familjerelationer</h2>${listLinks(relations,"Inga relationer inlagda ännu.")}</section>${emigrantLink}</aside></div>`;
 }
 function placeMatchesPerson(place, person){
   const haystack = [person.place,...(person.facts || []).flat(),...(person.story || []),...(person.timeline || []).flat()].filter(Boolean).join(" ").toLocaleLowerCase("sv");
-  return (place.aliases || [place.name]).some(alias=>haystack.includes(String(alias).toLocaleLowerCase("sv")));
+  return [place.name,...placeAliases(place),...(place.formerNames||[])].some(alias=>haystack.includes(String(alias).toLocaleLowerCase("sv")));
 }
 function placeArticle(place){
   const people = Array.isArray(place.relatedPersonIds) ? place.relatedPersonIds.filter(id=>PEOPLE[id]) : Object.entries(PEOPLE).filter(([,person])=>placeMatchesPerson(place,person)).map(([id])=>id);
   const story = place.story?.length ? place.story : [place.note || "Ingen längre platsbeskrivning är inlagd ännu."];
-  const facts = [["Område",place.area || "Ej angivet"],...(place.facts || [])];
-  return `<div class="detail-hero"><div><nav class="breadcrumbs" aria-label="Brödsmulor"><a href="/">Startsida</a><span>/</span><a href="/gardar/">Gårdsarkiv</a><span>/</span><strong>${escapeHtml(place.name)}</strong></nav><p class="detail-kicker">Gårdssida</p><h1 class="detail-title">${escapeHtml(place.name)}</h1><p class="detail-subtitle">${escapeHtml(place.area || "")}</p><p class="detail-summary">${linkEntities(story[0])}</p></div></div><div class="detail-layout"><main class="detail-main"><section class="detail-section"><h2>Platsens historia</h2><div class="detail-story">${story.map(text=>`<p>${linkEntities(text)}</p>`).join("")}</div></section><section class="detail-section"><h2>Tidslinje</h2>${timelineList(place.timeline || [])}</section><section class="detail-section"><h2>Bilder</h2>${gallerySection(place)}</section></main><aside class="detail-side"><section class="detail-section"><h2>Fakta</h2>${factsList(facts)}</section><section class="detail-section"><h2>Kopplade personer</h2>${listLinks(people,"Inga personer är kopplade hit ännu.")}</section></aside></div>`;
+  const facts = [["Område",place.area || "Ej angivet"],...(placeAliases(place).length ? [["Sekundära namn",placeAliases(place).join(", ")]] : []),...(place.facts || [])];
+  return `<div class="detail-hero"><div><nav class="breadcrumbs" aria-label="Brödsmulor"><a href="/">Startsida</a><span>/</span><a href="/gardar/">Gårdsarkiv</a><span>/</span><strong>${escapeHtml(place.name)}</strong></nav><p class="detail-kicker">Gårdssida</p><h1 class="detail-title">${escapeHtml(place.name)}</h1>${placeAliases(place).length?`<p class="detail-name-aliases"><span>Även känd som</span> ${escapeHtml(placeAliases(place).join(" · "))}</p>`:""}<p class="detail-subtitle">${escapeHtml(place.area || "")}</p><p class="detail-summary">${linkEntities(story[0])}</p></div></div><div class="detail-layout"><main class="detail-main"><section class="detail-section"><h2>Platsens historia</h2><div class="detail-story">${story.map(text=>`<p>${linkEntities(text)}</p>`).join("")}</div></section><section class="detail-section"><h2>Tidslinje</h2>${timelineList(place.timeline || [])}</section><section class="detail-section"><h2>Bilder</h2>${gallerySection(place)}</section></main><aside class="detail-side"><section class="detail-section"><h2>Fakta</h2>${factsList(facts)}</section><section class="detail-section"><h2>Kopplade personer</h2>${listLinks(people,"Inga personer är kopplade hit ännu.")}</section></aside></div>`;
 }
 function emigrantArticle(id){
   const branch = EMIGRANT_BRANCHES[id];
@@ -167,7 +180,7 @@ function archivePage(kind){
   let html = setHead(template,{title,description,path:isPeople?"/personarkiv/":"/gardar/",jsonLd:{"@context":"https://schema.org","@type":"CollectionPage","name":title,"description":description}})
     .replace('<body class="page-home">', `<body class="page-${isPeople ? "personarkiv" : "gardarkiv"}">`);
   if(isPeople){
-    const links = Object.keys(PEOPLE).sort((a,b)=>PEOPLE[a].name.localeCompare(PEOPLE[b].name,"sv")).map(id=>`<a class="archive-item" href="${personUrl(id)}"><span class="archive-item-name">${escapeHtml(PEOPLE[id].name)}</span><span class="archive-item-meta">${escapeHtml([PEOPLE[id].born,PEOPLE[id].place].filter(Boolean).join(" · "))}</span></a>`).join("");
+    const links = Object.keys(PEOPLE).sort((a,b)=>PEOPLE[a].name.localeCompare(PEOPLE[b].name,"sv")).map(id=>`<a class="archive-item" href="${personUrl(id)}"><span class="archive-item-name">${escapeHtml(PEOPLE[id].name)}${personAliases(PEOPLE[id]).length?` / ${escapeHtml(personAliases(PEOPLE[id]).join(" / "))}`:""}</span><span class="archive-item-meta">${escapeHtml([PEOPLE[id].born,PEOPLE[id].place].filter(Boolean).join(" · "))}</span></a>`).join("");
     html = html.replace('<div id="personArchive" class="archive-grid"></div>', `<div id="personArchive" class="archive-grid"><article class="archive-group"><h3>Alla personer</h3><div class="archive-list">${links}</div></article></div>`);
   }else{
     const links = PLACES.slice().sort((a,b)=>a.name.localeCompare(b.name,"sv")).map(place=>`<article class="archive-group"><h3>${escapeHtml(place.name)}</h3><p class="archive-group-meta">${escapeHtml(place.area || "Område saknas")}</p><a class="archive-item" href="${placeUrl(place)}"><span class="archive-item-name">Öppna gårdssida</span></a></article>`).join("");
@@ -207,12 +220,12 @@ Object.keys(PEOPLE).forEach(id=>{
   const person = PEOPLE[id];
   const path = personUrl(id);
   const description = `${person.name}${person.born ? `, född ${person.born}` : ""}${person.place ? `, kopplad till ${person.place}` : ""}. Personsida i Nilsson/Bengtsson släktträd.`;
-  writePage(`${path.slice(1)}index.html`, detailPage(personArticle(id),{title:`${person.name} - Nilsson/Bengtsson släktträd`,description,path,jsonLd:{"@context":"https://schema.org","@type":"Person","name":person.name,"alternateName":person.alt || undefined,"birthDate":person.born || undefined,"deathDate":person.died || undefined,"description":person.story?.[0] || description,"url":`${SITE_URL}${path}`}}));
+  writePage(`${path.slice(1)}index.html`, detailPage(personArticle(id),{title:`${person.name} - Nilsson/Bengtsson släktträd`,description,path,jsonLd:{"@context":"https://schema.org","@type":"Person","name":person.name,"alternateName":personAliases(person).length ? personAliases(person) : undefined,"birthDate":person.born || undefined,"deathDate":person.died || undefined,"description":person.story?.[0] || description,"url":`${SITE_URL}${path}`}}));
 });
 PLACES.forEach(place=>{
   const path = placeUrl(place);
   const description = `${place.name}${place.area ? ` i ${place.area}` : ""}. Gårdssida med historik, tidslinje och kopplade personer.`;
-  writePage(`${path.slice(1)}index.html`, detailPage(placeArticle(place),{title:`${place.name} - gårdssida`,description,path,jsonLd:{"@context":"https://schema.org","@type":"Place","name":place.name,"alternateName":place.aliases || undefined,"description":place.note || description,"url":`${SITE_URL}${path}`}}));
+  writePage(`${path.slice(1)}index.html`, detailPage(placeArticle(place),{title:`${place.name} - gårdssida`,description,path,jsonLd:{"@context":"https://schema.org","@type":"Place","name":place.name,"alternateName":placeAliases(place).length ? placeAliases(place) : undefined,"description":place.note || description,"url":`${SITE_URL}${path}`}}));
 });
 Object.keys(EMIGRANT_BRANCHES).forEach(id=>{
   const branch = EMIGRANT_BRANCHES[id];
