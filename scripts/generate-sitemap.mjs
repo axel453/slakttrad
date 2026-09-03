@@ -186,16 +186,23 @@ function emigrantArchivePage(){
   }).join("");
   return html.replace('<div id="emigrantArchive" class="archive-grid"></div>', `<div id="emigrantArchive" class="archive-grid">${links}</div>`);
 }
+function contactPage(){
+  const title = "Kontakt - Nilsson/Bengtsson släktträd";
+  const description = "Kontakta Axel Nilsson med fotografier, berättelser, källor och rättelser till Nilsson/Bengtsson släktträd.";
+  return setHead(template,{title,description,path:"/kontakt/",jsonLd:{"@context":"https://schema.org","@type":"ContactPage","name":"Kontakt",description,"url":`${SITE_URL}/kontakt/`}})
+    .replace('<body class="page-home">','<body class="page-contact">');
+}
 function writePage(path, html){
   const file = new URL(path.replace(/^\//, ""), ROOT);
   fs.mkdirSync(new URL("./", file), {recursive:true});
   fs.writeFileSync(file, html);
 }
 
-const paths = ["/","/personarkiv/","/gardar/","/emigranter/",...Object.keys(PEOPLE).map(personUrl),...PLACES.map(placeUrl),...Object.keys(EMIGRANT_BRANCHES).map(emigrantUrl)];
+const paths = ["/","/personarkiv/","/gardar/","/emigranter/","/kontakt/",...Object.keys(PEOPLE).map(personUrl),...PLACES.map(placeUrl),...Object.keys(EMIGRANT_BRANCHES).map(emigrantUrl)];
 writePage("personarkiv/index.html", archivePage("personarkiv"));
 writePage("gardar/index.html", archivePage("gardarkiv"));
 writePage("emigranter/index.html", emigrantArchivePage());
+writePage("kontakt/index.html", contactPage());
 Object.keys(PEOPLE).forEach(id=>{
   const person = PEOPLE[id];
   const path = personUrl(id);

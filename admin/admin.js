@@ -1,7 +1,7 @@
 (function(){
   const ui = {
     login:document.getElementById('loginScreen'),app:document.getElementById('adminApp'),content:document.getElementById('adminContent'),
-    loading:document.getElementById('loadingState'),pageTitle:document.getElementById('pageTitle'),pageEyebrow:document.getElementById('pageEyebrow')
+    password:document.getElementById('passwordScreen'),loading:document.getElementById('loadingState'),pageTitle:document.getElementById('pageTitle'),pageEyebrow:document.getElementById('pageEyebrow')
   };
   const fallbackPeople = typeof PEOPLE === 'undefined' ? {} : JSON.parse(JSON.stringify(PEOPLE));
   const fallbackPlaces = typeof PLACES === 'undefined' ? [] : JSON.parse(JSON.stringify(PLACES));
@@ -86,6 +86,7 @@
     const url=adminUrl([base,id].filter(Boolean).join('/'));
     if(isFile()) location.hash=url.slice(1); else history.pushState({},'',url);
     renderRoute();
+    window.scrollTo({top:0,behavior:'auto'});
   }
 
   async function refreshData(showToast=false){
@@ -105,7 +106,9 @@
   function showAuth(status){
     state.status=status;
     const signedIn=!!status?.user;
-    ui.login.hidden=signedIn; ui.app.hidden=!signedIn;
+    const recovering=!!status?.passwordRecovery;
+    ui.password.hidden=!recovering;ui.login.hidden=signedIn||recovering;ui.app.hidden=!signedIn||recovering;
+    if(recovering) return;
     if(!signedIn) return;
     const name=status.profile?.display_name||status.user.email||'Familjemedlem';
     document.getElementById('accountName').textContent=name;
@@ -141,7 +144,7 @@
     const filter=()=>{const q=document.getElementById('adminSearch').value.toLocaleLowerCase('sv');const branch=document.getElementById('branchFilter').value;document.querySelectorAll('#peopleRows tr').forEach(row=>row.hidden=!(row.dataset.search.includes(q)&&(!branch||row.dataset.branch===branch)));};
     document.getElementById('adminSearch').addEventListener('input',filter); document.getElementById('branchFilter').addEventListener('change',filter);
   }
-  function personRow([id,p]){ const hay=[p.name,p.alt,p.born,p.died,p.place,p.role].join(' ').toLocaleLowerCase('sv');const hasPhoto=p.photo&&!/person-placeholder\.svg$/i.test(p.photo),imageCount=(p.images||[]).length+(hasPhoto?1:0);return `<tr data-search="${esc(hay)}" data-branch="${esc(p.branch||'shared')}"><td><div class="entity-cell"><img class="entity-avatar" src="${esc(p.photo||'/assets/person-placeholder.svg')}" alt=""><span><strong>${esc(p.name)}</strong><small>${esc(p.role||'Person')}${imageCount?` · ${imageCount} ${imageCount===1?'bild':'bilder'}`:''}</small></span></div></td><td>${esc([p.born,p.died].filter(Boolean).join(' – ')||'Saknas')}</td><td>${esc(p.place||'Ej angivet')}</td><td><span class="badge">${esc(labels[p.branch]||'Gemensamt')}</span></td><td><span class="badge ${p.status==='confirmed'?'green':'amber'}">${esc(p.status||'open')}</span></td><td><button class="row-action" data-edit-person="${esc(id)}">Redigera</button></td></tr>`; }
+  function personRow([id,p]){ const hay=[p.name,p.alt,p.born,p.died,p.place,p.role].join(' ').toLocaleLowerCase('sv');const hasPhoto=p.photo&&!/person-placeholder\.svg$/i.test(p.photo),imageCount=(p.images||[]).length+(hasPhoto?1:0);return `<tr data-search="${esc(hay)}" data-branch="${esc(p.branch||'shared')}"><td><div class="entity-cell"><img class="entity-avatar" src="${esc(p.photo||'/assets/person-placeholder.svg')}" alt=""><span><strong>${esc(p.name)}</strong><small>${esc(p.role||'Person')}${imageCount?` · ${imageCount} ${imageCount===1?'bild':'bilder'}`:''}</small></span></div></td><td data-label="Levnadsår">${esc([p.born,p.died].filter(Boolean).join(' – ')||'Saknas')}</td><td data-label="Plats">${esc(p.place||'Ej angivet')}</td><td data-label="Släktled"><span class="badge">${esc(labels[p.branch]||'Gemensamt')}</span></td><td data-label="Status"><span class="badge ${p.status==='confirmed'?'green':'amber'}">${esc(p.status||'open')}</span></td><td class="table-action"><button class="row-action" data-edit-person="${esc(id)}">Redigera</button></td></tr>`; }
 
   function renderPlaces(){
     const places=[...state.places].sort((a,b)=>a.name.localeCompare(b.name,'sv'));
@@ -151,7 +154,7 @@
     const filter=()=>{const q=document.getElementById('adminSearch').value.toLocaleLowerCase('sv');const map=document.getElementById('mapFilter').value;document.querySelectorAll('#placeRows tr').forEach(row=>row.hidden=!(row.dataset.search.includes(q)&&(!map||row.dataset.map===map)));};
     document.getElementById('adminSearch').addEventListener('input',filter); document.getElementById('mapFilter').addEventListener('change',filter);
   }
-  function placeRow(p){const mapped=Number.isFinite(Number(p.lat))&&Number.isFinite(Number(p.lng));const hay=[p.name,p.area,...(p.aliases||[])].join(' ').toLocaleLowerCase('sv');const imageCount=(p.images||[]).length;return `<tr data-search="${esc(hay)}" data-map="${mapped?'mapped':'unmapped'}"><td><div class="entity-cell"><span class="entity-avatar entity-icon">${icon('landmark')}</span><span><strong>${esc(p.name)}</strong><small>${esc(p.note||'Platskort')}${imageCount?` · ${imageCount} ${imageCount===1?'bild':'bilder'}`:''}</small></span></div></td><td>${esc(p.area||'Ej angivet')}</td><td>${esc((p.aliases||[]).slice(0,3).join(', ')||'Saknas')}</td><td><span class="badge ${mapped?'green':'amber'}">${mapped?'Kartlagd':'Saknas'}</span></td><td><button class="row-action" data-edit-place="${esc(p.id)}">Redigera</button></td></tr>`;}
+  function placeRow(p){const mapped=Number.isFinite(Number(p.lat))&&Number.isFinite(Number(p.lng));const hay=[p.name,p.area,...(p.aliases||[])].join(' ').toLocaleLowerCase('sv');const imageCount=(p.images||[]).length;return `<tr data-search="${esc(hay)}" data-map="${mapped?'mapped':'unmapped'}"><td><div class="entity-cell"><span class="entity-avatar entity-icon">${icon('landmark')}</span><span><strong>${esc(p.name)}</strong><small>${esc(p.note||'Platskort')}${imageCount?` · ${imageCount} ${imageCount===1?'bild':'bilder'}`:''}</small></span></div></td><td data-label="Område">${esc(p.area||'Ej angivet')}</td><td data-label="Namnvarianter">${esc((p.aliases||[]).slice(0,3).join(', ')||'Saknas')}</td><td data-label="Karta"><span class="badge ${mapped?'green':'amber'}">${mapped?'Kartlagd':'Saknas'}</span></td><td class="table-action"><button class="row-action" data-edit-place="${esc(p.id)}">Redigera</button></td></tr>`;}
 
   function personOptions(selected=''){ return `<option value="">Ingen vald</option>`+Object.entries(state.people).sort((a,b)=>a[1].name.localeCompare(b[1].name,'sv')).map(([id,p])=>`<option value="${esc(id)}"${id===selected?' selected':''}>${esc(p.name)}${p.born?` (${esc(p.born)})`:''}</option>`).join(''); }
   function field(label,id,value='',wide=false,type='text',help=''){return `<label class="field${wide?' full':''}"><span>${esc(label)}</span>${type==='textarea'?`<textarea id="${id}">${esc(value)}</textarea>`:`<input id="${id}" type="${type}" value="${esc(value)}">`}${help?`<small class="field-help">${esc(help)}</small>`:''}</label>`;}
@@ -198,7 +201,7 @@
   }
   function renderMembers(){
     if(!canManageUsers()){navigate('dashboard');return;}
-    ui.content.innerHTML=heading('Användare','Hantera vilka familjemedlemmar som får bidra, publicera och administrera.')+`<div class="table-shell"><table class="data-table"><thead><tr><th>Familjemedlem</th><th>Roll</th><th>Registrerad</th></tr></thead><tbody>${state.overview.profiles.map(profile=>`<tr><td><strong>${esc(profile.display_name||'Namnlös användare')}</strong></td><td><select data-member-role="${esc(profile.id)}"><option value="contributor"${profile.role==='contributor'?' selected':''}>Bidragsgivare</option><option value="editor"${profile.role==='editor'?' selected':''}>Redaktör</option><option value="admin"${profile.role==='admin'?' selected':''}>Administratör</option></select></td><td>${new Date(profile.created_at).toLocaleDateString('sv-SE')}</td></tr>`).join('')}</tbody></table></div>`;
+    ui.content.innerHTML=heading('Användare','Hantera vilka familjemedlemmar som får bidra, publicera och administrera.')+`<div class="table-shell"><table class="data-table"><thead><tr><th>Familjemedlem</th><th>Roll</th><th>Registrerad</th></tr></thead><tbody>${state.overview.profiles.map(profile=>`<tr><td><strong>${esc(profile.display_name||'Namnlös användare')}</strong></td><td data-label="Roll"><select data-member-role="${esc(profile.id)}"><option value="contributor"${profile.role==='contributor'?' selected':''}>Bidragsgivare</option><option value="editor"${profile.role==='editor'?' selected':''}>Redaktör</option><option value="admin"${profile.role==='admin'?' selected':''}>Administratör</option></select></td><td data-label="Registrerad">${new Date(profile.created_at).toLocaleDateString('sv-SE')}</td></tr>`).join('')}</tbody></table></div>`;
   }
 
   function renderRoute(){
@@ -215,12 +218,16 @@
     catch(error){toast(error.message||'Granskningen misslyckades.',true);}finally{button.disabled=false;}
   }
   function bind(){
-    document.getElementById('adminLoginForm').addEventListener('submit',async event=>{event.preventDefault();const message=document.getElementById('loginMessage');message.textContent='Skickar länken...';try{await window.FamilyData.sendMagicLink(document.getElementById('adminEmail').value.trim());message.textContent='Länken är skickad. Öppna din e-post och följ länken.';}catch(error){message.textContent=error.message||'Inloggningen misslyckades.';}});
+    document.getElementById('adminLoginForm').addEventListener('submit',async event=>{event.preventDefault();const message=document.getElementById('loginMessage'),button=event.submitter||event.currentTarget.querySelector('[type="submit"]');message.textContent='Loggar in...';button.disabled=true;try{await window.FamilyData.signInWithPassword(document.getElementById('adminEmail').value.trim(),document.getElementById('adminPassword').value);message.textContent='';}catch(error){message.textContent=error.message||'Inloggningen misslyckades.';}finally{button.disabled=false;}});
+    document.getElementById('forgotPassword').addEventListener('click',async event=>{const email=document.getElementById('adminEmail').value.trim(),message=document.getElementById('loginMessage');if(!email){message.textContent='Fyll i din e-postadress först.';document.getElementById('adminEmail').focus();return;}event.currentTarget.disabled=true;message.textContent='Skickar återställningslänk...';try{await window.FamilyData.sendPasswordReset(email);message.textContent='Ett mejl har skickats. Följ länken för att välja lösenord.';}catch(error){message.textContent=error.message||'Länken kunde inte skickas.';}finally{event.currentTarget.disabled=false;}});
+    document.getElementById('passwordRecoveryForm').addEventListener('submit',async event=>{event.preventDefault();const password=document.getElementById('newPassword').value,confirm=document.getElementById('newPasswordConfirm').value,message=document.getElementById('passwordMessage'),button=event.submitter||event.currentTarget.querySelector('[type="submit"]');if(password!==confirm){message.textContent='Lösenorden är inte likadana.';return;}button.disabled=true;message.textContent='Sparar lösenord...';try{await window.FamilyData.updatePassword(password);message.textContent='';toast('Lösenordet är sparat.');}catch(error){message.textContent=error.message||'Lösenordet kunde inte sparas.';}finally{button.disabled=false;}});
     document.getElementById('adminSignOut').addEventListener('click',()=>window.FamilyData.signOut());
     document.getElementById('refreshButton').addEventListener('click',()=>refreshData(true));
+    const closeMenu=()=>document.getElementById('sidebar').classList.remove('open');
     document.getElementById('menuButton').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
+    document.getElementById('sidebarScrim').addEventListener('click',closeMenu);
     document.addEventListener('click',event=>{
-      const nav=event.target.closest('[data-route]');if(nav){event.preventDefault();navigate(nav.dataset.route);document.getElementById('sidebar').classList.remove('open');return;}
+      const nav=event.target.closest('[data-route]');if(nav){event.preventDefault();navigate(nav.dataset.route);closeMenu();return;}
       const go=event.target.closest('[data-go]');if(go){navigate(go.dataset.go);return;}
       const create=event.target.closest('[data-create]');if(create){navigate(create.dataset.create==='person'?'people':'places','ny');return;}
       const person=event.target.closest('[data-edit-person]');if(person){navigate('people',person.dataset.editPerson);return;}

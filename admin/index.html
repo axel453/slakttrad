@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/admin/admin.css">
+  <link rel="stylesheet" href="/admin/admin.css?v=20260903">
 </head>
 <body>
   <a class="skip-link" href="#adminMain">Hoppa till innehållet</a>
@@ -17,14 +17,34 @@
       <a class="brand" href="/" aria-label="Till publika webbplatsen"><span class="brand-mark">N/B</span><span><strong>Nilsson/Bengtsson</strong><small>Familjearkiv</small></span></a>
       <p class="eyebrow">Skyddad arbetsyta</p>
       <h1>Logga in i familjearkivet</h1>
-      <p class="login-copy">Hantera personer, gårdar, källor och familjens gemensamma historia. Du får en säker inloggningslänk via e-post.</p>
+      <p class="login-copy">Hantera personer, gårdar, källor och familjens gemensamma historia. Din e-postadress fungerar som användarnamn.</p>
       <form id="adminLoginForm" class="login-form">
-        <label for="adminEmail">E-postadress</label>
-        <input id="adminEmail" type="email" autocomplete="email" required placeholder="namn@exempel.se">
-        <button class="primary-button" type="submit">Skicka inloggningslänk</button>
+        <label for="adminEmail">Användarnamn</label>
+        <input id="adminEmail" type="email" autocomplete="username" required placeholder="Din e-postadress">
+        <label for="adminPassword">Lösenord</label>
+        <input id="adminPassword" type="password" autocomplete="current-password" required minlength="8" placeholder="Ditt lösenord">
+        <button class="primary-button" type="submit">Logga in</button>
+        <button class="text-button" id="forgotPassword" type="button">Glömt eller saknar lösenord?</button>
       </form>
       <p class="form-message" id="loginMessage" aria-live="polite"></p>
       <a class="back-link" href="/">Tillbaka till släktträdet</a>
+    </div>
+  </section>
+
+  <section class="login-screen" id="passwordScreen" hidden>
+    <div class="login-card">
+      <a class="brand" href="/" aria-label="Till publika webbplatsen"><span class="brand-mark">N/B</span><span><strong>Nilsson/Bengtsson</strong><small>Familjearkiv</small></span></a>
+      <p class="eyebrow">Nytt lösenord</p>
+      <h1>Välj ett nytt lösenord</h1>
+      <p class="login-copy">Använd minst åtta tecken. När lösenordet är sparat öppnas familjearkivet.</p>
+      <form id="passwordRecoveryForm" class="login-form">
+        <label for="newPassword">Nytt lösenord</label>
+        <input id="newPassword" type="password" autocomplete="new-password" required minlength="8">
+        <label for="newPasswordConfirm">Upprepa lösenordet</label>
+        <input id="newPasswordConfirm" type="password" autocomplete="new-password" required minlength="8">
+        <button class="primary-button" type="submit">Spara lösenord</button>
+      </form>
+      <p class="form-message" id="passwordMessage" aria-live="polite"></p>
     </div>
   </section>
 
@@ -43,6 +63,7 @@
         <button type="button" id="adminSignOut" data-icon="log-out">Logga ut</button>
       </div>
     </aside>
+    <button class="sidebar-scrim" id="sidebarScrim" type="button" aria-label="Stäng meny" tabindex="-1"></button>
 
     <div class="admin-shell">
       <header class="topbar">
@@ -62,10 +83,10 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-  <script src="/data.js"></script>
+  <script src="/data.js?v=20260903"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/supabase-config.js"></script>
-  <script src="/shared-data.js"></script>
-  <script src="/admin/admin.js"></script>
+  <script src="/supabase-config.js?v=20260903"></script>
+  <script src="/shared-data.js?v=20260903"></script>
+  <script src="/admin/admin.js?v=20260903"></script>
 </body>
 </html>

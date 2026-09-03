@@ -1,6 +1,6 @@
 (function(){
   const config = window.FAMILY_ARCHIVE_CONFIG || {};
-  const state = {client:null,user:null,profile:null,connected:false};
+  const state = {client:null,user:null,profile:null,connected:false,passwordRecovery:false};
 
   function configured(){
     return Boolean(config.supabaseUrl && config.supabasePublishableKey && window.supabase?.createClient);
@@ -49,8 +49,10 @@
     const {data:{session}} = await state.client.auth.getSession();
     state.user = session?.user || null;
     await refreshProfile();
-    state.client.auth.onAuthStateChange(async (_event, sessionValue)=>{
+    state.client.auth.onAuthStateChange(async (authEvent, sessionValue)=>{
       state.user = sessionValue?.user || null;
+      if(authEvent === 'PASSWORD_RECOVERY') state.passwordRecovery = true;
+      if(authEvent === 'SIGNED_OUT') state.passwordRecovery = false;
       await refreshProfile();
       emit('family-auth-change',status());
     });
@@ -66,7 +68,26 @@
   }
 
   function status(){
-    return {configured:configured(),connected:state.connected,user:state.user,profile:state.profile};
+    return {configured:configured(),connected:state.connected,user:state.user,profile:state.profile,passwordRecovery:state.passwordRecovery};
+  }
+  async function signInWithPassword(email,password){
+    if(!state.client) throw new Error('Databasen är inte ansluten ännu.');
+    const {error} = await state.client.auth.signInWithPassword({email,password});
+    if(error) throw new Error('Fel användarnamn eller lösenord.');
+  }
+  async function sendPasswordReset(email){
+    if(!state.client) throw new Error('Databasen är inte ansluten ännu.');
+    const redirectTo = location.protocol === 'file:' ? undefined : `${location.origin}/admin/`;
+    const options = redirectTo ? {redirectTo} : {};
+    const {error} = await state.client.auth.resetPasswordForEmail(email,options);
+    if(error) throw error;
+  }
+  async function updatePassword(password){
+    if(!state.client || !state.user) throw new Error('Länken är inte längre giltig. Begär en ny återställningslänk.');
+    const {error} = await state.client.auth.updateUser({password});
+    if(error) throw error;
+    state.passwordRecovery = false;
+    emit('family-auth-change',status());
   }
   async function sendMagicLink(email){
     if(!state.client) throw new Error('Databasen är inte ansluten ännu.');
@@ -193,7 +214,7 @@
     return {mode:'pending'};
   }
 
-  window.FamilyData = {init,status,loadSnapshot,loadAdminOverview,sendMagicLink,signOut,uploadPublicImage,submitChange,reviewChange,updateMemberRole};
+  window.FamilyData = {init,status,loadSnapshot,loadAdminOverview,signInWithPassword,sendPasswordReset,updatePassword,sendMagicLink,signOut,uploadPublicImage,submitChange,reviewChange,updateMemberRole};
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded',init,{once:true});
   else init();
 })();

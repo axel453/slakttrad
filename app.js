@@ -398,7 +398,7 @@ function renderTree({preserveView=false}={}){
   renderUnits(units);
   drawLinks();
   syncTreeControlButtons();
-  if(!preserveView) fit();
+  if(!preserveView) initialTreeView();
 }
 
 let scale = 1, tx = 0, ty = 0;
@@ -411,6 +411,14 @@ function fit(){
   tx = (vw - world.worldW * scale) / 2;
   ty = (vh - world.worldH * scale) / 2;
   applyTransform();
+}
+function initialTreeView(){
+  if(window.matchMedia('(max-width: 640px)').matches && PEOPLE.axel_nilsson){
+    scale = 0.82;
+    focusPerson('axel_nilsson', 0.82);
+    return;
+  }
+  fit();
 }
 function zoomAt(factor, cx, cy){
   const ns = clampScale(scale * factor);
@@ -802,6 +810,15 @@ function resetMetaForPage(mode){
       "Emigrantarkiv - Nilsson/Bengtsson släktträd",
       "Emigrantarkiv med separata släktgrenar, resor, efterkommande, platser och källor för Nilsson/Bengtsson-släkten.",
       "/emigranter/"
+    );
+    return;
+  }
+  if(mode === "contact"){
+    setMeta(
+      "Kontakt - Nilsson/Bengtsson släktträd",
+      "Kontakta Axel Nilsson med fotografier, berättelser, källor och rättelser till Nilsson/Bengtsson släktträd.",
+      "/kontakt/",
+      {"@context":"https://schema.org","@type":"ContactPage","name":"Kontakt","url":absoluteUrl('/kontakt/')}
     );
     return;
   }
@@ -1233,7 +1250,7 @@ function renderEmigrantDetail(id){
   return true;
 }
 function setPageMode(mode){
-  document.body.classList.remove("page-home","page-personarkiv","page-gardarkiv","page-emigrantarkiv","page-detail");
+  document.body.classList.remove("page-home","page-personarkiv","page-gardarkiv","page-emigrantarkiv","page-contact","page-detail");
   document.body.classList.add(`page-${mode}`);
   if(mode !== "detail") resetMetaForPage(mode);
   if(mode === "gardarkiv") refreshPlaceMapLayout();
@@ -1248,6 +1265,7 @@ function currentRoute(){
   if(rawHash === "personarkiv") return "/personarkiv/";
   if(rawHash === "gardarkiv") return "/gardar/";
   if(rawHash === "emigrantarkiv") return "/emigranter/";
+  if(rawHash === "kontakt") return "/kontakt/";
   if(rawHash.startsWith("person/")) return `/personer/${rawHash.slice(7)}/`;
   if(rawHash.startsWith("plats/")) return `/gardar/${rawHash.slice(6)}/`;
   return location.pathname || "/";
@@ -1275,6 +1293,11 @@ function renderCurrentRoute(){
   if(parts[0] === "emigranter" && parts.length === 1){
     setPageMode("emigrantarkiv");
     document.getElementById('emigrantarkiv')?.scrollIntoView({behavior:'auto',block:'start'});
+    return;
+  }
+  if(parts[0] === "kontakt" && parts.length === 1){
+    setPageMode("contact");
+    document.getElementById('kontakt')?.scrollIntoView({behavior:'auto',block:'start'});
     return;
   }
   if(parts[0] === "personer" && parts[1]){
@@ -1334,11 +1357,11 @@ document.addEventListener('click', e=>{
   }
 });
 
-function focusPerson(id){
+function focusPerson(id, minimumScale=0.72){
   const unit = UNIT_BY_ID[PERSON_TO_UNIT[id]]; if(!unit?._el) return;
   const cx = unit._el.offsetLeft + unit._el.offsetWidth/2;
   const cy = unit._el.offsetTop + unit._el.offsetHeight/2;
-  scale = clampScale(Math.max(scale,0.72));
+  scale = clampScale(Math.max(scale,minimumScale));
   tx = viewport.clientWidth/2 - cx*scale; ty = viewport.clientHeight/2 - cy*scale; applyTransform();
 }
 function initBranchFilters(){
@@ -1637,25 +1660,47 @@ function placeIdFromCurrentRoute(){
   return null;
 }
 function initSiteNavigation(){
-  const adminLink = '<a class="nav-link" href="/admin/">Familjearkiv</a>';
-  const primaryNav = document.querySelector('.site-nav > .nav-links');
-  const footerNav = document.querySelector('.footer-nav');
-  if(primaryNav && !primaryNav.querySelector('a[href="/admin/"]')) primaryNav.insertAdjacentHTML('beforeend',adminLink);
-  if(footerNav && !footerNav.querySelector('a[href="/admin/"]')) footerNav.insertAdjacentHTML('beforeend',adminLink);
   document.addEventListener('click', e=>{
     const nav = e.target.closest('[data-nav]');
     if(!nav) return;
     e.preventDefault();
-    const target = nav.dataset.nav === "personarkiv" ? "/personarkiv/" : nav.dataset.nav === "gardarkiv" ? "/gardar/" : nav.dataset.nav === "emigrantarkiv" ? "/emigranter/" : "/";
+    const target = nav.dataset.nav === "personarkiv" ? "/personarkiv/" : nav.dataset.nav === "gardarkiv" ? "/gardar/" : nav.dataset.nav === "emigrantarkiv" ? "/emigranter/" : nav.dataset.nav === "contact" ? "/kontakt/" : "/";
     closePanel();
     navigatePath(target);
   });
+}
+function initMobileNavigation(){
+  const nav = document.querySelector('.site-nav');
+  const toggle = document.getElementById('navToggle');
+  if(!nav || !toggle) return;
+  const close = ()=>{
+    nav.classList.remove('menu-open');
+    toggle.setAttribute('aria-expanded','false');
+    toggle.setAttribute('aria-label','Öppna meny');
+    toggle.title = 'Öppna meny';
+    toggle.textContent = '☰';
+    document.querySelector('.access-menu')?.removeAttribute('open');
+  };
+  toggle.addEventListener('click',()=>{
+    const open = !nav.classList.contains('menu-open');
+    nav.classList.toggle('menu-open',open);
+    toggle.setAttribute('aria-expanded',String(open));
+    toggle.setAttribute('aria-label',open ? 'Stäng meny' : 'Öppna meny');
+    toggle.title = open ? 'Stäng meny' : 'Öppna meny';
+    toggle.textContent = open ? '×' : '☰';
+  });
+  nav.addEventListener('click',event=>{ if(event.target.closest('a')) close(); });
+  document.addEventListener('click',event=>{
+    const menu = document.querySelector('.access-menu');
+    if(menu?.open && !menu.contains(event.target)) menu.removeAttribute('open');
+  });
+  window.matchMedia('(min-width: 901px)').addEventListener?.('change',event=>{ if(event.matches) close(); });
 }
 function updateActiveNav(){
   const route = currentRoute();
   document.querySelectorAll('[data-nav]').forEach(link=>{
     const key = link.dataset.nav;
-    const active = (key === "home" && route === "/") || (key === "personarkiv" && route.startsWith("/personarkiv")) || (key === "gardarkiv" && route.startsWith("/gardar")) || (key === "emigrantarkiv" && route.startsWith("/emigranter"));
+    const active = (key === "home" && route === "/") || (key === "personarkiv" && route.startsWith("/personarkiv")) || (key === "gardarkiv" && route.startsWith("/gardar")) || (key === "emigrantarkiv" && route.startsWith("/emigranter")) || (key === "contact" && route.startsWith("/kontakt"));
     link.classList.toggle('active', active);
   });
 }
@@ -2618,6 +2663,7 @@ function initFamilyAccount(){
 
 loadManualData();
 initAccessibilityControls();
+initMobileNavigation();
 renderTree();
 initTreeControls();
 initEditor();

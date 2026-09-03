@@ -22,7 +22,7 @@ Person- och gårdssidorna har separata avsnitt för berättelse, tidslinje, rela
 
 Emigrantarkivet på `/emigranter/` håller internationella sidogrenar utanför huvudträdets familjeenheter. Varje gren återanvänder rotpersonens befintliga person-ID och får en separat sida, datamodell och markdownfil för resan, livet i det nya landet, efterkommande, källor och öppna frågor.
 
-Den publika webbplatsen är en ren läsvy. Redigering sker i Familjearkivet på `/admin/`, där Supabase-inloggning och databasens RLS-regler styr åtkomsten.
+Den publika webbplatsen är en ren läsvy. Redigering sker i Familjearkivet på `/admin/`, där Supabase-inloggning med e-postadress som användarnamn och lösenord samt databasens RLS-regler styr åtkomsten. Konton som tidigare använde e-postlänk kan välja lösenord via återställningslänken på inloggningssidan.
 
 - `contributor` kan skapa ändringsförslag som skickas för granskning.
 - `editor` kan redigera, granska och publicera personer och platser.
