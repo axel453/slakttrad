@@ -1,12 +1,16 @@
 ---
-person_id: nils_johan_bengtsson
+person_id: nils_johan_bengtsson_1869
 slug: nils-johan-bengtsson
 destination: USA
-status: pågående
+status: historisk
 senast_uppdaterad: 2026-09-02
+ersatt_av: nils-johan-bengtsson-master-4.md
 ---
 
-# Nils Johan Bengtssons emigrantgren
+# Historisk startfil för Nils Johan Bengtssons emigrantgren
+
+> Denna första arbetsversion bevaras som historik. Aktuell source of truth är
+> `nils-johan-bengtsson-master-4.md` från 2026-09-03.
 
 ## Sammanfattning
 

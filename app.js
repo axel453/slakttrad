@@ -61,15 +61,18 @@ function personHTML(id, unit){
   const alt = aliasText ? `<span class="alt">/ ${escapeHtml(aliasText)}</span>` : "";
   const dates = formatDates(p);
   const place = p.place ? `<span class="pplace">${escapeHtml(canonicalEntityText(p.place))}</span>` : "";
-  return `<button class="person${heir ? " heir" : ""}${unit?.ancestor ? " ancestor" : ""}" data-id="${id}" title="Öppna livshistoria">
-    <img class="pcard-photo" src="${escapeHtml(personPhoto(p))}" alt="" loading="lazy" onerror="this.src='${PERSON_PLACEHOLDER}'">
-    <span class="pcard-text">
-      <span class="prole"><span class="sdot ${p.status || 'open'}"></span>${escapeHtml(role)}</span>
-      <span class="pname">${escapeHtml(p.name)}${alt}</span>
-      ${dates ? `<span class="pdates">${escapeHtml(dates)}</span>` : ""}
-      ${place}
-    </span>
-  </button>`;
+  return `<span class="person-card-shell">
+    <button class="person${heir ? " heir" : ""}${unit?.ancestor ? " ancestor" : ""}" data-id="${id}" title="Öppna livshistoria">
+      <img class="pcard-photo" src="${escapeHtml(personPhoto(p))}" alt="" loading="lazy" onerror="this.src='${PERSON_PLACEHOLDER}'">
+      <span class="pcard-text">
+        <span class="prole"><span class="sdot ${p.status || 'open'}"></span>${escapeHtml(role)}</span>
+        <span class="pname">${escapeHtml(p.name)}${alt}</span>
+        ${dates ? `<span class="pdates">${escapeHtml(dates)}</span>` : ""}
+        ${place}
+      </span>
+    </button>
+    ${adminEditLinkHTML("person",id,p.name,"record-edit-shortcut person-card-edit")}
+  </span>`;
 }
 
 const CARD_W = window.innerWidth <= 640 ? 188 : 208;
@@ -400,6 +403,10 @@ function renderUnits(units){
         openPerson(btn.dataset.id);
       });
     });
+    div.querySelectorAll('.record-edit-shortcut').forEach(link=>{
+      link.addEventListener('pointerdown', e=>e.stopPropagation());
+      link.addEventListener('click', e=>e.stopPropagation());
+    });
     const toggleBtn = div.querySelector('.unit-toggle');
     if(toggleBtn){
       toggleBtn.addEventListener('pointerdown', e=>e.stopPropagation());
@@ -442,6 +449,7 @@ function renderTree({preserveView=false}={}){
   renderUnits(units);
   drawLinks();
   syncTreeControlButtons();
+  refreshPageIcons();
   if(!preserveView) initialTreeView();
 }
 
@@ -660,7 +668,10 @@ function openPerson(id){
   document.getElementById('pActions').style.display = "";
   document.getElementById('panelPageOpen').dataset.route = personPath(id);
   document.getElementById('panelPageOpen').textContent = "Öppna sida";
-  document.getElementById('panelEditToggle').style.display = canEditArchive() ? "" : "none";
+  const panelEdit = document.getElementById('panelEditToggle');
+  panelEdit.href = adminEditUrl("person",id);
+  panelEdit.setAttribute('aria-label',`Redigera ${p.name}`);
+  panelEdit.title = `Redigera ${p.name}`;
   document.getElementById('panelEditForm').classList.remove('open');
   const photo = document.getElementById('pPhoto');
   photo.style.display = "";
@@ -719,7 +730,10 @@ function openPlace(id){
   document.getElementById('pActions').style.display = "";
   document.getElementById('panelPageOpen').dataset.route = placePath(place.id);
   document.getElementById('panelPageOpen').textContent = "Öppna platssida";
-  document.getElementById('panelEditToggle').style.display = "none";
+  const panelEdit = document.getElementById('panelEditToggle');
+  panelEdit.href = adminEditUrl("place",place.id);
+  panelEdit.setAttribute('aria-label',`Redigera platsen ${place.name}`);
+  panelEdit.title = `Redigera platsen ${place.name}`;
   document.getElementById('panelEditForm').classList.remove('open');
   document.getElementById('pPhoto').style.display = "none";
   document.getElementById('pRole').textContent = "Platskort";
@@ -797,6 +811,17 @@ function emigrantPath(id){
   const branch = EMIGRANT_BRANCHES[id];
   return `/emigranter/${branch?.slug || personSlug(id)}/`;
 }
+function emigrantPersonSlug(branch, id){
+  const person = branch?.people?.[id];
+  return person?.slug || slugifyUrl(person?.name || id);
+}
+function emigrantPersonPath(branchId, personId){
+  const branch = EMIGRANT_BRANCHES[branchId];
+  return `${emigrantPath(branchId)}personer/${emigrantPersonSlug(branch,personId)}/`;
+}
+function findEmigrantPersonBySlug(branch, slug){
+  return Object.keys(branch?.people || {}).find(id=>emigrantPersonSlug(branch,id) === slug || slugifyUrl(id) === slug) || null;
+}
 function findPersonBySlug(slug){
   return Object.keys(PEOPLE).find(id=>personSlug(id) === slug || slugifyUrl(id) === slug) || null;
 }
@@ -829,6 +854,18 @@ function clearDetailRoute(){
 }
 function routePersonUrl(id){ return personPath(id); }
 function routePlaceUrl(id){ return placePath(id); }
+function adminEditUrl(type,id){
+  const section = type === "person" ? "personer" : "gardar";
+  const recordPath = `${section}/${encodeURIComponent(id)}/`;
+  if(location.protocol !== "file:") return `/admin/${recordPath}`;
+  const appScript = [...document.scripts].find(script=>/\bapp\.js(?:\?|$)/.test(script.src));
+  const adminPage = new URL("admin/index.html",appScript?.src || location.href);
+  return `${adminPage.href}#/${recordPath}`;
+}
+function adminEditLinkHTML(type,id,name,className="btn"){
+  const label = type === "person" ? `Redigera ${name}` : `Redigera platsen ${name}`;
+  return `<a class="${escapeHtml(className)} auth-edit-link" href="${escapeHtml(adminEditUrl(type,id))}" aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}"><i data-lucide="pencil" aria-hidden="true"></i>${className.includes("record-edit-shortcut") ? "" : "<span>Redigera</span>"}</a>`;
+}
 function absoluteUrl(path){
   if(location.protocol === "file:") return path;
   return new URL(path, location.origin).href;
@@ -1120,7 +1157,7 @@ function renderPersonDetail(id){
         <img class="detail-photo" src="${escapeHtml(personPhoto(p))}" alt="">
         <button class="btn" type="button" data-show-in-tree="${escapeHtml(id)}">Visa i trädet</button>
         ${EMIGRANT_BRANCHES[id] ? `<a class="btn" href="${escapeHtml(emigrantPath(id))}" data-open-emigrant="${escapeHtml(id)}">Visa emigrantgren</a>` : ""}
-        ${canEditArchive() ? `<button class="btn" type="button" data-edit-person="${escapeHtml(id)}">Redigera</button>` : ""}
+        ${adminEditLinkHTML("person",id,p.name)}
         ${shareButtonHTML({title:p.name,text:`Läs om ${p.name} i Nilsson/Bengtsson släktträd.`,path:personPath(id),restricted:p.isLiving === true || ["family","private"].includes(p.visibility)})}
         <button class="btn" type="button" data-print-page>Skriv ut</button>
       </div>
@@ -1224,7 +1261,7 @@ function renderPlaceDetail(id){
         <p class="detail-summary">${linkPersonNames(story[0])}</p>
       </div>
       <div class="detail-actions">
-        ${canEditArchive() ? '<button class="btn" type="button" data-toggle-place-edit>Redigera plats</button>' : ""}
+        ${adminEditLinkHTML("place",place.id,place.name)}
         <button class="btn" type="button" data-jump-place-map="${escapeHtml(place.id)}">Visa på kartan</button>
         ${shareButtonHTML({title:place.name,text:`Läs om ${place.name} i Nilsson/Bengtsson släktträd.`,path:placePath(id)})}
         <button class="btn" type="button" data-print-page>Skriv ut</button>
@@ -1291,27 +1328,55 @@ function emigrantBranchStatus(branch){
   if(branch.status === "open") return "Öppet emigrantspår";
   return STATUS_LABEL[branch.status] || "Emigrantspår";
 }
+function emigrantResearchStatus(status){
+  return {confirmed:"Bekräftat",strong:"Starkt stöd",hypothesis:"Hypotes",excluded:"Avförd"}[status] || STATUS_LABEL[status] || "Öppet spår";
+}
+function emigrantPersonRecord(branch,id){
+  return id === branch.rootPersonId ? PEOPLE[id] : branch.people?.[id];
+}
+function emigrantPersonLinkHTML(branch,id,className="emigrant-person-link"){
+  const person = emigrantPersonRecord(branch,id);
+  if(!person) return "";
+  const meta = [person.relation,person.born,person.died,person.location].filter(Boolean).join(" · ");
+  if(id === branch.rootPersonId){
+    return `<a class="${className}" href="${escapeHtml(personPath(id))}" data-open-person="${escapeHtml(id)}"><strong>${escapeHtml(person.name)}</strong>${meta ? `<span>${escapeHtml(meta)}</span>` : ""}</a>`;
+  }
+  return `<a class="${className}" href="${escapeHtml(emigrantPersonPath(branch.id,id))}" data-open-emigrant-person="${escapeHtml(id)}" data-emigrant-branch="${escapeHtml(branch.id)}"><strong>${escapeHtml(person.name)}</strong>${meta ? `<span>${escapeHtml(meta)}</span>` : ""}</a>`;
+}
+function emigrantFamilyBranchHTML(branch,family,seen=new Set(),depth=0){
+  if(!family || seen.has(family.id)) return "";
+  const nextSeen = new Set(seen); nextSeen.add(family.id);
+  const partners = family.partners.map(id=>emigrantPersonLinkHTML(branch,id,"emigrant-family-person")).join('<span class="emigrant-family-and">och</span>');
+  const children = family.children.map(childId=>{
+    const childFamily = branch.families.find(row=>row.partners.includes(childId) && row.children.length);
+    return `<li>${emigrantPersonLinkHTML(branch,childId,"emigrant-family-person child")}${childFamily ? `<details class="emigrant-family-more"><summary>Visa nästa generation</summary>${emigrantFamilyBranchHTML(branch,childFamily,nextSeen,depth+1)}</details>` : ""}</li>`;
+  }).join("");
+  return `<div class="emigrant-family-branch">
+    <div class="emigrant-family-couple">${partners}</div>
+    ${family.children.length ? `<ol class="emigrant-family-children">${children}</ol>` : '<p class="detail-empty">Inga säkert kopplade barn är införda.</p>'}
+    <p class="emigrant-family-source"><span class="research-status ${escapeHtml(family.status)}">${escapeHtml(emigrantResearchStatus(family.status))}</span>${escapeHtml(family.source || "")}</p>
+  </div>`;
+}
 function emigrantTreeHTML(branch){
-  const root = PEOPLE[branch.rootPersonId];
-  const branchPeople = Object.entries(branch.people || {}).map(([id,person])=>({id,...person}));
-  const known = (branch.knownDescendants || []).filter(item=>!branchPeople.some(person=>person.name === item.name));
-  const descendants = [...branchPeople,...known];
-  const children = descendants.length ? descendants.map(item=>{
-    const meta = [item.relation || "efterkommande",item.born,item.location,item.status === "source-mentioned" ? "källomnämnd" : ""].filter(Boolean).join(" · ");
-    if(item.personId && PEOPLE[item.personId]){
-      return `<div class="emigrant-tree-child"><a class="emigrant-tree-node" href="${escapeHtml(personPath(item.personId))}" data-open-person="${escapeHtml(item.personId)}"><span class="emigrant-tree-name">${escapeHtml(PEOPLE[item.personId].name)}</span><span class="emigrant-tree-meta">${escapeHtml(meta)}</span></a></div>`;
-    }
-    return `<div class="emigrant-tree-child"><div class="emigrant-tree-node research"><span class="emigrant-tree-name">${escapeHtml(item.name)}</span><span class="emigrant-tree-meta">${escapeHtml(meta || "Forskningspost")}</span></div></div>`;
-  }).join("") : '<p class="detail-empty">Efterkommande läggs till här när de har källbelagts.</p>';
-  return `<div class="emigrant-tree-shell"><div class="emigrant-tree">
-    <a class="emigrant-tree-node root" href="${escapeHtml(personPath(branch.rootPersonId))}" data-open-person="${escapeHtml(branch.rootPersonId)}">
-      <span class="emigrant-tree-name">${escapeHtml(root.name)}</span>
-      <span class="emigrant-tree-meta">Rotperson · ${escapeHtml([root.born,branch.branchLabel].filter(Boolean).join(" · "))}</span>
-    </a>
-    <div class="emigrant-tree-stem" aria-hidden="true"></div>
-    <div class="emigrant-tree-children" style="--child-count:${Math.max(descendants.length,1)}">${children}</div>
-    <p class="emigrant-tree-note">Heldragen ram markerar den centrala personen. Streckade ramar är källomnämnda personer som ännu inte har fullständiga personposter.</p>
-  </div></div>`;
+  const rootFamily = branch.families.find(family=>family.partners.includes(branch.rootPersonId));
+  if(!rootFamily) return '<p class="detail-empty">Inga säkert belagda familjerelationer är införda ännu.</p>';
+  return `<div class="emigrant-tree-shell">${emigrantFamilyBranchHTML(branch,rootFamily)}<p class="emigrant-tree-note">Endast relationer med stöd i Master 4 visas i trädet. Öppna nästa generation stegvis för en lugnare överblick.</p></div>`;
+}
+function emigrantSourceGroupsHTML(groups){
+  if(!groups?.length) return '<p class="detail-empty">Inga källgrupper är inlagda.</p>';
+  return `<div class="source-groups">${groups.map(group=>`<section class="source-group"><h4>${escapeHtml(group.title)}</h4>${detailEvidenceHTML(group.items || [],"source")}</section>`).join("")}</div>`;
+}
+function emigrantResearchItemsHTML(items,kind){
+  if(!items?.length) return '<p class="detail-empty">Inga poster i denna kategori.</p>';
+  return `<div class="research-list">${items.map(item=>`<article class="research-item ${escapeHtml(item.status || kind)}"><span class="research-status ${escapeHtml(item.status || kind)}">${escapeHtml(emigrantResearchStatus(item.status || kind))}</span><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.text || item.reason || item.note || "")}</p></article>`).join("")}</div>`;
+}
+function emigrantUnplacedHTML(branch){
+  const items = branch.unplacedDescendants || [];
+  if(!items.length) return '<p class="detail-empty">Inga ofördelade efterkommande.</p>';
+  return `<div class="research-list">${items.map(item=>{
+    const person = item.personId ? branch.people?.[item.personId] : null;
+    return `<article class="research-item ${escapeHtml(item.status || "open")}"><span class="research-status ${escapeHtml(item.status || "open")}">${escapeHtml(emigrantResearchStatus(item.status))}</span><h4>${person ? emigrantPersonLinkHTML(branch,item.personId,"inline-emigrant-person") : escapeHtml(item.names || "Namngivna efterkommande")}</h4><p>${escapeHtml([item.relation,item.note].filter(Boolean).join(". "))}</p></article>`;
+  }).join("")}</div>`;
 }
 function renderEmigrantDetail(id){
   const branch = EMIGRANT_BRANCHES[id];
@@ -1328,7 +1393,7 @@ function renderEmigrantDetail(id){
     "url":absoluteUrl(path)
   });
   const detail = document.getElementById('detailPage');
-  const descendants = branch.knownDescendants || [];
+  const descendants = Object.entries(branch.people || {}).map(([personId,record])=>({personId,...record}));
   detail.innerHTML = `
     <div class="detail-hero">
       <div>
@@ -1349,18 +1414,76 @@ function renderEmigrantDetail(id){
         <section class="detail-section"><h3>Emigrantspåret</h3><div class="detail-story">${(branch.story || []).map(text=>`<p>${linkPersonNames(text)}</p>`).join("")}</div></section>
         <section class="detail-section"><h3>Sekundärt släktträd</h3>${emigrantTreeHTML(branch)}</section>
         <section class="detail-section"><h3>Tidslinje</h3>${detailTimelineHTML(branch.timeline || [])}</section>
-        <section class="detail-section"><h3>Källor</h3>${detailEvidenceHTML(branch.sources || [],"source")}</section>
-        <section class="detail-section"><h3>Osäkerheter och öppna spår</h3>${detailEvidenceHTML(branch.uncertainties || [],"uncertain")}</section>
+        <section class="detail-section"><h3>Platser och adresser</h3>${detailFactsHTML((branch.places || []).map(place=>[place.name || place[0],place.note || place[1] || ""]))}</section>
+        <section class="detail-section"><h3>Källor</h3>${emigrantSourceGroupsHTML(branch.sourceGroups)}</section>
+        <section class="detail-section"><h3>Hypoteser</h3>${emigrantResearchItemsHTML(branch.hypotheses,"hypothesis")}</section>
+        <section class="detail-section"><h3>Avförda kandidater</h3>${emigrantResearchItemsHTML(branch.excludedCandidates,"excluded")}</section>
+        <section class="detail-section"><h3>Efterkommande utan säker föräldraplacering</h3>${emigrantUnplacedHTML(branch)}</section>
+        <section class="detail-section"><h3>Prioriterade forskningsuppgifter</h3>${emigrantResearchItemsHTML(branch.researchPriorities,"open")}</section>
+        <section class="detail-section"><h3>Osäkerheter och öppna forskningsfrågor</h3>${detailEvidenceHTML(branch.uncertainties || [],"uncertain")}</section>
       </main>
       <aside class="detail-side">
         <section class="detail-section"><h3>Grenfakta</h3>${detailFactsHTML(branch.facts || [])}</section>
-        <section class="detail-section"><h3>Kända efterkommande</h3><div class="emigrant-descendant-list">${descendants.map(item=>`<div class="emigrant-descendant"><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml([item.relation,item.location,"källomnämnd"].filter(Boolean).join(" · "))}</span></div>`).join("") || '<p class="detail-empty">Inga efterkommande inlagda ännu.</p>'}</div></section>
+        <section class="detail-section"><h3>Personregister för grenen</h3><div class="emigrant-descendant-list">${descendants.map(item=>emigrantPersonLinkHTML(branch,item.personId,"emigrant-descendant")).join("") || '<p class="detail-empty">Inga efterkommande inlagda ännu.</p>'}</div></section>
         <section class="detail-section"><h3>Avgränsning</h3><p class="place-note">Rotpersonen hämtas från personarkivet. Den här sidan innehåller endast emigrantgrenens forskning och sekundära släktträd.</p></section>
       </aside>
     </div>`;
   detail.classList.add('open');
   detail.scrollIntoView({behavior:'smooth',block:'start'});
   return true;
+}
+function emigrantRelativeIds(branch,id){
+  const parents=[],partners=[],children=[];
+  (branch.families || []).forEach(family=>{
+    if(family.children.includes(id)) parents.push(...family.partners);
+    if(family.partners.includes(id)){
+      partners.push(...family.partners.filter(personId=>personId !== id));
+      children.push(...family.children);
+    }
+  });
+  const unique = values=>[...new Set(values)];
+  return {parents:unique(parents),partners:unique(partners),children:unique(children)};
+}
+function emigrantRelativeLinksHTML(branch,ids,emptyText){
+  if(!ids.length) return `<p class="detail-empty">${escapeHtml(emptyText)}</p>`;
+  return `<div class="emigrant-descendant-list">${ids.map(id=>emigrantPersonLinkHTML(branch,id,"emigrant-descendant")).join("")}</div>`;
+}
+function renderEmigrantPersonDetail(branchId,personId){
+  const branch = EMIGRANT_BRANCHES[branchId];
+  const person = branch?.people?.[personId];
+  const root = PEOPLE[branch?.rootPersonId];
+  if(!branch || !person || !root) return false;
+  const path = emigrantPersonPath(branchId,personId);
+  const description = person.summary || `${person.name}, person i ${root.name}s amerikanska emigrantgren.`;
+  setMeta(`${person.name} - ${root.name}s emigrantgren`,description,path,{"@context":"https://schema.org","@type":"Person","name":person.name,"alternateName":person.aliases || undefined,"birthDate":person.born || undefined,"deathDate":person.died || undefined,"description":description,"url":absoluteUrl(path)});
+  const relatives = emigrantRelativeIds(branch,personId);
+  const facts = [];
+  if(person.aliases?.length) facts.push(["Sekundära namn",person.aliases.join(", ")]);
+  if(person.location) facts.push(["Plats",person.location]);
+  (person.facts || []).forEach(row=>facts.push(row));
+  const detail = document.getElementById('detailPage');
+  detail.innerHTML = `<div class="detail-hero"><div>
+    ${breadcrumbsHTML([{label:"Startsida",href:"/",nav:"home"},{label:"Emigrantarkiv",href:"/emigranter/",nav:"emigrantarkiv"},{label:`${root.name}s gren`,href:emigrantPath(branchId)},{label:person.name}])}
+    <p class="detail-kicker">Person i amerikansk emigrantgren</p><h2 class="detail-title">${escapeHtml(person.name)}</h2>
+    ${person.aliases?.length ? `<p class="detail-name-aliases"><span>Även känd som</span> ${escapeHtml(person.aliases.join(" · "))}</p>` : ""}
+    <p class="detail-subtitle">${escapeHtml([person.relation,person.born ? `född ${person.born}` : "",person.died ? `avliden ${person.died}` : "",person.location].filter(Boolean).join(" · "))}</p>
+    <span class="research-status ${escapeHtml(person.status || "open")}">${escapeHtml(emigrantResearchStatus(person.status))}</span>
+    <p class="detail-summary">${escapeHtml(description)}</p>
+  </div><div class="detail-actions"><a class="btn" href="${escapeHtml(emigrantPath(branchId))}" data-open-emigrant="${escapeHtml(branchId)}">Visa hela emigrantgrenen</a>${shareButtonHTML({title:person.name,text:`Läs om ${person.name} i ${root.name}s emigrantgren.`,path,restricted:person.isLiving === true})}<button class="btn" type="button" data-print-page>Skriv ut</button></div></div>
+  <div class="detail-layout"><main class="detail-main">
+    <section class="detail-section"><h3>Livshistoria</h3><div class="detail-story">${(person.story?.length ? person.story : [description]).map(text=>`<p>${escapeHtml(text)}</p>`).join("")}</div></section>
+    <section class="detail-section"><h3>Livslinje</h3>${detailTimelineHTML(person.timeline || [])}</section>
+    <section class="detail-section"><h3>Bilder och dokument</h3>${detailImagesHTML(person,true)}</section>
+    <section class="detail-section"><h3>Källor</h3>${detailEvidenceHTML(person.sources || [],"source")}</section>
+    <section class="detail-section"><h3>Osäkerheter</h3>${detailEvidenceHTML(person.uncertainties || [],"uncertain")}</section>
+  </main><aside class="detail-side">
+    ${person.isLiving ? '<section class="detail-section privacy-note"><h3>Integritet</h3><p>Personen kan vara i livet. Privata kontaktuppgifter och exakta privata adresser visas därför inte.</p></section>' : ""}
+    <section class="detail-section"><h3>Fakta</h3>${detailFactsHTML(facts)}</section>
+    <section class="detail-section"><h3>Föräldrar</h3>${emigrantRelativeLinksHTML(branch,relatives.parents,"Inga säkert kopplade föräldrar är inlagda.")}</section>
+    <section class="detail-section"><h3>Make eller maka</h3>${emigrantRelativeLinksHTML(branch,relatives.partners,"Ingen make eller maka är säkert inlagd.")}</section>
+    <section class="detail-section"><h3>Barn</h3>${emigrantRelativeLinksHTML(branch,relatives.children,"Inga säkert kopplade barn är inlagda.")}</section>
+  </aside></div>`;
+  detail.classList.add('open'); refreshPageIcons(); detail.scrollIntoView({behavior:'smooth',block:'start'}); return true;
 }
 function setPageMode(mode){
   document.body.classList.remove("page-home","page-personarkiv","page-gardarkiv","page-emigrantarkiv","page-contact","page-detail");
@@ -1421,6 +1544,11 @@ function renderCurrentRoute(){
     const id = findPlaceBySlug(parts[1]);
     if(id){ setPageMode("detail"); if(renderPlaceDetail(id)) return; }
   }
+  if(parts[0] === "emigranter" && parts[1] && parts[2] === "personer" && parts[3]){
+    const branchId = findEmigrantBySlug(parts[1]);
+    const personId = branchId ? findEmigrantPersonBySlug(EMIGRANT_BRANCHES[branchId],parts[3]) : null;
+    if(branchId && personId){ setPageMode("detail"); if(renderEmigrantPersonDetail(branchId,personId)) return; }
+  }
   if(parts[0] === "emigranter" && parts[1]){
     const id = findEmigrantBySlug(parts[1]);
     if(id){ setPageMode("detail"); if(renderEmigrantDetail(id)) return; }
@@ -1436,6 +1564,12 @@ document.addEventListener('click', e=>{
   if(placeBtn){ e.preventDefault(); navigatePath(placePath(placeBtn.dataset.openPlace)); return; }
   const emigrantBtn = e.target.closest('[data-open-emigrant]');
   if(emigrantBtn){ e.preventDefault(); navigatePath(emigrantPath(emigrantBtn.dataset.openEmigrant)); return; }
+  const emigrantPersonBtn = e.target.closest('[data-open-emigrant-person]');
+  if(emigrantPersonBtn){
+    e.preventDefault();
+    navigatePath(emigrantPersonPath(emigrantPersonBtn.dataset.emigrantBranch,emigrantPersonBtn.dataset.openEmigrantPerson));
+    return;
+  }
   const closeBtn = e.target.closest('[data-close-detail]');
   if(closeBtn){ clearDetailRoute(); return; }
   const shareBtn = e.target.closest('[data-share-page]');
@@ -1590,6 +1724,23 @@ function rankedPlaceSearch(query){
   const best=Math.min(...rows.map(row=>row.rank),Infinity);
   return rows.filter(row=>best <= 1 ? row.rank <= 1 : best < 3 ? row.rank <= 2 : true).sort((a,b)=>a.rank-b.rank || a.place.name.localeCompare(b.place.name,'sv'));
 }
+function rankedEmigrantPersonSearch(query){
+  const normalizedQuery=normalizeSearchText(query),tokens=searchTokens(query),rows=[];
+  Object.entries(EMIGRANT_BRANCHES).forEach(([branchId,branch])=>{
+    Object.entries(branch.people || {}).forEach(([personId,person])=>{
+      const names=normalizeSearchText([person.name,...(person.aliases || [])].join(" "));
+      const words=new Set(names.split(/\s+/));
+      const full=[names,person.relation,person.born,person.died,person.location,person.summary,...(person.story || []),...(person.facts || []).flat()].filter(Boolean).join(" ");
+      let rank=Infinity;
+      if(names === normalizedQuery || names.startsWith(`${normalizedQuery} `)) rank=0;
+      else if(tokens.every(token=>words.has(token))) rank=1;
+      else if(matchesSearchText(names,query)) rank=2;
+      else if(matchesSearchText(full,query)) rank=4;
+      if(Number.isFinite(rank)) rows.push({branchId,personId,person,rank});
+    });
+  });
+  return rows.sort((a,b)=>a.rank-b.rank || a.person.name.localeCompare(b.person.name,'sv'));
+}
 function runSearch(query){
   const results = document.getElementById('searchResults');
   const q = normalizeSearchText(query);
@@ -1598,11 +1749,21 @@ function runSearch(query){
   runPersonSearch(q, results);
 }
 function runPersonSearch(q, results){
-  const hits = rankedPersonSearch(q).map(row=>row.id).slice(0,12);
+  const central = rankedPersonSearch(q).map(row=>({kind:"central",id:row.id,person:PEOPLE[row.id],rank:row.rank}));
+  const branch = rankedEmigrantPersonSearch(q).map(row=>({kind:"emigrant",...row}));
+  const hits = [...central,...branch].sort((a,b)=>a.rank-b.rank || a.person.name.localeCompare(b.person.name,'sv')).slice(0,12);
   results.classList.add('open');
   if(!hits.length){ results.innerHTML = '<div class="search-empty">Ingen person matchar sökningen.</div>'; return; }
-  results.innerHTML = hits.map(id=>{
-    const p = PEOPLE[id];
+  results.innerHTML = hits.map(hit=>{
+    const p = hit.person;
+    if(hit.kind === "emigrant"){
+      return `<a class="search-hit" href="${escapeHtml(emigrantPersonPath(hit.branchId,hit.personId))}" data-type="emigrant-person" data-id="${escapeHtml(hit.personId)}" data-emigrant-branch="${escapeHtml(hit.branchId)}">
+        <div class="search-hit-name">${escapeHtml(p.name)}${p.aliases?.length ? ` / ${escapeHtml(p.aliases.join(" / "))}` : ""}</div>
+        <div class="search-hit-meta">${escapeHtml(p.relation || "Emigrantgren")}</div>
+        <div class="search-hit-context">${escapeHtml([p.born,p.location,"amerikansk gren"].filter(Boolean).join(" · "))}</div>
+      </a>`;
+    }
+    const id = hit.id;
     const aliases = personAliasText(p);
     return `<a class="search-hit" href="${escapeHtml(personPath(id))}" data-type="person" data-id="${id}">
       <div class="search-hit-name">${escapeHtml(p.name)}${aliases ? ` / ${escapeHtml(aliases)}` : ""}</div>
@@ -1681,13 +1842,14 @@ function renderPersonArchive(){
         <h3>${escapeHtml(place)}</h3>
         <p class="archive-group-meta">${people.length} person${people.length === 1 ? "" : "er"}</p>
         <div class="archive-list">
-          ${people.map(({id,person})=>`<a class="archive-item" href="${escapeHtml(routePersonUrl(id))}" data-open-person="${escapeHtml(id)}">
+          ${people.map(({id,person})=>`<div class="archive-item-row"><a class="archive-item" href="${escapeHtml(routePersonUrl(id))}" data-open-person="${escapeHtml(id)}">
             <span class="archive-item-name">${escapeHtml(person.name)}${personAliases(person).length ? ` / ${escapeHtml(personAliases(person).join(" / "))}` : ""}</span>
             <span class="archive-item-meta">${escapeHtml([person.born, person.role, DIRECT_HEIRS.has(id) ? "direkt led" : "", EMIGRANT_BRANCHES[id] ? "emigrantgren" : ""].filter(Boolean).join(" · ") || "Person")}</span>
-          </a>`).join("")}
+          </a>${adminEditLinkHTML("person",id,person.name,"record-edit-shortcut archive-edit-shortcut")}</div>`).join("")}
         </div>
       </article>`);
   }).join("") || '<p class="detail-empty">Inga personer matchar valt filter.</p>';
+  refreshPageIcons();
 }
 function renderPlaceArchive(){
   const el = document.getElementById('placeArchive');
@@ -1715,17 +1877,19 @@ function renderPlaceArchive(){
       <p class="archive-group-meta">${escapeHtml(place.area || "Område saknas")} · ${related.length} kopplade personer${hasCoords(place) ? " · kartpunkt" : ""}</p>
       <p class="place-note">${escapeHtml(place.note || "Ingen platsbeskrivning ännu.")}</p>
       <div class="archive-list" style="margin-top:12px">
-        <a class="archive-item" href="${escapeHtml(routePlaceUrl(place.id))}" data-open-place="${escapeHtml(place.id)}">
+        <div class="archive-item-row"><a class="archive-item" href="${escapeHtml(routePlaceUrl(place.id))}" data-open-place="${escapeHtml(place.id)}">
           <span class="archive-item-name">Öppna gårdssida</span>
           <span class="archive-item-meta">${escapeHtml(placeAliases(place).slice(0,4).join(" · ") || place.name)}</span>
-        </a>
+        </a>${adminEditLinkHTML("place",place.id,place.name,"record-edit-shortcut archive-edit-shortcut")}</div>
       </div>
     </article>`;
   }).join("") || '<p class="detail-empty">Inga platser matchar valt filter.</p>';
+  refreshPageIcons();
 }
 function emigrantSearchText(branch){
   const person = PEOPLE[branch.rootPersonId] || {};
-  return [person.name,person.born,branch.branchLabel,branch.originCountry,branch.destinationCountry,...(branch.destinationAreas || []),branch.summary,...(branch.story || []),...(branch.facts || []).flat(),...(branch.knownDescendants || []).flatMap(item=>[item.name,item.relation,item.location])].filter(Boolean).join(" ").toLocaleLowerCase('sv');
+  const branchPeople = Object.values(branch.people || {}).flatMap(item=>[item.name,...(item.aliases || []),item.relation,item.born,item.died,item.location,item.summary,...(item.story || []),...(item.facts || []).flat()]);
+  return [person.name,...personAliases(person),person.born,branch.branchLabel,branch.originCountry,branch.destinationCountry,...(branch.destinationAreas || []),branch.summary,...(branch.story || []),...(branch.facts || []).flat(),...branchPeople].filter(Boolean).join(" ").toLocaleLowerCase('sv');
 }
 function renderEmigrantArchive(){
   const el = document.getElementById('emigrantArchive');
@@ -1747,7 +1911,7 @@ function renderEmigrantArchive(){
       <p class="archive-section-label">${escapeHtml(branch.branchLabel || "Emigrantgren")}</p>
       <h3>${escapeHtml(person.name)}</h3>
       <div class="emigrant-route"><strong>${escapeHtml(branch.originCountry || "Sverige")}</strong><span class="emigrant-route-arrow" aria-hidden="true">→</span><strong>${escapeHtml(branch.destinationCountry || "Okänd destination")}</strong></div>
-      <p class="archive-group-meta">${escapeHtml([person.born ? `född ${person.born}` : "",emigrantBranchStatus(branch),`${(branch.knownDescendants || []).length} kända efterkommande`].filter(Boolean).join(" · "))}</p>
+      <p class="archive-group-meta">${escapeHtml([person.born ? `född ${person.born}` : "",emigrantBranchStatus(branch),`${Object.keys(branch.people || {}).length} dokumenterade personer`].filter(Boolean).join(" · "))}</p>
       <p class="place-note">${escapeHtml(branch.summary)}</p>
       <div class="archive-list" style="margin-top:12px">
         <a class="archive-item" href="${escapeHtml(emigrantPath(branch.id))}" data-open-emigrant="${escapeHtml(branch.id)}">
@@ -1801,9 +1965,15 @@ function initArchiveFilters(){
   setSelectOptions('personArchiveCentury', centuries, 'Alla århundraden');
   setSelectOptions('personArchivePlace', places, 'Alla platser');
   setSelectOptions('emigrantArchiveDestination', destinations, 'Alla destinationer');
-  ['personArchiveSearch','personArchiveCentury','personArchivePlace','personArchiveStatus','placeArchiveSearch','placeArchiveType','placeArchiveMap','emigrantArchiveSearch','emigrantArchiveDestination','emigrantArchiveStatus'].forEach(id=>{
+  const liveSearches = {
+    personArchiveSearch: renderPersonArchive,
+    placeArchiveSearch: renderPlaceArchive,
+    emigrantArchiveSearch: renderEmigrantArchive
+  };
+  Object.entries(liveSearches).forEach(([id,render])=>bindLiveSearch(document.getElementById(id),render));
+  ['personArchiveCentury','personArchivePlace','personArchiveStatus','placeArchiveType','placeArchiveMap','emigrantArchiveDestination','emigrantArchiveStatus'].forEach(id=>{
     const field = document.getElementById(id);
-    field?.addEventListener(field.tagName === 'INPUT' ? 'input' : 'change', renderArchives);
+    field?.addEventListener('change', renderArchives);
   });
 }
 function placeIdFromCurrentRoute(){
@@ -1858,11 +2028,35 @@ function updateActiveNav(){
     link.classList.toggle('active', active);
   });
 }
+function bindLiveSearch(input, callback){
+  if(!input) return;
+  let composing = false;
+  let frame = 0;
+  const update = ()=>{
+    window.cancelAnimationFrame(frame);
+    frame = window.requestAnimationFrame(()=>callback(input.value));
+  };
+  input.addEventListener('compositionstart',()=>{ composing = true; });
+  input.addEventListener('compositionend',()=>{ composing = false; update(); });
+  ['input','search','change'].forEach(type=>input.addEventListener(type,()=>{ if(!composing) update(); }));
+  input.addEventListener('keyup',event=>{
+    if(!composing && event.key !== 'Enter' && event.key !== 'Escape') update();
+  });
+  input.addEventListener('keydown',event=>{
+    if(event.key !== 'Enter') return;
+    event.preventDefault();
+    update();
+  });
+}
 function initPersonSearch(){
   const input = document.getElementById('personSearch'), clear = document.getElementById('searchClear'), results = document.getElementById('searchResults');
   const modes = [...document.querySelectorAll('input[name="searchMode"]')];
-  input.addEventListener('input',()=>runSearch(input.value));
+  bindLiveSearch(input,runSearch);
   input.addEventListener('keydown', e=>{ if(e.key==="Escape"){ input.value=""; runSearch(""); } });
+  document.getElementById('siteSearchForm')?.addEventListener('submit',event=>{
+    event.preventDefault();
+    runSearch(input.value);
+  });
   modes.forEach(mode=>mode.addEventListener('change',()=>{
     input.placeholder = currentSearchMode() === "place" ? "Sök plats, gård, socken eller ort" : "Sök person på namn, födelsedatum, plats eller notering";
     runSearch(input.value);
@@ -1873,6 +2067,10 @@ function initPersonSearch(){
     e.preventDefault();
     if(hit.dataset.type === "place"){
       navigatePath(placePath(hit.dataset.place));
+      return;
+    }
+    if(hit.dataset.type === "emigrant-person"){
+      navigatePath(emigrantPersonPath(hit.dataset.emigrantBranch,hit.dataset.id));
       return;
     }
     navigatePath(personPath(hit.dataset.id));
@@ -1951,10 +2149,11 @@ function renderPlaceList(){
   const listEl = document.getElementById('placeList');
   if(!listEl) return;
   const places = visiblePlaces();
-  listEl.innerHTML = places.length ? places.map(p=>`<button class="place-btn" type="button" data-place="${p.id}">
+  listEl.innerHTML = places.length ? places.map(p=>`<div class="place-list-row"><button class="place-btn" type="button" data-place="${p.id}">
     <span class="place-btn-name">${escapeHtml(p.name)}</span>
     <span class="place-btn-meta">${escapeHtml(p.area)}${hasCoords(p) ? "" : " · ej kartlagd"}</span>
-  </button>`).join("") : '<div class="place-empty-row">Inga platser matchar valt filter.</div>';
+  </button>${adminEditLinkHTML("place",p.id,p.name,"record-edit-shortcut place-list-edit")}</div>`).join("") : '<div class="place-empty-row">Inga platser matchar valt filter.</div>';
+  refreshPageIcons();
 }
 function initPlaceMap(){
   const mapEl = document.getElementById('placeMap'), listEl = document.getElementById('placeList');
@@ -2233,12 +2432,16 @@ async function persistSharedEntity(type, id, payload, operation="update", showMe
 function applySharedSnapshot(snapshot){
   if(!snapshot) return;
   Object.entries(snapshot.people || {}).forEach(([id,person])=>{
+    // Master 4 replaces the legacy Nils Johan row. Ignore that stale database
+    // record until migration 005 has been applied so it cannot recreate a duplicate.
+    if(id === "nils_johan_bengtsson" && PEOPLE.nils_johan_bengtsson_1869) return;
     normalizePersonNames(person);
     if(PEOPLE[id]) Object.assign(PEOPLE[id], person);
     else applyManualPerson(id, person);
     if(person.direct) DIRECT_HEIRS.add(id);
   });
   (snapshot.units || []).forEach(unit=>{
+    unit = {...unit,persons:(unit.persons || []).map(id=>id === "nils_johan_bengtsson" ? "nils_johan_bengtsson_1869" : id)};
     if(UNIT_BY_ID[unit.id]){
       Object.assign(UNIT_BY_ID[unit.id], unit);
       (unit.persons || []).forEach(personId=>{ PERSON_TO_UNIT[personId] = unit.id; });
@@ -2710,12 +2913,6 @@ function initEditor(){
   document.getElementById('placeEditorForm').addEventListener('submit', e=>{
     e.preventDefault();
     addManualPlace(e.currentTarget);
-  });
-  document.getElementById('panelEditToggle').addEventListener('click', ()=>{
-    if(!currentPanelPersonId) return;
-    const form = document.getElementById('panelEditForm');
-    form.classList.toggle('open');
-    if(form.classList.contains('open')) fillPanelEditor(currentPanelPersonId);
   });
   document.getElementById('panelEditForm').addEventListener('submit', e=>{
     e.preventDefault();

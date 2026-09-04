@@ -83,7 +83,7 @@
   }
   .btn:hover{background:var(--surface-2);border-color:#C9D4CB;color:var(--ink)}
   .btn.active{background:var(--thread);border-color:var(--thread);color:var(--surface)}
-  .btn:focus-visible,.search-input:focus,.person:focus-visible,.relchip:focus-visible,.place-btn:focus-visible,.place-open:focus-visible,.search-hit:focus-visible,.editor-field:focus{outline:2px solid var(--thread);outline-offset:2px}
+  .btn:focus-visible,.search-input:focus,.person:focus-visible,.relchip:focus-visible,.place-btn:focus-visible,.place-open:focus-visible,.search-hit:focus-visible,.editor-field:focus,.record-edit-shortcut:focus-visible{outline:2px solid var(--thread);outline-offset:2px}
 
   .search-shell{margin:0 0 14px;background:rgba(255,255,255,.86);border:1px solid var(--rule);border-radius:12px;padding:12px;box-shadow:0 16px 40px -32px rgba(23,33,29,.28)}
   .search-row{display:flex;align-items:center;gap:10px}
@@ -127,6 +127,11 @@
   .family-locked-note{display:none;margin:14px 0 0;padding:12px 14px;border-left:3px solid var(--thread);background:#f3f8f4;color:var(--ink-soft);font-size:14px}
   body.family-auth-required .family-locked-note{display:block}
   body.family-auth-required #personEditorForm,body.family-auth-required #placeEditorForm,body.family-auth-required #manualList{display:none}
+  .auth-edit-link{display:none!important}
+  body.family-authenticated .auth-edit-link{display:inline-flex!important}
+  .record-edit-shortcut{width:34px;height:34px;flex:none;align-items:center;justify-content:center;border:1px solid rgba(63,125,90,.3);border-radius:8px;background:rgba(255,255,255,.96);color:var(--thread-deep);text-decoration:none;box-shadow:0 9px 20px -14px rgba(23,33,29,.55);transition:background .16s,border-color .16s,transform .16s}
+  .record-edit-shortcut:hover{background:#F0F8F2;border-color:var(--thread);transform:translateY(-1px)}
+  .record-edit-shortcut svg{width:16px;height:16px}
   .editor-message{font-size:13.5px;color:var(--thread-deep);margin-left:auto}
   .manual-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-top:12px}
   .manual-item{border:1px solid var(--rule);border-radius:10px;background:var(--paper);padding:10px 12px}
@@ -142,6 +147,9 @@
   .link.faint{stroke:var(--ink-faint);stroke-dasharray:4 6;opacity:.38;stroke-width:1.5}
 
   .unit{position:absolute;display:flex;gap:12px;align-items:stretch}
+  .person-card-shell{position:relative;display:flex;flex:none;width:max-content}
+  .person-card-edit{position:absolute;z-index:3;top:7px;right:7px}
+  body.family-authenticated .person-card-edit{display:flex!important}
   .unit-toggle{
     position:absolute;left:50%;bottom:-35px;transform:translateX(-50%);z-index:2;
     border:1px solid var(--rule);border-radius:999px;background:rgba(255,255,255,.96);color:var(--ink-soft);
@@ -346,6 +354,8 @@
   .archive-group h3{font-size:1.05rem;line-height:1.2;margin:0;color:var(--ink)}
   .archive-group-meta{font-family:"Spline Sans Mono",monospace;font-size:10.5px;color:var(--ink-faint);margin:4px 0 12px}
   .archive-list{display:grid;gap:7px}
+  .archive-item-row,.place-list-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;align-items:stretch}
+  .archive-edit-shortcut,.place-list-edit{height:auto;min-height:34px;align-self:stretch}
   .archive-item{width:100%;text-align:left;border:1px solid var(--rule-soft);border-radius:10px;background:var(--paper);padding:10px 11px;font:inherit;color:var(--ink);cursor:pointer;text-decoration:none;display:block}
   .archive-item:hover{border-color:var(--thread);background:#F8FCF9}
   .archive-item-name{display:block;font-weight:650;line-height:1.18;color:var(--thread-deep)}
@@ -354,23 +364,28 @@
   .emigrant-route{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:12px 0;color:var(--ink-soft);font-family:"Spline Sans Mono",monospace;font-size:11px}
   .emigrant-route strong{color:var(--thread-deep)}
   .emigrant-route-arrow{color:var(--thread);font-size:16px}
-  .emigrant-tree-shell{overflow-x:auto;border:1px solid var(--rule);border-radius:12px;background:var(--surface-2);padding:24px 18px}
-  .emigrant-tree{min-width:560px;display:grid;justify-items:center}
-  .emigrant-tree-node{width:220px;border:1px solid var(--rule);border-radius:8px;background:var(--surface);padding:12px 14px;text-align:left;color:var(--ink);text-decoration:none;box-shadow:0 14px 30px -28px rgba(23,33,29,.5)}
-  .emigrant-tree-node.root{border:2px solid var(--thread);background:#F7FBF8}
-  .emigrant-tree-node.research{border-style:dashed;background:#FFFDF8}
-  .emigrant-tree-name{display:block;font-weight:700;line-height:1.2;color:var(--thread-deep)}
-  .emigrant-tree-meta{display:block;margin-top:5px;font-family:"Spline Sans Mono",monospace;font-size:10px;line-height:1.4;color:var(--ink-faint)}
-  .emigrant-tree-stem{width:1px;height:34px;background:var(--thread);position:relative}
-  .emigrant-tree-children{position:relative;display:grid;grid-template-columns:repeat(var(--child-count,1),220px);gap:18px;padding-top:34px}
-  .emigrant-tree-children::before{content:"";position:absolute;top:0;left:110px;right:110px;border-top:1px solid var(--thread)}
-  .emigrant-tree-child{position:relative}
-  .emigrant-tree-child::before{content:"";position:absolute;left:50%;top:-34px;height:34px;border-left:1px solid var(--thread)}
+  .emigrant-tree-shell{border:1px solid var(--rule);border-radius:12px;background:var(--surface-2);padding:20px}
+  .emigrant-family-branch{display:grid;gap:14px}
+  .emigrant-family-couple{display:flex;align-items:stretch;gap:9px;flex-wrap:wrap}
+  .emigrant-family-and{align-self:center;color:var(--ink-faint);font-family:"Spline Sans Mono",monospace;font-size:10px;text-transform:uppercase}
+  .emigrant-family-person{display:grid;gap:4px;flex:1 1 190px;min-width:0;border:1px solid var(--rule);border-left:3px solid var(--thread);border-radius:8px;background:var(--surface);padding:11px 12px;color:var(--ink);text-decoration:none}
+  .emigrant-family-person:hover,.emigrant-family-person:focus-visible{border-color:var(--thread);background:#F7FBF8}
+  .emigrant-family-person strong{color:var(--thread-deep);line-height:1.2}.emigrant-family-person span{color:var(--ink-faint);font-size:11px;line-height:1.4}
+  .emigrant-family-children{display:grid;gap:12px;margin:0;padding:0 0 0 22px;list-style:none;border-left:1px solid var(--thread)}
+  .emigrant-family-children>li{position:relative;display:grid;gap:8px}.emigrant-family-children>li::before{content:"";position:absolute;left:-22px;top:24px;width:20px;border-top:1px solid var(--thread)}
+  .emigrant-family-more{margin-left:14px}.emigrant-family-more>summary{cursor:pointer;color:var(--thread-deep);font-weight:650;font-size:12px;padding:7px 0}.emigrant-family-more[open]>summary{margin-bottom:8px}
+  .emigrant-family-source{display:flex;align-items:flex-start;gap:8px;margin:0;color:var(--ink-faint);font-size:11px;line-height:1.45}
+  .research-status{display:inline-flex;align-items:center;width:max-content;max-width:100%;border:1px solid var(--rule);border-radius:999px;padding:3px 7px;font-family:"Spline Sans Mono",monospace;font-size:9px;line-height:1.2;text-transform:uppercase;color:var(--ink-soft);background:var(--surface)}
+  .research-status.confirmed{border-color:#77A487;color:#245D3C;background:#F0F8F2}.research-status.strong{border-color:#B8A46B;color:#705B1D;background:#FFFBEF}.research-status.hypothesis{border-color:#C99B63;color:#81511B;background:#FFF7ED}.research-status.excluded{border-color:#BD8A8A;color:#7B3535;background:#FFF4F4}
+  .research-list,.source-groups{display:grid;gap:12px}.research-item,.source-group{border-top:1px solid var(--rule);padding-top:12px}.research-item:first-child,.source-group:first-child{border-top:0;padding-top:0}.research-item h4,.source-group h4{font-size:1rem;margin:7px 0 5px}.research-item p{margin:0;color:var(--ink-soft);font-size:13px;line-height:1.55}
+  .inline-emigrant-person{color:var(--thread-deep);text-decoration:none}.inline-emigrant-person:hover{text-decoration:underline}
   .emigrant-tree-note{margin:16px 0 0;color:var(--ink-faint);font-size:13px;text-align:center}
   .emigrant-descendant-list{display:grid;gap:8px}
-  .emigrant-descendant{border-left:3px dashed #A36A21;padding:8px 0 8px 12px}
+  .emigrant-descendant{display:grid;border-left:3px solid var(--thread);padding:8px 10px 8px 12px;color:var(--ink);text-decoration:none;background:var(--surface-2)}
+  .emigrant-descendant:hover{background:#F0F7F2}
   .emigrant-descendant strong{display:block;color:var(--ink)}
   .emigrant-descendant span{display:block;margin-top:2px;color:var(--ink-faint);font-size:12px}
+  .privacy-note{border-left:3px solid var(--thread);padding-left:14px}.privacy-note p{margin:0;color:var(--ink-soft);font-size:13px}
   .leads{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:24px}
   .lead{background:var(--surface);border:1px solid var(--rule);border-top:3px solid var(--st-open);border-radius:14px;padding:18px 20px;box-shadow:0 16px 40px -36px rgba(23,33,29,.28)}
   .lead h3{font-weight:700;font-size:1.08rem;margin:0 0 8px}
@@ -411,7 +426,7 @@
     .panel{width:100%;max-width:100vw}.panel-head{padding:18px 18px 14px}.panel-body{padding:18px 18px 32px}.panel-person-top{grid-template-columns:68px minmax(0,1fr);gap:12px;padding-right:34px}.panel-photo{width:68px;height:68px}.panel-name{font-size:1.38rem;overflow-wrap:anywhere}.facts li,.timeline li{display:grid;gap:3px}.facts .k,.timeline .tl-y{width:auto}.panel-edit-grid{grid-template-columns:1fr}
     .map-shell{grid-template-columns:1fr;gap:12px}.place-map{height:clamp(340px,56vh,500px);min-height:340px;border-radius:12px}
     .detail-page,body.page-detail .detail-page{margin:16px 0 36px;border-radius:12px;scroll-margin-top:72px}.detail-hero,.detail-layout{grid-template-columns:1fr}.detail-hero{padding:20px;gap:20px}.detail-main,.detail-side{padding:18px}.detail-title{font-size:2rem;overflow-wrap:anywhere}.detail-summary{font-size:1rem}.detail-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));justify-content:stretch}.detail-actions .btn{justify-content:center;min-height:44px}.share-feedback{grid-column:1/-1;text-align:left}.detail-photo{grid-column:1/-1;width:96px;height:96px}.detail-side{border-left:0;border-top:1px solid var(--rule)}.detail-timeline li{grid-template-columns:1fr;gap:4px}.place-edit-grid{grid-template-columns:1fr}.detail-generation-nav{grid-template-columns:1fr}.detail-generation-nav .detail-link-card:last-child{text-align:left}.detail-media-grid{grid-template-columns:1fr}
-    .archive-filters,.archive-filters.emigrant-filters,.archive-grid,.leads{grid-template-columns:minmax(0,1fr)}.archive-toolbar .branch-filters{width:100%}.archive-group{padding:14px}.step{padding:16px;gap:12px}.emigrant-tree-shell{padding:18px 12px}
+    .archive-filters,.archive-filters.emigrant-filters,.archive-grid,.leads{grid-template-columns:minmax(0,1fr)}.archive-toolbar .branch-filters{width:100%}.archive-group{padding:14px}.step{padding:16px;gap:12px}.emigrant-tree-shell{padding:14px 10px}.emigrant-family-couple{display:grid;grid-template-columns:minmax(0,1fr)}.emigrant-family-and{padding-left:4px}.emigrant-family-children{padding-left:14px}.emigrant-family-children>li::before{left:-14px;width:12px}.emigrant-family-more{margin-left:4px}
     .contact-page{padding:38px 0 48px}.contact-title{font-size:2.35rem}.contact-layout{grid-template-columns:1fr;gap:26px;margin-top:30px;padding-top:28px}.contact-topics{grid-template-columns:1fr}.contact-details{padding:18px}
     .media-lightbox{grid-template-columns:44px minmax(0,1fr) 44px;grid-template-rows:52px minmax(0,1fr) auto;padding:8px}.media-lightbox-figure{grid-column:1/-1;grid-row:1/4;padding:52px 0 62px}.media-lightbox-close,.media-lightbox-nav{position:relative;z-index:1}.media-lightbox-image{max-height:calc(100vh - 130px)}
   }
@@ -467,18 +482,19 @@
 
 <main class="wrap" id="mainContent">
   <div class="stage-shell" data-page="home">
-    <div class="search-shell" role="search">
+    <form class="search-shell" id="siteSearchForm" role="search">
       <div class="search-row">
         <label class="search-label" for="personSearch">Sök</label>
         <span class="search-mode" aria-label="Välj söktyp">
           <label><input type="radio" name="searchMode" value="person" checked> Person</label>
           <label><input type="radio" name="searchMode" value="place"> Plats</label>
         </span>
-        <input class="search-input" id="personSearch" type="search" autocomplete="off" placeholder="Namn, datum, plats eller notering">
+        <input class="search-input" id="personSearch" type="search" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-controls="searchResults" placeholder="Namn, datum, plats eller notering">
+        <button class="btn search-submit" type="submit">Sök</button>
         <button class="btn search-clear" id="searchClear" type="button">Rensa</button>
       </div>
       <div class="search-results" id="searchResults" aria-live="polite"></div>
-    </div>
+    </form>
     <div class="toolbar">
       <button class="btn" id="zoomIn"><span class="ico">+</span> Zooma in</button>
       <button class="btn" id="zoomOut"><span class="ico">-</span> Zooma ut</button>
@@ -578,7 +594,7 @@
       </div>
     </div>
     <div class="archive-filters" aria-label="Filtrera personarkivet">
-      <label class="archive-filter">Sök person<input id="personArchiveSearch" type="search" placeholder="Namn, gård eller notering"></label>
+      <label class="archive-filter">Sök person<input id="personArchiveSearch" type="search" enterkeyhint="search" spellcheck="false" placeholder="Namn, gård eller notering"></label>
       <label class="archive-filter">Århundrade<select id="personArchiveCentury"><option value="">Alla århundraden</option></select></label>
       <label class="archive-filter">Plats<select id="personArchivePlace"><option value="">Alla platser</option></select></label>
       <label class="archive-filter">Bevisstatus<select id="personArchiveStatus"><option value="">Alla statusar</option><option value="confirmed">Bekräftat</option><option value="likely">Starkt sannolikt</option><option value="working">Arbetsantagande</option><option value="open">Öppet spår</option></select></label>
@@ -594,7 +610,7 @@
       <span class="archive-count" id="emigrantArchiveCount"></span>
     </div>
     <div class="archive-filters emigrant-filters" aria-label="Filtrera emigrantarkivet">
-      <label class="archive-filter">Sök emigrant<input id="emigrantArchiveSearch" type="search" placeholder="Namn, land, region eller notering"></label>
+      <label class="archive-filter">Sök emigrant<input id="emigrantArchiveSearch" type="search" enterkeyhint="search" spellcheck="false" placeholder="Namn, land, region eller notering"></label>
       <label class="archive-filter">Destination<select id="emigrantArchiveDestination"><option value="">Alla destinationer</option></select></label>
       <label class="archive-filter">Forskningsstatus<select id="emigrantArchiveStatus"><option value="">Alla statusar</option><option value="confirmed">Bekräftad emigration</option><option value="working">Under utredning</option><option value="open">Öppet spår</option></select></label>
     </div>
@@ -632,7 +648,7 @@
       <span class="archive-count" id="placeArchiveCount"></span>
     </div>
     <div class="archive-filters" aria-label="Filtrera gårdsarkivet">
-      <label class="archive-filter">Sök plats<input id="placeArchiveSearch" type="search" placeholder="Namn, område eller historik"></label>
+      <label class="archive-filter">Sök plats<input id="placeArchiveSearch" type="search" enterkeyhint="search" spellcheck="false" placeholder="Namn, område eller historik"></label>
       <label class="archive-filter">Typ<select id="placeArchiveType"><option value="">Alla typer</option><option value="farm">Gårdar</option><option value="place">Övriga platser</option></select></label>
       <label class="archive-filter">Karta<select id="placeArchiveMap"><option value="">Alla</option><option value="mapped">Med kartpunkt</option><option value="unmapped">Utan kartpunkt</option></select></label>
     </div>
@@ -723,7 +739,7 @@
         <p class="panel-dates" id="pDates"></p>
         <span class="panel-status" id="pStatus"></span>
         <span class="panel-branch" id="pBranch"></span>
-        <div class="panel-actions" id="pActions"><button class="btn" id="panelPageOpen" type="button">Öppna sida</button><button class="btn" id="panelEditToggle" type="button">Redigera person</button></div>
+        <div class="panel-actions" id="pActions"><button class="btn" id="panelPageOpen" type="button">Öppna sida</button><a class="btn auth-edit-link" id="panelEditToggle" href="/admin/"><i data-lucide="pencil" aria-hidden="true"></i><span>Redigera</span></a></div>
       </div>
     </div>
   </div>
@@ -769,13 +785,13 @@
 </aside>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="data.js?v=20260903"></script>
-<script src="emigrants.js?v=20260903"></script>
+<script src="data.js?v=20260904b"></script>
+<script src="emigrants.js?v=20260904c"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js?v=20260903"></script>
 <script src="shared-data.js?v=20260903b"></script>
 <script id="structuredData" type="application/ld+json">{"@context":"https://schema.org","@type":"Place","name":"Torpa Tolsgård / Tolfsgård","alternateName":["Torpa Tolsgård","Torpa Tolfsgård","Tolsgård","Tolfsgård"],"description":"Preliminär fadderplats i Berndt/Bernt Börgessons familj. Gårdsläsningen behöver kontrolleras mot originalbild.","url":"https://axels-slakt.vercel.app/gardar/torpa-tolsgard-tolfsgard/"}</script>
 <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-<script src="app.js?v=20260903e"></script>
+<script src="app.js?v=20260904e"></script>
 </body>
 </html>

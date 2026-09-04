@@ -9,10 +9,10 @@ Emigrantgrenens efterkommande, familjer, resor, amerikanska platser, källor och
 
 ## Filnamn
 
-Använd samma slug som emigrantsidan:
+Använd samma slug som emigrantsidan och lägg till masterns versionsnummer:
 
 ```text
-emigrantgrenar/nils-johan-bengtsson.md
+emigrantgrenar/nils-johan-bengtsson-master-4.md
 ```
 
 ## Grundstruktur

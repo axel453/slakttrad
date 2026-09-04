@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-01T20:53:43.299Z",
+  "generatedAt": "2026-09-04T19:39:55.131Z",
   "people": [
     {
       "id": "lars_esbjornsson",
@@ -1551,7 +1551,7 @@
           "gunnild_alfredsdotter"
         ],
         "children": [
-          "nils_johan_bengtsson",
+          "nils_johan_bengtsson_1869",
           "anders_g_bengtsson",
           "karl_oskar_bengtsson",
           "johan_albin_bengtsson",
@@ -1621,7 +1621,7 @@
         ],
         "parents": [],
         "children": [
-          "nils_johan_bengtsson",
+          "nils_johan_bengtsson_1869",
           "anders_g_bengtsson",
           "karl_oskar_bengtsson",
           "johan_albin_bengtsson",
@@ -1633,7 +1633,7 @@
       }
     },
     {
-      "id": "nils_johan_bengtsson",
+      "id": "nils_johan_bengtsson_1869",
       "slug": "nils-johan-bengtsson",
       "name": "Nils Johan Bengtsson",
       "alt_name": null,
@@ -1643,19 +1643,49 @@
       "visibility": "public",
       "content": {
         "name": "Nils Johan Bengtsson",
-        "role": "Syskon till Sven Adolf",
-        "born": "1865",
-        "status": "working",
-        "story": [
-          "Barn till Bengt A. Nilsson och Sara Britta Andersdotter enligt Ancestry-trädet. Fullständigt datum och födelseort ska kontrolleras.",
-          "Arvskiftet efter Alma 1955 ger ett direkt belägg för Nils Johans tre döttrar i USA. De maskinskrivna orts- och gatunamnen kan innehålla svenska felskrivningar och behöver kontrolleras mot amerikanska källor."
+        "slug": "nils-johan-bengtsson",
+        "aliases": [
+          "Nils Johan Bengtson",
+          "John Benson"
         ],
-        "parents": [
-          "bengt_a_nilsson",
-          "sara_britta_andersdotter"
-        ],
-        "children": [],
+        "role": "Syskon till Sven Adolf · emigrant",
+        "born": "1869-03-26",
+        "died": "mellan 1940 och 1955-01-12",
+        "status": "confirmed",
+        "place": "Träslöv, Halland / Youngstown, Ohio / Chicago, Illinois",
         "facts": [
+          [
+            "Födelseort",
+            "Träslöv, Halland, Sverige"
+          ],
+          [
+            "Amerikanska namnformer",
+            "Nils Johan Bengtson och John Benson"
+          ],
+          [
+            "Emigration",
+            "1891 enligt Bethel-registret och amerikanska censuskällor"
+          ],
+          [
+            "Kyrkotillhörighet",
+            "Swedish Evangelical Lutheran Bethel Church, Youngstown"
+          ],
+          [
+            "Vigsel",
+            "1895 i Chicago med Ida Johnson"
+          ],
+          [
+            "Barn",
+            "Esther Benson Sholeen, Alice Victoria Benson Bischel och Edna Benson Weltner"
+          ],
+          [
+            "Levnadsstatus",
+            "I livet 1940; avliden före arvskiftet 1955-01-12"
+          ],
+          [
+            "Källstatus",
+            "Identiteten Nils Johan Bengtsson = John Benson är bekräftad i Master 4"
+          ],
           [
             "Barn i USA 1955",
             "Alice Beschel i Illinois, Edna Weltner i Kansas och Esther Sholeen i Illinois anges som döttrar i arvskiftet efter Alma."
@@ -1665,9 +1695,68 @@
             "Arvskiftet visar döttrarnas amerikanska bosättning men inte i sig att Nils Johan själv utvandrade."
           ]
         ],
+        "story": [
+          "Nils Johan Bengtsson föddes den 26 mars 1869 i Träslöv som son till Bengt August Nilsson och Sara Britta Andersdotter. Han var bror till Sven Adolf Bengtsson i den raka morfarslinjen.",
+          "Omkring 1891 lämnade han Sverige. Den första säkra amerikanska miljön är den svenska lutherska Bethel-församlingen i Youngstown, Ohio, där medlemsregistret anger namnformen Nils Johan Bengtson, exakt födelsedatum och Träslöv som födelseort.",
+          "Senast 1895 hade han flyttat till Chicago och börjat använda namnet John Benson. Där gifte han sig med Ida Johnson. Census 1900 placerar paret och dottern Esther i Hegewisch och binder genom födelsemånad, födelseår och immigrationsår samman John Benson med Nils Johan från Träslöv.",
+          "År 1920 bodde John och Ida i Chicago med döttrarna Esther, Alice och Edna. John levde fortfarande 1940, då han var 71 år och återfinns tillsammans med Ida. Exakt dödsdatum är okänt, men han var avliden före det svenska arvskiftet den 12 januari 1955.",
+          "Den stora amerikanska efterkommandegrenen visas separat för att huvudträdet ska förbli lättläst.",
+          "Arvskiftet efter Alma 1955 ger ett direkt belägg för Nils Johans tre döttrar i USA. De maskinskrivna orts- och gatunamnen kan innehålla svenska felskrivningar och behöver kontrolleras mot amerikanska källor."
+        ],
+        "timeline": [
+          [
+            "1869-03-26",
+            "Föds i Träslöv, Halland."
+          ],
+          [
+            "1891",
+            "Ankommer till USA och förs in i Bethel-församlingen i Youngstown enligt kyrko- och censuskällor."
+          ],
+          [
+            "ca 1893",
+            "En svårläst notering kan avse utflyttning från Bethel; destinationen är en hypotes."
+          ],
+          [
+            "1895",
+            "Gifter sig med Ida Johnson i Chicago."
+          ],
+          [
+            "1900",
+            "Census i Hegewisch/Chicago ger det avgörande identitetsbeviset för John Benson = Nils Johan Bengtsson."
+          ],
+          [
+            "1920",
+            "Bor i Chicago med Ida och döttrarna Esther, Alice och Edna."
+          ],
+          [
+            "1940",
+            "Återfinns 71 år gammal tillsammans med Ida och är fortfarande i livet."
+          ],
+          [
+            "före 1955-01-12",
+            "Är avliden när arvskiftet efter systern Alma förrättas."
+          ]
+        ],
         "sources": [
+          "Master 4: nils_johan_bengtsson_usa_master_2026-09-03_v4.md.",
+          "Bethel Lutheran Church, Youngstown, medlemsregister: Nils Johan Bengtson, född 26/3 1869 i Träslöf.",
+          "1900 U.S. Federal Census, Hegewisch/Hyde Park Township, Chicago, Ward 34, ED 1087, household 357, sheet 19B.",
+          "1920 U.S. Federal Census, Chicago, ED 389, sheet 2B, household 60.",
+          "1940 U.S. Federal Census: John och Ida Benson; John 71 år.",
+          "Cook County marriage index: John Benson och Ida Johnson, Chicago 1895, cn 240619.",
+          "Arvskifte efter Alma Josefina Bengtsson, förrättat 1955-01-12.",
           "Arvskifte efter Alma 1955.HEIC."
-        ]
+        ],
+        "uncertainties": [
+          "Exakt dödsdatum och dödsort mellan 1940 och 1955-01-12 är ännu okända.",
+          "Svensk utflyttningsnotis, fartyg, resväg och ankomsthamn har ännu inte identifierats.",
+          "Johns vistelseort i 1930 års census är fortfarande okänd."
+        ],
+        "parents": [
+          "bengt_a_nilsson",
+          "sara_britta_andersdotter"
+        ],
+        "children": []
       }
     },
     {
@@ -10980,7 +11069,7 @@
       "generation": 4,
       "branch": "mother",
       "person_ids": [
-        "nils_johan_bengtsson"
+        "nils_johan_bengtsson_1869"
       ],
       "child_unit_ids": [],
       "content": {}
@@ -11938,12 +12027,12 @@
       "kind": "parent"
     },
     {
-      "person_id": "nils_johan_bengtsson",
+      "person_id": "nils_johan_bengtsson_1869",
       "related_person_id": "bengt_a_nilsson",
       "kind": "parent"
     },
     {
-      "person_id": "nils_johan_bengtsson",
+      "person_id": "nils_johan_bengtsson_1869",
       "related_person_id": "sara_britta_andersdotter",
       "kind": "parent"
     },
