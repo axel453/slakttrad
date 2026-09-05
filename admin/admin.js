@@ -15,6 +15,11 @@
   function icon(name){ return `<i data-lucide="${name}"></i>`; }
   function icons(){ window.lucide?.createIcons({attrs:{'stroke-width':1.8}}); }
   function toast(message,error=false){ const el=document.getElementById('toast'); el.textContent=message; el.className=`toast show${error?' error':''}`; clearTimeout(toast.timer); toast.timer=setTimeout(()=>el.className='toast',4200); }
+  function publishedMessage(label,visibility){
+    if(visibility==='family') return `${label} är sparad och visas för inloggade familjemedlemmar.`;
+    if(visibility==='private') return `${label} är sparad och visas endast för redaktionen.`;
+    return `${label} är publicerad för alla.`;
+  }
   function role(){ return state.status?.profile?.role || 'contributor'; }
   function canReview(){ return ['editor','admin'].includes(role()); }
   function canManageUsers(){ return role()==='admin'; }
@@ -240,7 +245,7 @@
     const name=document.getElementById('fName').value.trim(); if(!name){toast('Personen behöver ett namn.',true);button.disabled=false;return;}
     const isNew=id==='ny'; const finalId=isNew?entityId('person'):id;
     const aliases=editedAliases(val('fAliases'),name,current);const payload={...clone(current),name,slug:current.slug||uniqueSlug('person',name),aliases,alt:aliases.join(' / '),formerNames:formerNames(current,name),role:val('fRole'),place:val('fPlace'),born:val('fBorn'),died:val('fDied'),branch:val('fBranch'),status:val('fStatus'),direct:val('fDirect')==='yes',isLiving:val('fLiving')==='yes',visibility:val('fVisibility'),parents:[val('fParent1'),val('fParent2')].filter(Boolean),partner:val('fPartner'),story:rows(val('fStory')),timeline:pairs(val('fTimeline')),facts:pairs(val('fFacts')),sources:rows(val('fSources')),uncertainties:rows(val('fUncertainties')),photo:val('fPhoto'),images:images(val('fImages'))};
-    try{const result=await window.FamilyData.submitChange('person',finalId,payload,isNew?'create':'update');toast(result.mode==='published'?'Personen är publicerad.':'Ändringen är skickad för granskning.');await refreshData();navigate('people',result.mode==='published'?finalId:null);}catch(error){toast(error.message||'Ändringen kunde inte sparas.',true);}finally{button.disabled=false;}
+    try{const result=await window.FamilyData.submitChange('person',finalId,payload,isNew?'create':'update');toast(result.mode==='published'?publishedMessage('Personen',payload.visibility):'Ändringen är skickad för granskning.');await refreshData();navigate('people',result.mode==='published'?finalId:null);}catch(error){toast(error.message||'Ändringen kunde inte sparas.',true);}finally{button.disabled=false;}
   }
 
   function renderPlaceEditor(id){
@@ -256,7 +261,7 @@
     event.preventDefault();const button=event.submitter;button.disabled=true;const name=val('fName');if(!name){toast('Platsen behöver ett namn.',true);button.disabled=false;return;}
     const lat=val('fLat'),lng=val('fLng');if((lat&&!lng)||(!lat&&lng)||Number.isNaN(Number(lat))||Number.isNaN(Number(lng))){toast('Fyll i både latitud och longitud med giltiga tal.',true);button.disabled=false;return;}
     const isNew=id==='ny',finalId=isNew?entityId('place'):id;const payload={...clone(current),id:finalId,name,slug:current.slug||uniqueSlug('place',name),area:val('fArea'),visibility:val('fVisibility'),aliases:editedAliases(val('fAliases'),name,current),formerNames:formerNames(current,name),note:val('fNote'),story:rows(val('fStory')),timeline:pairs(val('fTimeline')),sources:rows(val('fSources')),uncertainties:rows(val('fUncertainties')),images:images(val('fImages'))};if(lat){payload.lat=Number(lat);payload.lng=Number(lng);}else{delete payload.lat;delete payload.lng;}
-    try{const result=await window.FamilyData.submitChange('place',finalId,payload,isNew?'create':'update');toast(result.mode==='published'?'Platsen är publicerad.':'Platsen är skickad för granskning.');await refreshData();navigate('places',result.mode==='published'?finalId:null);}catch(error){toast(error.message||'Platsen kunde inte sparas.',true);}finally{button.disabled=false;}
+    try{const result=await window.FamilyData.submitChange('place',finalId,payload,isNew?'create':'update');toast(result.mode==='published'?publishedMessage('Platsen',payload.visibility):'Platsen är skickad för granskning.');await refreshData();navigate('places',result.mode==='published'?finalId:null);}catch(error){toast(error.message||'Platsen kunde inte sparas.',true);}finally{button.disabled=false;}
   }
   function val(id){return document.getElementById(id)?.value.trim()||'';}
 

@@ -1,6 +1,6 @@
 (function(){
   const config = window.FAMILY_ARCHIVE_CONFIG || {};
-  const state = {client:null,user:null,profile:null,connected:false,passwordRecovery:false};
+  const state = {client:null,user:null,profile:null,connected:false,passwordRecovery:false,lastSnapshotAt:0,refreshPromise:null};
 
   function configured(){
     return Boolean(config.supabaseUrl && config.supabasePublishableKey && window.supabase?.createClient);
@@ -51,6 +51,25 @@
     };
   }
 
+  async function refreshSnapshot(){
+    if(!state.client) return null;
+    if(state.refreshPromise) return state.refreshPromise;
+    state.refreshPromise = loadSnapshot().then(snapshot=>{
+      state.connected = true;
+      state.lastSnapshotAt = Date.now();
+      emit('family-data-ready',snapshot);
+      return snapshot;
+    }).finally(()=>{ state.refreshPromise = null; });
+    return state.refreshPromise;
+  }
+
+  function refreshWhenActive(){
+    if(document.visibilityState === 'hidden' || Date.now() - state.lastSnapshotAt < 5000) return;
+    refreshSnapshot().catch(error=>{
+      emit('family-data-status',{mode:'error',message:'Kunde inte uppdatera familjearkivet',error});
+    });
+  }
+
   async function refreshProfile(){
     if(!state.user){ state.profile = null; return; }
     const {data} = await state.client.from('profiles').select('display_name,role').eq('id',state.user.id).maybeSingle();
@@ -71,17 +90,21 @@
       if(authEvent === 'PASSWORD_RECOVERY') state.passwordRecovery = true;
       if(authEvent === 'SIGNED_OUT') state.passwordRecovery = false;
       await refreshProfile();
+      if(authEvent === 'SIGNED_IN' || authEvent === 'USER_UPDATED'){
+        try{ await refreshSnapshot(); }catch{}
+      }
       emit('family-auth-change',status());
     });
     try{
-      const snapshot = await loadSnapshot();
-      state.connected = true;
-      emit('family-data-ready',snapshot);
+      await refreshSnapshot();
       emit('family-data-status',{mode:'shared',message:'Ansluten till familjearkivet'});
     }catch(error){
       emit('family-data-status',{mode:'error',message:'Kunde inte läsa familjearkivet',error});
     }
     emit('family-auth-change',status());
+    window.addEventListener('focus',refreshWhenActive);
+    window.addEventListener('pageshow',refreshWhenActive);
+    document.addEventListener('visibilitychange',refreshWhenActive);
   }
 
   function status(){
@@ -234,7 +257,7 @@
     return {mode:'pending'};
   }
 
-  window.FamilyData = {init,status,loadSnapshot,loadAdminOverview,signInWithPassword,sendPasswordReset,updatePassword,sendMagicLink,signOut,uploadPublicImage,submitChange,reviewChange,updateMemberRole};
+  window.FamilyData = {init,status,loadSnapshot,refreshSnapshot,loadAdminOverview,signInWithPassword,sendPasswordReset,updatePassword,sendMagicLink,signOut,uploadPublicImage,submitChange,reviewChange,updateMemberRole};
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded',init,{once:true});
   else init();
 })();

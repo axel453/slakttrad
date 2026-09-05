@@ -2452,6 +2452,8 @@ async function persistSharedEntity(type, id, payload, operation="update", showMe
 }
 function applySharedSnapshot(snapshot){
   if(!snapshot) return;
+  const sharedPeopleIds = new Set(Object.keys(snapshot.people || {}));
+  const sharedPlaceIds = new Set((snapshot.places || []).map(place=>place.id));
   Object.entries(snapshot.people || {}).forEach(([id,person])=>{
     // Master 4 replaces the legacy Nils Johan row. Ignore that stale database
     // record until migration 005 has been applied so it cannot recreate a duplicate.
@@ -2477,8 +2479,14 @@ function applySharedSnapshot(snapshot){
   Object.entries(manualData.people).forEach(([id,person])=>applyManualPerson(id,person));
   manualData.units.forEach(applyManualUnit);
   manualData.places.forEach(applyManualPlace);
-  Object.entries(manualData.placeEdits).forEach(([id,edit])=>applyManualPlaceEdit(id,edit));
-  Object.entries(manualData.edits).forEach(([id,edit])=>applyManualPersonEdit(id,edit));
+  // A shared record is authoritative. Old browser-local edits must not hide a
+  // newer version that was published from another phone or computer.
+  Object.entries(manualData.placeEdits).forEach(([id,edit])=>{
+    if(!sharedPlaceIds.has(id)) applyManualPlaceEdit(id,edit);
+  });
+  Object.entries(manualData.edits).forEach(([id,edit])=>{
+    if(!sharedPeopleIds.has(id)) applyManualPersonEdit(id,edit);
+  });
   invalidateEntityReferenceCache();
   refreshEditorSelects();
   renderTree({preserveView:true});
