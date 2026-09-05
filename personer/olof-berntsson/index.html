@@ -261,6 +261,7 @@
   .place-btn:hover,.place-btn.active{border-color:var(--thread);color:var(--thread-deep);background:var(--surface-2)}
   .place-btn-name{display:block;color:var(--ink)}
   .place-btn-meta{display:block;font-family:"Spline Sans Mono",monospace;font-size:10px;color:var(--ink-faint);margin-top:2px}
+  .place-panel-actions{display:flex;align-items:stretch;gap:7px;flex-wrap:wrap;margin-bottom:4px}.place-panel-actions .btn{margin:0;min-height:40px}.place-panel-actions a.btn{text-decoration:none}
   .place-name{font-size:1.18rem;font-weight:700;line-height:1.15;margin:0}
   .place-meta{font-family:"Spline Sans Mono",monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--thread);margin:6px 0 0}
   .place-note{font-size:14.5px;color:var(--ink-soft);line-height:1.55;margin:12px 0 0}
@@ -632,7 +633,7 @@
         <h3 class="place-name" id="placeName">Välj en plats</h3>
         <p class="place-meta" id="placeMeta">Tvååker-Morup, Halland</p>
         <p class="place-note" id="placeNote">Platslistan växer i takt med att fler personer och källor läggs in.</p>
-        <button class="btn place-open" id="placeOpen" type="button">Öppna platskort</button>
+        <div class="place-panel-actions"><button class="btn place-open" id="placeOpen" type="button">Öppna platskort</button><a class="btn" id="placeMaps" href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer"><i data-lucide="map-pin" aria-hidden="true"></i><span>Öppna i Google Maps</span></a></div>
         <ol class="place-evidence" id="placeEvidence"></ol>
         <p class="panel-section-label" style="margin-top:18px">Platser</p>
         <div class="place-list" id="placeList"></div>
@@ -792,6 +793,6 @@
 <script src="shared-data.js?v=20260903b"></script>
 <script id="structuredData" type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Olof Berntsson","birthDate":"1783-03-20","description":"Olof Berntsson föds 20 mars 1783 i Torpa och döps 21 mars.","url":"https://axels-slakt.vercel.app/personer/olof-berntsson/"}</script>
 <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-<script src="app.js?v=20260905a"></script>
+<script src="app.js?v=20260905b"></script>
 </body>
 </html>

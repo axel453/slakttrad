@@ -1226,6 +1226,12 @@ function factsFromPlace(place){
   (place.facts || []).forEach(row=>rows.push(row));
   return rows;
 }
+function externalPlaceMapUrl(place){
+  if(hasCoords(place)){
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${place.lat},${place.lng}`)}`;
+  }
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([place.name,place.area].filter(Boolean).join(", "))}`;
+}
 function placeTimelineToText(timeline){
   return timelineToText(timeline || []);
 }
@@ -1263,6 +1269,7 @@ function renderPlaceDetail(id){
       <div class="detail-actions">
         ${adminEditLinkHTML("place",place.id,place.name)}
         <button class="btn" type="button" data-jump-place-map="${escapeHtml(place.id)}">Visa på kartan</button>
+        <a class="btn" href="${escapeHtml(externalPlaceMapUrl(place))}" target="_blank" rel="noopener noreferrer"><i data-lucide="map-pin" aria-hidden="true"></i><span>${hasCoords(place) ? "Öppna i Google Maps" : "Sök i Google Maps"}</span></a>
         ${shareButtonHTML({title:place.name,text:`Läs om ${place.name} i Nilsson/Bengtsson släktträd.`,path:placePath(id)})}
         <button class="btn" type="button" data-print-page>Skriv ut</button>
       </div>
@@ -2098,9 +2105,24 @@ function refreshPlaceMapLayout(){
 function ensurePlaceMarker(place){
   if(!placeMap || !window.L || !hasCoords(place) || placeMarkers[place.id]) return;
   const marker = L.circleMarker([place.lat,place.lng],{radius:7,color:'#245A3B',weight:2,fillColor:'#3F7D5A',fillOpacity:.78}).addTo(placeMap);
-  marker.bindPopup(`<strong>${escapeHtml(place.name)}</strong><br>${escapeHtml(place.area)}<br><button type="button" data-place-card="${escapeHtml(place.id)}">Öppna platskort</button>`);
+  marker.bindPopup(placeMarkerPopup(place));
   marker.on('click',()=>selectPlace(place.id));
   placeMarkers[place.id] = marker;
+}
+function placeMarkerPopup(place){
+  return `<strong>${escapeHtml(place.name)}</strong><br>${escapeHtml(place.area || "Område saknas")}<br><button type="button" data-place-card="${escapeHtml(place.id)}">Öppna platskort</button><br><a href="${escapeHtml(externalPlaceMapUrl(place))}" target="_blank" rel="noopener noreferrer">Öppna i Google Maps</a>`;
+}
+function syncPlaceMarker(place){
+  if(!placeMap || !window.L) return;
+  const marker = placeMarkers[place.id];
+  if(!hasCoords(place)){
+    if(marker){ placeMap.removeLayer(marker); delete placeMarkers[place.id]; }
+    return;
+  }
+  if(marker){
+    marker.setLatLng([place.lat,place.lng]);
+    marker.setPopupContent(placeMarkerPopup(place));
+  }else ensurePlaceMarker(place);
 }
 function placeHaystack(p){
   return [p.place,...(p.facts||[]).flat(),...(p.story||[]),...(p.timeline||[]).flat()].filter(Boolean).join(" ");
@@ -2193,6 +2215,9 @@ function selectPlace(id, opts={}){
   document.getElementById('placeName').textContent = place.name;
   document.getElementById('placeMeta').textContent = hasCoords(place) ? place.area : `${place.area} · ingen exakt kartpunkt ännu`;
   document.getElementById('placeNote').textContent = place.note;
+  const mapsLink = document.getElementById('placeMaps');
+  mapsLink.href = externalPlaceMapUrl(place);
+  mapsLink.innerHTML = `<i data-lucide="map-pin" aria-hidden="true"></i><span>${hasCoords(place) ? "Öppna i Google Maps" : "Sök i Google Maps"}</span>`;
   const relatedPeople = placePeople(place);
   document.getElementById('placeEvidence').innerHTML = relatedPeople.length ? relatedPeople.map(row=>`
     <li>
@@ -2208,6 +2233,7 @@ function selectPlace(id, opts={}){
     document.getElementById('mapEmpty').style.display = "flex";
     document.getElementById('mapEmpty').textContent = "Den här platsen finns i platsregistret men saknar exakt kartpunkt ännu.";
   }
+  refreshPageIcons();
 }
 document.addEventListener('click', e=>{
   const placeCardBtn = e.target.closest('[data-place-card]');
@@ -2380,12 +2406,7 @@ function applyManualPlaceEdit(id, edit){
   if(place.lat === null) delete place.lat;
   if(place.lng === null) delete place.lng;
   normalizePlaceNames(place);
-  if(placeMarkers[id] && hasCoords(place)){
-    placeMarkers[id].setLatLng([place.lat, place.lng]);
-    placeMarkers[id].setPopupContent(`<strong>${escapeHtml(place.name)}</strong><br>${escapeHtml(place.area)}<br><button type="button" data-place-card="${escapeHtml(place.id)}">Öppna platskort</button>`);
-  }else{
-    ensurePlaceMarker(place);
-  }
+  syncPlaceMarker(place);
 }
 function loadManualData(){
   const raw = safeLocalStorageGet(MANUAL_STORAGE_KEY);
@@ -2450,7 +2471,7 @@ function applySharedSnapshot(snapshot){
   (snapshot.places || []).forEach(place=>{
     normalizePlaceNames(place);
     const current = PLACES.find(row=>row.id === place.id);
-    if(current) Object.assign(current, place);
+    if(current){ Object.assign(current, place); syncPlaceMarker(current); }
     else applyManualPlace(place);
   });
   Object.entries(manualData.people).forEach(([id,person])=>applyManualPerson(id,person));
