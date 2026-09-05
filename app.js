@@ -857,7 +857,7 @@ function routePlaceUrl(id){ return placePath(id); }
 function adminEditUrl(type,id){
   const section = type === "person" ? "personer" : "gardar";
   const recordPath = `${section}/${encodeURIComponent(id)}/`;
-  if(location.protocol !== "file:") return `/admin/${recordPath}`;
+  if(location.protocol !== "file:") return `/admin/#/${recordPath}`;
   const appScript = [...document.scripts].find(script=>/\bapp\.js(?:\?|$)/.test(script.src));
   const adminPage = new URL("admin/index.html",appScript?.src || location.href);
   return `${adminPage.href}#/${recordPath}`;

@@ -19,7 +19,10 @@
   function canReview(){ return ['editor','admin'].includes(role()); }
   function canManageUsers(){ return role()==='admin'; }
   function isFile(){ return location.protocol==='file:'; }
-  function adminUrl(path=''){ const clean=String(path).replace(/^\/+|\/+$/g,''); return isFile() ? `#/${clean}${clean?'/':''}` : `/admin/${clean}${clean?'/':''}`; }
+  function adminUrl(path=''){
+    const clean=String(path).replace(/^\/+|\/+$/g,'');
+    return isFile() ? `#/${clean}${clean?'/':''}` : `/admin/#/${clean}${clean?'/':''}`;
+  }
   function publicUrl(type,item){ return `/${type==='person'?'personer':'gardar'}/${item.slug || slug(item.name)}/`; }
   function slug(value){ return String(value||'post').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'post'; }
   function entityId(type){ return `${type}_${crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)}`; }
@@ -125,13 +128,23 @@
   }
 
   function route(){
-    const raw=isFile()?decodeURIComponent(location.hash.slice(1)):location.pathname.replace(/^\/admin\/?/,'');
+    const hashRoute=decodeURIComponent(location.hash.slice(1)).replace(/^\/+|\/+$/g,'');
+    const raw=hashRoute || (isFile() ? '' : location.pathname.replace(/^\/admin\/?/,''));
     const parts=raw.replace(/^\/+|\/+$/g,'').split('/').filter(Boolean);
     if(parts[0]==='personer') return {name:'people',id:parts[1]||null};
     if(parts[0]==='gardar') return {name:'places',id:parts[1]||null};
     if(parts[0]==='andringar') return {name:'changes'};
     if(parts[0]==='anvandare') return {name:'members'};
     return {name:'dashboard'};
+  }
+  function bindArchiveFilter(input,filter){
+    if(!input) return;
+    let composing=false;
+    const update=()=>{if(!composing)filter();};
+    input.addEventListener('compositionstart',()=>{composing=true;});
+    input.addEventListener('compositionend',()=>{composing=false;filter();});
+    ['input','search','change'].forEach(type=>input.addEventListener(type,update));
+    input.addEventListener('keyup',update);
   }
   function navigate(name,id){
     const base={dashboard:'',people:'personer',places:'gardar',changes:'andringar',members:'anvandare'}[name]||'';
@@ -194,7 +207,7 @@
       `<div class="toolbar"><div class="search-box">${icon('search')}<input id="adminSearch" type="search" placeholder="Sök namn, årtal eller plats"></div><select class="filter-select" id="branchFilter"><option value="">Alla släktled</option><option value="mother">Bengtsson-ledet</option><option value="father">Nilsson-ledet</option><option value="shared">Gemensamt</option></select></div>
       <div class="table-shell"><table class="data-table"><thead><tr><th>Person</th><th>Levnadsår</th><th>Plats</th><th>Släktled</th><th>Status</th><th></th></tr></thead><tbody id="peopleRows">${people.map(personRow).join('')}</tbody></table></div>`;
     const filter=()=>{const q=normalizeSearch(document.getElementById('adminSearch').value);const branch=document.getElementById('branchFilter').value;document.querySelectorAll('#peopleRows tr').forEach(row=>row.hidden=!(row.dataset.search.includes(q)&&(!branch||row.dataset.branch===branch)));};
-    document.getElementById('adminSearch').addEventListener('input',filter); document.getElementById('branchFilter').addEventListener('change',filter);
+    bindArchiveFilter(document.getElementById('adminSearch'),filter); document.getElementById('branchFilter').addEventListener('change',filter);
   }
   function personRow([id,p]){ const hay=normalizeSearch([p.name,...personAliases(p),...(p.formerNames||[]),p.born,p.died,p.place,p.role].join(' '));const hasPhoto=p.photo&&!/person-placeholder\.svg$/i.test(p.photo),imageCount=(p.images||[]).length+(hasPhoto?1:0),aliases=personAliases(p);return `<tr data-search="${esc(hay)}" data-branch="${esc(p.branch||'shared')}"><td><div class="entity-cell"><img class="entity-avatar" src="${esc(p.photo||'/assets/person-placeholder.svg')}" alt=""><span><strong>${esc(p.name)}</strong><small>${esc(aliases.length?`Även ${aliases.slice(0,2).join(', ')}`:(p.role||'Person'))}${imageCount?` · ${imageCount} ${imageCount===1?'bild':'bilder'}`:''}</small></span></div></td><td data-label="Levnadsår">${esc([p.born,p.died].filter(Boolean).join(' – ')||'Saknas')}</td><td data-label="Plats">${esc(p.place||'Ej angivet')}</td><td data-label="Släktled"><span class="badge">${esc(labels[p.branch]||'Gemensamt')}</span></td><td data-label="Status"><span class="badge ${p.status==='confirmed'?'green':'amber'}">${esc(p.status||'open')}</span></td><td class="table-action"><button class="row-action" data-edit-person="${esc(id)}">Redigera</button></td></tr>`; }
 
@@ -204,7 +217,7 @@
       `<div class="toolbar"><div class="search-box">${icon('search')}<input id="adminSearch" type="search" placeholder="Sök gård, socken eller område"></div><select class="filter-select" id="mapFilter"><option value="">Alla kartstatusar</option><option value="mapped">Med kartpunkt</option><option value="unmapped">Utan kartpunkt</option></select></div>
       <div class="table-shell"><table class="data-table"><thead><tr><th>Plats</th><th>Område</th><th>Sekundära namn</th><th>Karta</th><th></th></tr></thead><tbody id="placeRows">${places.map(placeRow).join('')}</tbody></table></div>`;
     const filter=()=>{const q=normalizeSearch(document.getElementById('adminSearch').value);const map=document.getElementById('mapFilter').value;document.querySelectorAll('#placeRows tr').forEach(row=>row.hidden=!(row.dataset.search.includes(q)&&(!map||row.dataset.map===map)));};
-    document.getElementById('adminSearch').addEventListener('input',filter); document.getElementById('mapFilter').addEventListener('change',filter);
+    bindArchiveFilter(document.getElementById('adminSearch'),filter); document.getElementById('mapFilter').addEventListener('change',filter);
   }
   function placeRow(p){const mapped=Number.isFinite(Number(p.lat))&&Number.isFinite(Number(p.lng)),aliases=uniqueNames(p.aliases||[],p.name);const hay=normalizeSearch([p.name,...aliases,...(p.formerNames||[]),p.area].join(' '));const imageCount=(p.images||[]).length;return `<tr data-search="${esc(hay)}" data-map="${mapped?'mapped':'unmapped'}"><td><div class="entity-cell"><span class="entity-avatar entity-icon">${icon('landmark')}</span><span><strong>${esc(p.name)}</strong><small>${esc(p.note||'Platskort')}${imageCount?` · ${imageCount} ${imageCount===1?'bild':'bilder'}`:''}</small></span></div></td><td data-label="Område">${esc(p.area||'Ej angivet')}</td><td data-label="Sekundära namn">${esc(aliases.slice(0,3).join(', ')||'Saknas')}</td><td data-label="Karta"><span class="badge ${mapped?'green':'amber'}">${mapped?'Kartlagd':'Saknas'}</span></td><td class="table-action"><button class="row-action" data-edit-place="${esc(p.id)}">Redigera</button></td></tr>`;}
 
