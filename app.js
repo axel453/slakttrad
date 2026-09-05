@@ -1237,6 +1237,7 @@ function placeTimelineToText(timeline){
 }
 function renderPlaceDetail(id){
   const place = PLACES.find(p=>p.id===id); if(!place) return false;
+  const coverImage = place.coverImage || "";
   const placeDraft = manualData.drafts.places[id] ? {...place, ...manualData.drafts.places[id]} : place;
   const description = `${place.name}${place.area ? ` i ${place.area}` : ""}. Gårdssida med historik, tidslinje och kopplade personer i Nilsson/Bengtsson släktträd.`;
   setMeta(`${place.name} - gårdssida`, description, placePath(id), {
@@ -1256,7 +1257,8 @@ function renderPlaceDetail(id){
     text
   ])).slice(0,16);
   detail.innerHTML = `
-    <div class="detail-hero">
+    <div class="detail-hero${coverImage ? " has-cover" : ""}">
+      ${coverImage ? `<img class="detail-cover-image" src="${escapeHtml(coverImage)}" alt="" aria-hidden="true" onerror="this.closest('.detail-hero').classList.remove('has-cover');this.remove()">` : ""}
       <div>
         ${breadcrumbsHTML([{label:"Startsida",href:"/",nav:"home"},{label:"Gårdsarkiv",href:"/gardar/",nav:"gardarkiv"},{label:place.name}])}
         <p class="detail-kicker">Platssida · ${hasCoords(place) ? "kartlagd" : "utan exakt kartpunkt"}</p>
@@ -1286,6 +1288,7 @@ function renderPlaceDetail(id){
             <label class="panel-edit-label full">Kort notering<textarea class="panel-edit-field" id="placeEditNote">${escapeHtml(placeDraft.note || "")}</textarea></label>
             <label class="panel-edit-label full">Platsens historia<textarea class="panel-edit-field" id="placeEditStory">${escapeHtml((placeDraft.story || []).join("\n"))}</textarea></label>
             <label class="panel-edit-label full">Tidslinje<textarea class="panel-edit-field" id="placeEditTimeline">${escapeHtml(placeTimelineToText(placeDraft.timeline))}</textarea></label>
+            <label class="panel-edit-label full">Omslagsbild<textarea class="panel-edit-field" id="placeEditCoverImage" placeholder="Bildadress för platsens sidhuvud">${escapeHtml(placeDraft.coverImage || "")}</textarea></label>
             <label class="panel-edit-label full">Bilder<textarea class="panel-edit-field" id="placeEditImages" placeholder="En per rad: bildadress | bildtext">${escapeHtml(imagesToText(placeDraft.images))}</textarea></label>
             <label class="panel-edit-label full">Källor<textarea class="panel-edit-field" id="placeEditSources" placeholder="En källa per rad">${escapeHtml(textItems(placeDraft.sources).join("\n"))}</textarea></label>
             <label class="panel-edit-label full">Osäkerheter och öppna spår<textarea class="panel-edit-field" id="placeEditUncertainties">${escapeHtml(textItems(placeDraft.uncertainties).join("\n"))}</textarea></label>
@@ -2841,6 +2844,7 @@ function savePlaceDetailEdit(){
     formerNames:formerNamesAfterRename(place,name),
     story:textToStory(document.getElementById('placeEditStory').value),
     timeline:textToTimeline(document.getElementById('placeEditTimeline').value),
+    coverImage:document.getElementById('placeEditCoverImage').value.trim(),
     images:textToImages(document.getElementById('placeEditImages').value),
     sources:textToStory(document.getElementById('placeEditSources').value),
     uncertainties:textToStory(document.getElementById('placeEditUncertainties').value)
@@ -2882,6 +2886,7 @@ function savePlaceDetailDraft(id){
     note:document.getElementById('placeEditNote').value.trim(),
     story:textToStory(document.getElementById('placeEditStory').value),
     timeline:textToTimeline(document.getElementById('placeEditTimeline').value),
+    coverImage:document.getElementById('placeEditCoverImage').value.trim(),
     images:textToImages(document.getElementById('placeEditImages').value),
     sources:textToStory(document.getElementById('placeEditSources').value),
     uncertainties:textToStory(document.getElementById('placeEditUncertainties').value)
