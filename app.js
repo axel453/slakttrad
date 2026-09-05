@@ -1153,13 +1153,15 @@ function renderPersonDetail(id){
         <p class="detail-summary">${linkPersonNames((p.story || ["Ännu inte utforskad."])[0])}</p>
         ${personGenerationNavHTML(id)}
       </div>
-      <div class="detail-actions">
-        <img class="detail-photo" src="${escapeHtml(personPhoto(p))}" alt="">
-        <button class="btn" type="button" data-show-in-tree="${escapeHtml(id)}">Visa i trädet</button>
-        ${EMIGRANT_BRANCHES[id] ? `<a class="btn" href="${escapeHtml(emigrantPath(id))}" data-open-emigrant="${escapeHtml(id)}">Visa emigrantgren</a>` : ""}
-        ${adminEditLinkHTML("person",id,p.name)}
-        ${shareButtonHTML({title:p.name,text:`Läs om ${p.name} i Nilsson/Bengtsson släktträd.`,path:personPath(id),restricted:p.isLiving === true || ["family","private"].includes(p.visibility)})}
-        <button class="btn" type="button" data-print-page>Skriv ut</button>
+      <div class="detail-hero-side">
+        <img class="detail-photo" src="${escapeHtml(personPhoto(p))}" alt="Porträtt av ${escapeHtml(p.name)}" loading="eager" onerror="this.src='${PERSON_PLACEHOLDER}'">
+        <div class="detail-actions">
+          <button class="btn" type="button" data-show-in-tree="${escapeHtml(id)}">Visa i trädet</button>
+          ${EMIGRANT_BRANCHES[id] ? `<a class="btn" href="${escapeHtml(emigrantPath(id))}" data-open-emigrant="${escapeHtml(id)}">Visa emigrantgren</a>` : ""}
+          ${adminEditLinkHTML("person",id,p.name)}
+          ${shareButtonHTML({title:p.name,text:`Läs om ${p.name} i Nilsson/Bengtsson släktträd.`,path:personPath(id),restricted:p.isLiving === true || ["family","private"].includes(p.visibility)})}
+          <button class="btn" type="button" data-print-page>Skriv ut</button>
+        </div>
       </div>
     </div>
     <div class="detail-layout">
@@ -1479,7 +1481,7 @@ function renderEmigrantPersonDetail(branchId,personId){
     <p class="detail-subtitle">${escapeHtml([person.relation,person.born ? `född ${person.born}` : "",person.died ? `avliden ${person.died}` : "",person.location].filter(Boolean).join(" · "))}</p>
     <span class="research-status ${escapeHtml(person.status || "open")}">${escapeHtml(emigrantResearchStatus(person.status))}</span>
     <p class="detail-summary">${escapeHtml(description)}</p>
-  </div><div class="detail-actions"><a class="btn" href="${escapeHtml(emigrantPath(branchId))}" data-open-emigrant="${escapeHtml(branchId)}">Visa hela emigrantgrenen</a>${shareButtonHTML({title:person.name,text:`Läs om ${person.name} i ${root.name}s emigrantgren.`,path,restricted:person.isLiving === true})}<button class="btn" type="button" data-print-page>Skriv ut</button></div></div>
+  </div><div class="detail-hero-side"><img class="detail-photo" src="${escapeHtml(personPhoto(person))}" alt="Porträtt av ${escapeHtml(person.name)}" loading="eager" onerror="this.src='${PERSON_PLACEHOLDER}'"><div class="detail-actions"><a class="btn" href="${escapeHtml(emigrantPath(branchId))}" data-open-emigrant="${escapeHtml(branchId)}">Visa hela emigrantgrenen</a>${shareButtonHTML({title:person.name,text:`Läs om ${person.name} i ${root.name}s emigrantgren.`,path,restricted:person.isLiving === true})}<button class="btn" type="button" data-print-page>Skriv ut</button></div></div></div>
   <div class="detail-layout"><main class="detail-main">
     <section class="detail-section"><h3>Livshistoria</h3><div class="detail-story">${(person.story?.length ? person.story : [description]).map(text=>`<p>${escapeHtml(text)}</p>`).join("")}</div></section>
     <section class="detail-section"><h3>Livslinje</h3>${detailTimelineHTML(person.timeline || [])}</section>
