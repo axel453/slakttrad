@@ -144,16 +144,48 @@
     return `${stem}${extension}`;
   }
 
-  async function uploadPublicImage(file, entityType, entityId, caption=''){
+  async function optimizePublicImage(file,{maxDimension=2200,quality=.84}={}){
+    if(file.size < 500 * 1024) return file;
+    let source,width,height,cleanup=()=>{};
+    try{
+      if('createImageBitmap' in window){
+        source=await createImageBitmap(file,{imageOrientation:'from-image'});
+        width=source.width;height=source.height;cleanup=()=>source.close?.();
+      }else{
+        const url=URL.createObjectURL(file);
+        source=await new Promise((resolve,reject)=>{
+          const image=new Image();image.onload=()=>resolve(image);image.onerror=reject;image.src=url;
+        });
+        width=source.naturalWidth;height=source.naturalHeight;cleanup=()=>URL.revokeObjectURL(url);
+      }
+      const scale=Math.min(1,maxDimension/Math.max(width,height));
+      if(scale === 1 && file.size < 1200 * 1024){ cleanup(); return file; }
+      const canvas=document.createElement('canvas');
+      canvas.width=Math.max(1,Math.round(width*scale));
+      canvas.height=Math.max(1,Math.round(height*scale));
+      canvas.getContext('2d',{alpha:true}).drawImage(source,0,0,canvas.width,canvas.height);
+      const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',quality));
+      cleanup();
+      if(!blob || blob.size >= file.size) return file;
+      const stem=safeMediaName(file.name).replace(/\.[^.]+$/,'');
+      return new File([blob],`${stem}.webp`,{type:'image/webp',lastModified:file.lastModified});
+    }catch(error){
+      cleanup();
+      return file;
+    }
+  }
+
+  async function uploadPublicImage(file, entityType, entityId, caption='', options={}){
     if(!state.client || !state.user) throw new Error('Du behöver logga in först.');
     if(!['editor','admin'].includes(state.profile?.role)) throw new Error('En redaktör behöver publicera bilder i det offentliga galleriet.');
     if(!file || !['image/jpeg','image/png','image/webp'].includes(file.type)) throw new Error('Välj en bild i JPG-, PNG- eller WebP-format.');
     if(file.size > 15 * 1024 * 1024) throw new Error('Bilden får vara högst 15 MB.');
     if(!['person','place'].includes(entityType) || !entityId) throw new Error('Bilden behöver kopplas till en person eller gård.');
+    const uploadFile=await optimizePublicImage(file,options);
     const token = crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    const path = `${state.user.id}/${entityType}/${entityId}/${token}-${safeMediaName(file.name)}`;
+    const path = `${state.user.id}/${entityType}/${entityId}/${token}-${safeMediaName(uploadFile.name)}`;
     const bucket = state.client.storage.from('family-public-media');
-    const {error:uploadError} = await bucket.upload(path,file,{cacheControl:'3600',upsert:false,contentType:file.type});
+    const {error:uploadError} = await bucket.upload(path,uploadFile,{cacheControl:'31536000',upsert:false,contentType:uploadFile.type});
     if(uploadError) throw uploadError;
     const {data:urlData} = bucket.getPublicUrl(path);
     const mediaRow = {

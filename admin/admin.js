@@ -129,7 +129,7 @@
     button.disabled=true;button.innerHTML=`<span class="spinner small"></span> Laddar upp`;if(stateEl)stateEl.textContent='Laddar upp bilden…';
     try{
       const name=document.getElementById('fName')?.value.trim()||'personen';
-      const item=await window.FamilyData.uploadPublicImage(file,'person',manager.dataset.personId,`Porträtt av ${name}`);
+      const item=await window.FamilyData.uploadPublicImage(file,'person',manager.dataset.personId,`Porträtt av ${name}`,{maxDimension:960,quality:.84});
       const photoField=document.getElementById('fPhoto');if(photoField)photoField.value=item.src;
       setProfilePreview(manager,item.src);
       const gallery=document.querySelector('[data-gallery-manager][data-entity-type="person"]');

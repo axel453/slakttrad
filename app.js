@@ -46,7 +46,9 @@ function normalizePlaceNames(place){
   place.formerNames = uniqueNames(place.formerNames || [],place.name);
   return place;
 }
-const PERSON_PLACEHOLDER = "assets/person-placeholder.svg";
+const PERSON_PLACEHOLDER = location.protocol === "file:"
+  ? new URL("assets/person-placeholder.svg",document.currentScript?.src || location.href).href
+  : "/assets/person-placeholder.svg";
 function personPhoto(p){ return p.photo || p.image || PERSON_PLACEHOLDER; }
 function formatDates(p){
   const b = p.born ? "★ "+p.born : "";
@@ -878,8 +880,58 @@ function publicShareUrl(path){
 function shareButtonHTML({title,text,path,restricted=false}){
   return `<button class="btn detail-share-button" type="button" data-share-page data-share-title="${escapeHtml(title)}" data-share-text="${escapeHtml(text)}" data-share-path="${escapeHtml(path)}" data-share-restricted="${restricted ? "true" : "false"}" aria-label="Dela ${escapeHtml(title)}"><i data-lucide="share-2" aria-hidden="true"></i><span>Dela</span></button><span class="share-feedback" data-share-feedback role="status" aria-live="polite"></span>`;
 }
+const externalAssetPromises = new Map();
+function appAssetUrl(path){
+  if(location.protocol !== "file:") return `/${String(path).replace(/^\/+/,"")}`;
+  const appScript = [...document.scripts].find(script=>/\bapp\.js(?:\?|$)/.test(script.src));
+  return new URL(path,appScript?.src || location.href).href;
+}
+function loadExternalScript(src){
+  if(externalAssetPromises.has(src)) return externalAssetPromises.get(src);
+  const promise = new Promise((resolve,reject)=>{
+    const existing = [...document.scripts].find(script=>script.src === src);
+    if(existing){
+      if(existing.dataset.loaded === "true") resolve();
+      else{
+        existing.addEventListener('load',resolve,{once:true});
+        existing.addEventListener('error',reject,{once:true});
+      }
+      return;
+    }
+    const script=document.createElement('script');
+    script.src=src;script.async=true;
+    script.addEventListener('load',()=>{ script.dataset.loaded="true"; resolve(); },{once:true});
+    script.addEventListener('error',reject,{once:true});
+    document.head.appendChild(script);
+  });
+  externalAssetPromises.set(src,promise);
+  return promise;
+}
+function loadExternalStylesheet(href){
+  if(externalAssetPromises.has(href)) return externalAssetPromises.get(href);
+  const promise = new Promise((resolve,reject)=>{
+    const link=document.createElement('link');
+    link.rel='stylesheet';link.href=href;
+    link.addEventListener('load',resolve,{once:true});
+    link.addEventListener('error',reject,{once:true});
+    document.head.appendChild(link);
+  });
+  externalAssetPromises.set(href,promise);
+  return promise;
+}
+let lucideLoadScheduled=false;
+function scheduleLucide(){
+  if(window.lucide || lucideLoadScheduled) return;
+  lucideLoadScheduled=true;
+  const load=()=>loadExternalScript("https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js")
+    .then(()=>window.lucide?.createIcons({attrs:{"stroke-width":1.8}}))
+    .catch(()=>{});
+  if('requestIdleCallback' in window) window.requestIdleCallback(load,{timeout:1600});
+  else window.setTimeout(load,350);
+}
 function refreshPageIcons(){
-  window.lucide?.createIcons({attrs:{"stroke-width":1.8}});
+  if(window.lucide) window.lucide.createIcons({attrs:{"stroke-width":1.8}});
+  else scheduleLucide();
 }
 function showShareFeedback(button,message){
   const feedback=button.closest('.detail-actions')?.querySelector('[data-share-feedback]');
@@ -1518,6 +1570,46 @@ function currentRoute(){
   if(rawHash.startsWith("plats/")) return `/gardar/${rawHash.slice(6)}/`;
   return location.pathname || "/";
 }
+const initializedFeatures = {home:false,branchFilters:false,archiveFilters:false,personarkiv:false,gardarkiv:false,emigrantarkiv:false};
+function activePageMode(){
+  return ["home","personarkiv","gardarkiv","emigrantarkiv","contact","detail"].find(mode=>document.body.classList.contains(`page-${mode}`)) || "home";
+}
+function ensurePageFeatures(mode){
+  if(["home","personarkiv","gardarkiv"].includes(mode) && !initializedFeatures.branchFilters){
+    initBranchFilters();
+    initializedFeatures.branchFilters=true;
+  }
+  if(["personarkiv","gardarkiv","emigrantarkiv"].includes(mode) && !initializedFeatures.archiveFilters){
+    initArchiveFilters();
+    initializedFeatures.archiveFilters=true;
+  }
+  if(mode === "home" && !initializedFeatures.home){
+    renderTree();
+    initTreeControls();
+    initEditor();
+    initPersonSearch();
+    initializedFeatures.home=true;
+  }
+  if(mode === "personarkiv"){
+    renderPersonArchive();
+    initializedFeatures.personarkiv=true;
+  }
+  if(mode === "gardarkiv"){
+    renderPlaceArchive();
+    if(!initializedFeatures.gardarkiv){
+      initPlaceMap();
+      initializedFeatures.gardarkiv=true;
+    }else{
+      renderPlaceList();
+      refreshSelectedPlace();
+      refreshPlaceMapLayout();
+    }
+  }
+  if(mode === "emigrantarkiv"){
+    renderEmigrantArchive();
+    initializedFeatures.emigrantarkiv=true;
+  }
+}
 function renderCurrentRoute(){
   updateActiveNav();
   const detail = document.getElementById('detailPage');
@@ -1526,20 +1618,24 @@ function renderCurrentRoute(){
   const parts = path.replace(/^\/+|\/+$/g,"").split("/").filter(Boolean);
   if(!parts.length || parts[0] === "index.html"){
     setPageMode("home");
+    ensurePageFeatures("home");
     return;
   }
   if(parts[0] === "personarkiv"){
     setPageMode("personarkiv");
+    ensurePageFeatures("personarkiv");
     document.getElementById('personarkiv')?.scrollIntoView({behavior:'auto',block:'start'});
     return;
   }
   if(parts[0] === "gardar" && parts.length === 1){
     setPageMode("gardarkiv");
+    ensurePageFeatures("gardarkiv");
     document.getElementById('platskarta')?.scrollIntoView({behavior:'auto',block:'start'});
     return;
   }
   if(parts[0] === "emigranter" && parts.length === 1){
     setPageMode("emigrantarkiv");
+    ensurePageFeatures("emigrantarkiv");
     document.getElementById('emigrantarkiv')?.scrollIntoView({behavior:'auto',block:'start'});
     return;
   }
@@ -1566,6 +1662,7 @@ function renderCurrentRoute(){
     if(id){ setPageMode("detail"); if(renderEmigrantDetail(id)) return; }
   }
   setPageMode("home");
+  ensurePageFeatures("home");
 }
 window.addEventListener('hashchange', renderCurrentRoute);
 window.addEventListener('popstate', renderCurrentRoute);
@@ -1635,10 +1732,14 @@ function initBranchFilters(){
     if(source?.dataset.branchToggle === "father") branchState.father = source.checked;
     setAll(motherInputs, branchState.mother);
     setAll(fatherInputs, branchState.father);
-    renderTree();
-    renderPlaceList();
-    renderArchives();
-    refreshSelectedPlace();
+    const mode=activePageMode();
+    if(mode === "home") renderTree();
+    if(mode === "personarkiv") renderPersonArchive();
+    if(mode === "gardarkiv"){
+      renderPlaceList();
+      renderPlaceArchive();
+      refreshSelectedPlace();
+    }
   }
   [...motherInputs,...fatherInputs].forEach(input=>input.addEventListener('change',()=>sync(input)));
   setAll(motherInputs, branchState.mother);
@@ -1969,7 +2070,7 @@ function setSelectOptions(id, values, firstLabel){
   select.innerHTML = `<option value="">${escapeHtml(firstLabel)}</option>` + values.map(value=>`<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
   if(values.includes(current)) select.value = current;
 }
-function initArchiveFilters(){
+function refreshArchiveFilterOptions(){
   const rows = Object.entries(PEOPLE).map(([id,person])=>({id,person,place:archivePlaceKey(person)}));
   const centuries = [...new Set(rows.map(row=>personCentury(row.person)).filter(Boolean))].sort();
   const places = [...new Set(rows.map(row=>row.place).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'sv'));
@@ -1977,16 +2078,18 @@ function initArchiveFilters(){
   setSelectOptions('personArchiveCentury', centuries, 'Alla århundraden');
   setSelectOptions('personArchivePlace', places, 'Alla platser');
   setSelectOptions('emigrantArchiveDestination', destinations, 'Alla destinationer');
+}
+function initArchiveFilters(){
+  refreshArchiveFilterOptions();
   const liveSearches = {
     personArchiveSearch: renderPersonArchive,
     placeArchiveSearch: renderPlaceArchive,
     emigrantArchiveSearch: renderEmigrantArchive
   };
   Object.entries(liveSearches).forEach(([id,render])=>bindLiveSearch(document.getElementById(id),render));
-  ['personArchiveCentury','personArchivePlace','personArchiveStatus','placeArchiveType','placeArchiveMap','emigrantArchiveDestination','emigrantArchiveStatus'].forEach(id=>{
-    const field = document.getElementById(id);
-    field?.addEventListener('change', renderArchives);
-  });
+  ['personArchiveCentury','personArchivePlace','personArchiveStatus'].forEach(id=>document.getElementById(id)?.addEventListener('change',renderPersonArchive));
+  ['placeArchiveType','placeArchiveMap'].forEach(id=>document.getElementById(id)?.addEventListener('change',renderPlaceArchive));
+  ['emigrantArchiveDestination','emigrantArchiveStatus'].forEach(id=>document.getElementById(id)?.addEventListener('change',renderEmigrantArchive));
 }
 function placeIdFromCurrentRoute(){
   const parts = currentRoute().replace(/^\/+|\/+$/g,"").split("/").filter(Boolean);
@@ -2182,22 +2285,31 @@ function renderPlaceList(){
   </button>${adminEditLinkHTML("place",p.id,p.name,"record-edit-shortcut place-list-edit")}</div>`).join("") : '<div class="place-empty-row">Inga platser matchar valt filter.</div>';
   refreshPageIcons();
 }
-function initPlaceMap(){
+async function initPlaceMap(){
   const mapEl = document.getElementById('placeMap'), listEl = document.getElementById('placeList');
   renderPlaceList();
   listEl.addEventListener('click', e=>{ const btn=e.target.closest('.place-btn'); if(btn) selectPlace(btn.dataset.place); });
   document.getElementById('placeEvidence').addEventListener('click', e=>{ const btn=e.target.closest('.place-evidence-person'); if(btn) openPerson(btn.dataset.id); });
   document.getElementById('placeOpen').addEventListener('click',()=>{ if(currentPlaceId) openPlace(currentPlaceId); });
+  const mapEmpty=document.getElementById('mapEmpty');
+  mapEmpty.style.display="flex";
+  mapEmpty.textContent="Kartan laddas …";
+  try{
+    await Promise.all([
+      loadExternalStylesheet("https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"),
+      loadExternalScript("https://unpkg.com/leaflet@1.9.4/dist/leaflet.js")
+    ]);
+  }catch(error){}
   if(!window.L){
-    document.getElementById('mapEmpty').textContent = "Kartan kunde inte laddas. Platslistan fungerar ändå, och kartan visas när sidan har nätåtkomst.";
+    mapEmpty.textContent = "Kartan kunde inte laddas. Platslistan fungerar ändå, och kartan visas när sidan har nätåtkomst.";
     selectPlace(PLACES[0].id,{skipMap:true}); return;
   }
-  document.getElementById('mapEmpty').style.display = "none";
-  placeMap = L.map(mapEl,{scrollWheelZoom:false}).setView([57.04,12.40],11);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap'}).addTo(placeMap);
+  mapEmpty.style.display = "none";
+  placeMap = window.L.map(mapEl,{scrollWheelZoom:false}).setView([57.04,12.40],11);
+  window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap'}).addTo(placeMap);
   PLACES.forEach(ensurePlaceMarker);
   const mappedPlaces = PLACES.filter(hasCoords);
-  if(mappedPlaces.length) placeMap.fitBounds(L.latLngBounds(mappedPlaces.map(p=>[p.lat,p.lng])),{padding:[24,24]});
+  if(mappedPlaces.length) placeMap.fitBounds(window.L.latLngBounds(mappedPlaces.map(p=>[p.lat,p.lng])),{padding:[24,24]});
   selectPlace('munkaskog');
   if(document.body.classList.contains('page-gardarkiv')) refreshPlaceMapLayout();
 }
@@ -2493,12 +2605,23 @@ function applySharedSnapshot(snapshot){
     if(!sharedPeopleIds.has(id)) applyManualPersonEdit(id,edit);
   });
   invalidateEntityReferenceCache();
-  refreshEditorSelects();
-  renderTree({preserveView:true});
-  renderPlaceList();
-  renderArchives();
-  refreshSelectedPlace();
-  renderCurrentRoute();
+  const mode=activePageMode();
+  if(["personarkiv","gardarkiv","emigrantarkiv"].includes(mode)) refreshArchiveFilterOptions();
+  if(mode === "home"){
+    refreshEditorSelects();
+    renderTree({preserveView:true});
+  }else if(mode === "personarkiv"){
+    renderPersonArchive();
+  }else if(mode === "gardarkiv"){
+    renderPlaceList();
+    renderPlaceArchive();
+    PLACES.forEach(ensurePlaceMarker);
+    refreshSelectedPlace();
+  }else if(mode === "emigrantarkiv"){
+    renderEmigrantArchive();
+  }else if(mode === "detail"){
+    renderCurrentRoute();
+  }
 }
 function selectOptions(){
   const rows = Object.entries(PEOPLE).sort((a,b)=>a[1].name.localeCompare(b[1].name,'sv'));
@@ -3059,18 +3182,27 @@ function initFamilyAccount(){
   document.addEventListener('family-data-ready',event=>applySharedSnapshot(event.detail));
 }
 
+function scheduleSharedArchive(){
+  const load=async()=>{
+    try{
+      await loadExternalScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2");
+      await loadExternalScript(appAssetUrl("shared-data.js?v=20260906a"));
+    }catch(error){
+      document.dispatchEvent(new CustomEvent('family-data-status',{detail:{mode:'error',message:'Kunde inte ansluta familjearkivet',error}}));
+    }
+  };
+  window.requestAnimationFrame(()=>{
+    if('requestIdleCallback' in window) window.requestIdleCallback(load,{timeout:1200});
+    else window.setTimeout(load,450);
+  });
+}
+
 loadManualData();
 initAccessibilityControls();
 initMobileNavigation();
-renderTree();
-initTreeControls();
-initEditor();
 initFamilyAccount();
-initBranchFilters();
-initPersonSearch();
-initPlaceMap();
 initSiteNavigation();
-initArchiveFilters();
-renderArchives();
 renderCurrentRoute();
-document.getElementById('mapJump').onclick = ()=>document.getElementById('platskarta').scrollIntoView({behavior:'smooth',block:'start'});
+scheduleSharedArchive();
+const mapJump=document.getElementById('mapJump');
+if(mapJump) mapJump.onclick=()=>navigatePath("/gardar/");
