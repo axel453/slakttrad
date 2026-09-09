@@ -33,7 +33,7 @@ const people = Object.entries(PEOPLE).map(([id,person])=>({
     slugify(`${person.name}-${person.born || id}`),
     usedPersonSlugs
   ), name:person.name, alt_name:person.alt || null,
-  branch:branchForUnit(personUnit[id]), is_direct:DIRECT_HEIRS.has(id),
+  branch:person.branch || branchForUnit(personUnit[id]), is_direct:DIRECT_HEIRS.has(id),
   is_living:!person.died && Number(String(person.born || '').slice(0,4)) >= new Date().getFullYear()-110,
   visibility:(!person.died && Number(String(person.born || '').slice(0,4)) >= new Date().getFullYear()-110) ? 'family' : 'public',
   content:person

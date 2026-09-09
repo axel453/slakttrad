@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-04T19:39:55.131Z",
+  "generatedAt": "2026-09-07T20:13:02.107Z",
   "people": [
     {
       "id": "lars_esbjornsson",
@@ -119,12 +119,26 @@
           [
             "Barn",
             "Hans, Anders, Inger, Bengt, Nils och Bengta"
+          ],
+          [
+            "Barnens mödernearv",
+            "Bouppteckningens gravationer hänvisar till barnens arv efter Elin Bengtsdotter och en äldre handling/skiftesuppgift från 1779."
+          ],
+          [
+            "Personer vid bouppteckningen",
+            "Nils Hallongren samt Thore Johansson i Sotta och Sven Bengtsson i Munkaskog förekommer i rättsliga eller värderande roller; ingen släktskap antas."
+          ],
+          [
+            "Lokalt ekonomiskt nätverk",
+            "Lars Svensson i Tagebo och andra lokala namn förekommer bland skulder och fordringar utan att vara bevisade släktingar."
           ]
         ],
         "story": [
           "Arvid Svensson, även skriven Arfvid Svensson, är Bengtas far enligt födelsenotisen 1774 och är ytterligare stärkt genom bouppteckningen 1785.",
           "Bouppteckningen efter Arfvid Svensson upprättades 22 mars 1785 och gäller mannen på 1/2 kronohemman nr 5 Munkaskog. Den anger barnen med åldrar och binder Bengta till rätt familj och plats.",
-          "Boet visar ett etablerat men inte rikt bondehushåll med gårdsdrift, kreatur, textilier, hushållsföremål, bibel och postilla, men även skulder och gravationer."
+          "Boet visar ett etablerat men inte rikt bondehushåll med gårdsdrift, kreatur, textilier, hushållsföremål, bibel och postilla, men även skulder och gravationer.",
+          "Bouppteckningen visar att flera barn var minderåriga när Arvid dog. Eftersom Elin redan hade avlidit 1779 blev Bengta föräldralös omkring tio års ålder.",
+          "Posten om barnens mödernearv är en viktig indirekt källa till Elins familj. Den nämner Hans, Anders, Bengt, Nils, Inger och Bengta och stärker bedömningen att Elin var mor till hela barnaskaran."
         ],
         "timeline": [
           [
@@ -156,6 +170,12 @@
           "bengt_arfvidsson",
           "nils_arfvidsson",
           "bengta_arvidsdotter"
+        ],
+        "sources": [
+          "Släktforskningslogg 2026-07-06, syskon och faddrar: fördjupad läsning av Arvid Svenssons bouppteckning 1785-03-22."
+        ],
+        "uncertainties": [
+          "Exakta belopp och enskilda namn i bouppteckningens skulder, fordringar och mödernearv behöver kontrolläsas innan de anges som säkra siffror eller släktrelationer."
         ]
       }
     },
@@ -199,12 +219,21 @@
           [
             "Koppling",
             "Mor till Bengta Arvidsdotter"
+          ],
+          [
+            "Mödernearv",
+            "Arvid Svenssons bouppteckning 1785 hänvisar till barnens mödernearv efter Elin och en handling från 1779."
+          ],
+          [
+            "Motstridigt begravningsdatum",
+            "Webbplatsens tidigare familjeuppgift anger 1779-04-01. Syskon-/fadderfilen från 2026-07-06 anger 1779-04-11. Originalnotisen måste avgöra datumet."
           ]
         ],
         "story": [
           "Elin Bengtsdotter är bekräftad som Bengtas mor i födelsenotisen 1774.",
           "Dödnotisen anger henne som åboen Arfvid Svenssons hustru i Munkaskog, Sven Börges/Sven Börjes gård. Detta stärker familjegruppen i samma gårdsmiljö.",
-          "Elins eget ursprung är ännu inte löst. Nästa steg är att hitta vigseln med Arfvid eller spåra barnens födelsenotiser och faddrar."
+          "Elins eget ursprung är ännu inte löst. Nästa steg är att hitta vigseln med Arfvid eller spåra barnens födelsenotiser och faddrar.",
+          "Eftersom den aktuella bouppteckningsserien börjar 1781 fungerar posten om mödernearvet i Arvids bouppteckning som en indirekt ersättningskälla för en saknad eller förlorad handling efter Elin."
         ],
         "timeline": [
           [
@@ -222,6 +251,10 @@
           [
             "1779-04-01",
             "Begravs."
+          ],
+          [
+            "1779-04-11",
+            "Alternativt begravningsdatum i syskon-/fadderfilen. Den äldre publicerade uppgiften är 1779-04-01; konflikten är inte avgjord."
           ]
         ],
         "parents": [],
@@ -232,6 +265,12 @@
           "bengt_arfvidsson",
           "nils_arfvidsson",
           "bengta_arvidsdotter"
+        ],
+        "sources": [
+          "Släktforskningslogg 2026-07-06, syskon och faddrar: Elins dödnotis och mödernearv i Arvids bouppteckning."
+        ],
+        "uncertainties": [
+          "Begravningsdatumet är motstridigt: 1 april respektive 11 april 1779. Båda bevaras tills originalbilden har kontrollästs."
         ]
       }
     },
@@ -371,16 +410,40 @@
           [
             "Kommentar",
             "Kan vara samma Bengt som tidigare nämnts som broder Bengt i husförhörsspår"
+          ],
+          [
+            "Födelsenotis",
+            "Född och döpt 1768; exakta dagar behöver kontrolläsas i helsidan."
+          ],
+          [
+            "Föräldrar i födelsenotisen",
+            "Arvid Svensson och Elin Bengtsdotter."
+          ],
+          [
+            "Födelseplats",
+            "Lille Svensgård / Lilla Svensgård."
+          ],
+          [
+            "Faddrar och nätverk",
+            "Bengt i Munkagården, Nils i Hermanslycka eller liknande, en osäkert läst Lars i Juteby/Sibbarp, Karin Larsdotter i Munkaskog och Inger Svensdotter i Munkagården."
           ]
         ],
         "story": [
-          "Bengt anges som 16-årig son i bouppteckningen efter Arfvid Svensson. Han kan vara relevant för tidigare spår där en broder Bengt nämns."
+          "Bengt anges som 16-årig son i bouppteckningen efter Arfvid Svensson. Han kan vara relevant för tidigare spår där en broder Bengt nämns.",
+          "Födelsenotisen 1768 och bouppteckningen 1785 bekräftar tillsammans Bengt som son till Arvid Svensson och Elin Bengtsdotter. Platsen Lille Svensgård kan visa en flytt eller gårdskoppling före familjens senare poster i Munkaskog.",
+          "Fadderkretsen knyter notisen till Munkagården och Munkaskog, men de osäkra namn- och ortsläsningarna ska inte användas som bevisade släktrelationer."
         ],
         "parents": [
           "arvid_svensson",
           "elin_bengtsdotter"
         ],
-        "children": []
+        "children": [],
+        "sources": [
+          "Tvååkers födelsebok 1768, enligt släktforskningsloggen 2026-07-06; exakt bild- och sidreferens återstår."
+        ],
+        "uncertainties": [
+          "Bengts exakta födelse- och dopdatum samt flera fadder- och ortsläsningar behöver kontrolläsas i hela originaluppslaget."
+        ]
       }
     },
     {
@@ -395,7 +458,7 @@
       "content": {
         "name": "Nils Arfvidsson",
         "alt": "Nils Arvidsson",
-        "born": "ca 1770/1771",
+        "born": "1771-07-01",
         "status": "confirmed",
         "role": "Syskon till Bengta",
         "facts": [
@@ -410,16 +473,55 @@
           [
             "Kommentar",
             "Möjlig koppling till tidigare Nils-spår i Munkaskog"
+          ],
+          [
+            "Född",
+            "1771-07-01 i Munkaskog."
+          ],
+          [
+            "Döpt",
+            "1771-07-02."
+          ],
+          [
+            "Föräldrar i födelsenotisen",
+            "Arfvid Svensson och Elin Bengtsdotter."
+          ],
+          [
+            "Faddrar och nätverk",
+            "Kierstin Bengtsdotter, klockaren Nils Ekman, Sven Svensson i Frättegården och Catharina Olofsdotter; flera ortsläsningar är osäkra."
+          ],
+          [
+            "Möjligt Elin-spår",
+            "Kierstin Bengtsdotter kan höra till Elins släktnätverk, men relationen är inte bevisad."
           ]
         ],
         "story": [
-          "Nils anges som 14-årig son i bouppteckningen efter Arfvid Svensson. Detta ger tydligare kontext åt det tidigare Nils-spåret i Munkaskog."
+          "Nils anges som 14-årig son i bouppteckningen efter Arfvid Svensson. Detta ger tydligare kontext åt det tidigare Nils-spåret i Munkaskog.",
+          "Nils föds 1 juli 1771 och döps följande dag som son till Arfvid Svensson och Elin Bengtsdotter i Munkaskog. Åldern stämmer exakt med bouppteckningens uppgift om en 14-årig son i mars 1785.",
+          "Faddern Kierstin Bengtsdotter är ett viktigt spår kring Elins ursprung, men samma patronymikon räcker inte för att fastställa släktskap."
         ],
         "parents": [
           "arvid_svensson",
           "elin_bengtsdotter"
         ],
-        "children": []
+        "children": [],
+        "place": "Munkaskog, Tvååker",
+        "timeline": [
+          [
+            "1771-07-01",
+            "Föds i Munkaskog."
+          ],
+          [
+            "1771-07-02",
+            "Döps."
+          ]
+        ],
+        "sources": [
+          "Tvååkers födelsebok 1771, enligt släktforskningsloggen 2026-07-06; exakt bild- och sidreferens återstår."
+        ],
+        "uncertainties": [
+          "Kierstin Bengtsdotters relation till Elin samt flera orter i fadderlistan är ännu inte klarlagda."
+        ]
       }
     },
     {
@@ -1262,12 +1364,25 @@
           [
             "Nästa steg",
             "Komplettera exakt dödsdatum och källa"
+          ],
+          [
+            "Motstridigt födelsedatum",
+            "Tidigare familjeuppgift anger 1929-02-11; ett nytt handskrivet släktblad anger 1929-02-10."
+          ],
+          [
+            "Ursprung",
+            "Skillingshagen i Morup enligt familjeberättelsen."
+          ],
+          [
+            "Gårdsflytt",
+            "Korsberg till Valagården 1985 enligt familjeberättelsen."
           ]
         ],
         "story": [
           "Karin Margit föds 11 februari 1929 i Morup enligt den senaste morfarsfilen. Hon bär flicknamnet Johansson och tar som gift namnet Bengtsson.",
           "På 1950-talet flyttar hon med Axel Harry Bengtsson till Klastorp. Tillsammans får de barnen Ingemar och Gerd.",
-          "Den senaste morfarsfilen anger att familjeuppgiften om död i oktober 2023 ska ges företräde framför Ancestry-trädets 2022-uppgift tills exakt källa kompletteras."
+          "Den senaste morfarsfilen anger att familjeuppgiften om död i oktober 2023 ska ges företräde framför Ancestry-trädets 2022-uppgift tills exakt källa kompletteras.",
+          "Karin Margit beskrivs i familjematerialet som kommen från Skillingshagen i Morup. Hon bodde med Axel Harry på Korsberg och flyttade med honom till Valagården 1985."
         ],
         "timeline": [
           [
@@ -1281,6 +1396,10 @@
           [
             "2023-10",
             "Avlider enligt familjeuppgift; exakt datum ska kompletteras."
+          ],
+          [
+            "1985",
+            "Flyttar med Axel Harry från Korsberg till Valagården enligt familjeberättelsen."
           ]
         ],
         "parents": [
@@ -1290,6 +1409,12 @@
         "children": [
           "ingemar_bengtsson",
           "gerd_bengtsson"
+        ],
+        "sources": [
+          "Mormors handskrivna levnadsberättelse och släktblad, mottagna 2026-08-31; sekundära familjekällor."
+        ],
+        "uncertainties": [
+          "Födelsedagen 10 eller 11 februari 1929 måste avgöras med officiell källa."
         ]
       }
     },
@@ -1346,6 +1471,18 @@
           [
             "Jordägarens förbehåll",
             "Lars Emil behöll Smedlyckan bakom ladan och svarade för byggnadsunderhållet."
+          ],
+          [
+            "Motstridigt födelsedatum",
+            "Tidigare familjeuppgift anger 1916-12-22; två handskrivna släktblad anger 1916-12-18."
+          ],
+          [
+            "Korsberg",
+            "Övertog gården 1954 och överlät den till sonen Hans Ingemar 1985 enligt familjeberättelsen."
+          ],
+          [
+            "Valagården",
+            "Flyttade med Karin till släktgården 1985; överlåtelseformen behöver verifieras i fastighetsakter."
           ]
         ],
         "story": [
@@ -1353,7 +1490,8 @@
           "Den senaste morfarsfilen kopplar honom preliminärt till föräldrarna Sven Adolf Bengtsson och Gertrud Persdotter. Födelsenotisen 1916 är prioriterad nästa kontroll för att låsa föräldrarna i originalkälla.",
           "Harry gifter sig med Karin Margit Johansson. Tillsammans får de barnen Ingemar och Gerd Bengtsson.",
           "Ett originalkontrakt från 1958 visar att Harry, då lantbrukare i Klastorp, arrenderade Träslöv 5:7 av sin farbror Lars Emil Bengtsson. Avtalet ger honom en direkt, dokumenterad brukningskoppling till Valagården under efterkrigstiden.",
-          "Arrendet löpte i fem år och omfattade jordbruket samt användning av lada och loge. Om avtalet förlängdes efter 1 april 1963 är ännu okänt."
+          "Arrendet löpte i fem år och omfattade jordbruket samt användning av lada och loge. Om avtalet förlängdes efter 1 april 1963 är ännu okänt.",
+          "Familjeberättelsen beskriver hur Axel Harry växte upp på Korsberg, övertog gården 1954 och återvände till Valagården tillsammans med Karin 1985."
         ],
         "parents": [
           "sven_adolf_bengtsson",
@@ -1371,10 +1509,29 @@
           [
             "1958-04-01–1963-04-01",
             "Brukar Valagårdens fastighet Träslöv 5:7 som arrendator."
+          ],
+          [
+            "1954",
+            "Övertar Korsberg och gifter sig med Karin Johansson enligt familjeberättelsen."
+          ],
+          [
+            "1985",
+            "Överlåter Korsberg till Hans Ingemar och flyttar till Valagården."
+          ],
+          [
+            "1990",
+            "Valagården överlåts enligt familjeberättelsen till dottern Gerd."
           ]
         ],
         "sources": [
-          "IMG_6532.HEIC: originalarrendekontrakt mellan Lars Emil Bengtsson och Harry Bengtsson."
+          "IMG_6532.HEIC: originalarrendekontrakt mellan Lars Emil Bengtsson och Harry Bengtsson.",
+          "Mormors handskrivna levnadsberättelse och släktblad, mottagna 2026-08-31; sekundära familjekällor."
+        ],
+        "aliases": [
+          "Harry Bengtsson"
+        ],
+        "uncertainties": [
+          "Födelsedagen 18 eller 22 december 1916 och de juridiska formerna för gårdsövergångarna måste verifieras."
         ]
       }
     },
@@ -1421,29 +1578,76 @@
           [
             "Familjekoppling till Valagården",
             "Brodern Lars Emil bodde på Valagården 1955 och ägde Träslöv 5:7 1958."
+          ],
+          [
+            "Motstridigt födelsedatum",
+            "Ancestry anger 1879; äldre familjeblad 1878-03-01 och två nyare familjeblad 1878-03-11."
+          ],
+          [
+            "Vigsel",
+            "1911 med Gertrud Petersson/Persdotter enligt familjeberättelsen"
+          ],
+          [
+            "Amerikaresa",
+            "Reste efter vigseln till Amerika för att tjäna pengar och återvände 1916 enligt familjeberättelsen"
+          ],
+          [
+            "Korsberg och Hansa",
+            "Köpte enligt familjeberättelsen gårdarna efter hemkomsten 1916"
+          ],
+          [
+            "Barn",
+            "Axel Harry, Sven August Robert och Torsten Verner"
           ]
         ],
         "story": [
           "Sven Adolf Bengtsson förs i senaste morfarsfilen som far till Axel Harry Bengtsson.",
           "Uppgiften kommer från Ancestry-trädet och ska kontrolleras mot födelsenotis, församlingsbok och familjen när Harry föds i Klastorp 1916.",
           "Ett originalskuldebrev daterat 12 november 1928 visar Sven Adolf som fordringsägare när brodern Lars Emil Bengtsson, under namnet Emil Bengtsson, erkände en skuld på 3 000 kronor. Sven Adolf bodde då på nr 12 Klastorp.",
-          "Räntan anges i handlingen löpa från 14 mars 1920, åtta år före dateringen. Det kan betyda att 1928 års handling formaliserade ett äldre lån, men detta är ännu en tolkning."
+          "Räntan anges i handlingen löpa från 14 mars 1920, åtta år före dateringen. Det kan betyda att 1928 års handling formaliserade ett äldre lån, men detta är ännu en tolkning.",
+          "Familjeberättelsen ger en rikare men ännu sekundär bild av Sven Adolf: efter vigseln 1911 reste han till Amerika för att tjäna pengar, återvände 1916 och köpte Hansa och Korsberg i Klastorp.",
+          "Familjen bosatte sig på Korsberg. Gertruds affär flyttades dit och gården blev både bostad, jordbruksmiljö och plats för handel."
         ],
         "parents": [
           "bengt_a_nilsson",
           "sara_britta_andersdotter"
         ],
         "children": [
-          "harry_bengtsson"
+          "harry_bengtsson",
+          "sven_august_robert_bengtsson_1918",
+          "torsten_verner_bengtsson_1920"
         ],
         "timeline": [
           [
             "1928-11-12",
             "Brodern Lars Emil utfärdar ett skuldebrev på 3 000 kronor till Sven Adolf i Klastorp."
+          ],
+          [
+            "1911",
+            "Gifter sig med Gertrud enligt familjeberättelsen och reser därefter till Amerika."
+          ],
+          [
+            "1916",
+            "Återvänder från Amerika och köper enligt familjeberättelsen Hansa och Korsberg."
+          ],
+          [
+            "1918-04-24",
+            "Sonen Sven August Robert föds enligt familjebladet."
+          ],
+          [
+            "1920-01-06",
+            "Sonen Torsten Verner föds enligt familjebladet."
           ]
         ],
         "sources": [
-          "anteckning om sven adolf.HEIC: originalskuldebrev daterat 1928-11-12."
+          "anteckning om sven adolf.HEIC: originalskuldebrev daterat 1928-11-12.",
+          "Mormors handskrivna levnadsberättelse och släktblad, mottagna 2026-08-31; sekundära familjekällor."
+        ],
+        "aliases": [
+          "Adolf Bengtsson"
+        ],
+        "uncertainties": [
+          "Födelseåret och dagen, vigseln, Amerikaresans detaljer och gårdsköpen behöver originalbelägg."
         ]
       }
     },
@@ -1474,15 +1678,48 @@
           [
             "Källstatus",
             "Preliminär från Ancestry-träd"
+          ],
+          [
+            "Motstridigt namn",
+            "Gertrud Persdotter i Ancestry-materialet och Gertrud Petersson i två familjehandlingar"
+          ],
+          [
+            "Motstridiga födelseuppgifter",
+            "Ancestry anger 1875; ett familjeblad anger 1876-11-24"
+          ],
+          [
+            "Ursprung",
+            "Södra Näs enligt familjeberättelsen"
+          ],
+          [
+            "Syster och handel",
+            "Drev speceriaffär i Klastorp tillsammans med systern Anna enligt familjeberättelsen"
+          ],
+          [
+            "Korsberg",
+            "Affärsrörelsen flyttades enligt berättelsen till Korsberg efter Sven Adolfs återkomst"
           ]
         ],
         "story": [
           "Gertrud Persdotter förs som mor till Axel Harry Bengtsson i senaste morfarsfilen.",
-          "Uppgiften är preliminär tills Harrys födelsenotis och familjens församlingsbok har kontrollerats."
+          "Uppgiften är preliminär tills Harrys födelsenotis och familjens församlingsbok har kontrollerats.",
+          "Gertrud uppges i familjeberättelsen ha kommit från Södra Näs och ha drivit en speceriaffär i Klastorp tillsammans med sin syster Anna.",
+          "Både namnform och födelseuppgift är motstridiga mellan sekundärkällorna. Gertrud Petersson och datumet 1876-11-24 behandlas därför som starka familjespår, inte som avgjorda fakta."
         ],
         "parents": [],
         "children": [
-          "harry_bengtsson"
+          "harry_bengtsson",
+          "sven_august_robert_bengtsson_1918",
+          "torsten_verner_bengtsson_1920"
+        ],
+        "aliases": [
+          "Gertrud Petersson"
+        ],
+        "sources": [
+          "Mormors handskrivna levnadsberättelse och släktblad, mottagna 2026-08-31; sekundära familjekällor."
+        ],
+        "uncertainties": [
+          "Originalnotiser måste avgöra Persdotter/Petersson och födelseår 1875 eller datumet 1876-11-24."
         ]
       }
     },
@@ -1537,6 +1774,22 @@
           [
             "Äganderätt",
             "Handlingarna ger stark gårdskoppling men varje historisk mantalsandel och fastighetsdel måste fortfarande hållas isär."
+          ],
+          [
+            "Motstridiga födelsedagar",
+            "Familjebladen anger 1840-12-01 respektive 1840-12-02; kyrkobokskontroll krävs"
+          ],
+          [
+            "Dop enligt familjeblad",
+            "1840-12-04; uppgiften ser ut som en avskrift men originalnotisen är inte kontrollerad"
+          ],
+          [
+            "Preliminärt lästa dopvittnen",
+            "Anders Bengtsson, Johannes Eliasson eller liknande, Gertrud Petersdotter möjligen från Näs samt Karin Bengtsdotter i Träslöv"
+          ],
+          [
+            "Möjlig farbror bland faddrarna",
+            "Anders Bengtsson kan vara Nils Bengtssons bror född 1816, men identiteten är inte bevisad"
           ]
         ],
         "story": [
@@ -1581,7 +1834,14 @@
         "sources": [
           "IMG_6524.HEIC och IMG_6525.HEIC: familjeavskrift om byggnadsdelningen 1866.",
           "otydligt.HEIC och otydligt4.HEIC: skuldebrev 1901 och ränteanteckningar 1902-1911.",
-          "Lokalundersökningsblankett för Valagård, uppgift lämnad 1915-08-31."
+          "Lokalundersökningsblankett för Valagård, uppgift lämnad 1915-08-31.",
+          "Mormors handskrivna släktanteckningar, mottagna 2026-08-31; sekundär familjekälla."
+        ],
+        "aliases": [
+          "Bengt August Nilsson"
+        ],
+        "uncertainties": [
+          "Exakt födelsedag, dopdatumet och de antecknade faddrarnas läsning och identitet behöver verifieras i originalnotisen."
         ]
       }
     },
@@ -1612,6 +1872,10 @@
           [
             "Valagård 1915",
             "Maken Bengt Nilsson d.ä. står i lokalundersökningens ägarfält; blanketten avgör inte om Sara Britta hade juridisk deläganderätt."
+          ],
+          [
+            "Födelsedatum i familjeblad",
+            "1840-07-27; inte originalkontrollerat"
           ]
         ],
         "story": [
@@ -1629,6 +1893,9 @@
           "anna_v_bengtsdotter",
           "sven_adolf_bengtsson",
           "lars_emil_bengtsson"
+        ],
+        "sources": [
+          "Mormors handskrivna släktanteckningar, mottagna 2026-08-31; sekundär familjekälla."
         ]
       }
     },
@@ -2075,12 +2342,21 @@
           [
             "Avvikelse löst",
             "Rätt datum är 1814-05-11, inte 1814-06-11"
+          ],
+          [
+            "Död enligt familjeblad",
+            "1863-04-24; inte originalkontrollerat"
+          ],
+          [
+            "Ytterligare barn i familjeblad",
+            "Beata Sofia, Carl Johan, Anna Christina, Anders och Beata Lovisa utöver Bengt August"
           ]
         ],
         "story": [
           "Nils Bengtsson föds 11 maj 1814 och döps dagen därpå i Träslöv.",
           "Födelsenotisen anger föräldrarna åbon Bengt Olofsson och Bengta Börgesdotter samt placerar familjen vid Wahlagården. Detta visar att familjen fanns där redan i maj 1814.",
-          "Nils förs som far till Bengt A. Nilsson enligt Ancestry-trädet, men vigseln med Gunnild Alfredsdotter och vidare hushållskopplingar ska fortfarande kontrolleras."
+          "Nils förs som far till Bengt A. Nilsson enligt Ancestry-trädet, men vigseln med Gunnild Alfredsdotter och vidare hushållskopplingar ska fortfarande kontrolleras.",
+          "Mormors handskrivna anteckning utökar Nils och Gunnild/Gunnelds barnaskara med fem personer. De förs som sekundärt belagda sidospår och visas inte som bekräftade förrän födelsebok och husförhör har kontrollerats."
         ],
         "timeline": [
           [
@@ -2101,7 +2377,18 @@
           "bengta_borjesdotter_1793"
         ],
         "children": [
-          "bengt_a_nilsson"
+          "bengt_a_nilsson",
+          "beata_sofia_1842_nilsdotter_branch",
+          "carl_johan_1844_nilsdotter_branch",
+          "anna_christina_1846_nilsdotter_branch",
+          "anders_1849_nilsdotter_branch",
+          "beata_lovisa_1851_nilsdotter_branch"
+        ],
+        "sources": [
+          "Mormors handskrivna släktanteckningar, mottagna 2026-08-31; sekundär familjekälla."
+        ],
+        "uncertainties": [
+          "Dödsdatumet och hela barnaskaran behöver originalkontrolleras."
         ]
       }
     },
@@ -2128,15 +2415,45 @@
           [
             "Källstatus",
             "Preliminär; stavning och patronymikon ska kontrolleras mot originalkälla"
+          ],
+          [
+            "Namnkonflikt",
+            "Ancestry anger Gunnild Alfredsdotter; tre familjeblad använder Arvidsdotter med varierande förnamnsstavning"
+          ],
+          [
+            "Datumkonflikt",
+            "Familjeblad anger 1809-07-17 respektive 1809-04-17; april förekommer i två blad"
+          ],
+          [
+            "Barn i familjeblad",
+            "Bengt August, Beata Sofia, Carl Johan, Anna Christina, Anders och Beata Lovisa"
           ]
         ],
         "story": [
           "Gunnild Alfredsdotter förs i senaste morfarsfilen som maka till Nils Bengtsson och mor till Bengt A. Nilsson.",
-          "Stavningen återges från Ancestry-trädet och behöver kontrolleras mot originalkällor."
+          "Stavningen återges från Ancestry-trädet och behöver kontrolleras mot originalkällor.",
+          "Mormors familjeblad ger en tydlig men ännu olöst konflikt kring Gunnilds namn. Arvidsdotter återkommer i flera blad, medan Ancestry uppger Alfredsdotter.",
+          "Även födelsemånaden varierar. Apriluppgiften har stöd i två familjeblad och juli i ett, men ingen får låsas innan originalnotis, vigsel och husförhör har kontrollerats."
         ],
         "parents": [],
         "children": [
-          "bengt_a_nilsson"
+          "bengt_a_nilsson",
+          "beata_sofia_1842_nilsdotter_branch",
+          "carl_johan_1844_nilsdotter_branch",
+          "anna_christina_1846_nilsdotter_branch",
+          "anders_1849_nilsdotter_branch",
+          "beata_lovisa_1851_nilsdotter_branch"
+        ],
+        "aliases": [
+          "Gunneld Arvidsdotter",
+          "Gunnel Arvidsdotter",
+          "Gunnild Arvidsdotter"
+        ],
+        "sources": [
+          "Mormors handskrivna släktanteckningar, mottagna 2026-08-31; sekundära familjekällor."
+        ],
+        "uncertainties": [
+          "Huvudnamn, patronymikon och födelsedatum är olösta sekundärkällkonflikter."
         ]
       }
     },
@@ -2400,16 +2717,27 @@
           [
             "Källstatus",
             "Indexpost; originalnotis återstår"
+          ],
+          [
+            "Möjlig levnadsuppgift",
+            "Mormors handskrivna blad anger 'dövstum'; uppgiften är inte verifierad i husförhör"
           ]
         ],
         "story": [
-          "Olena förs som barn till Bengt Olofsson och Bengta Börjesdotter enligt Träslövs födelseindex. Platsen John/Jon Nilsgård knyts i morfarsfilen till Wahlagården/Jon Nilsgård-spåret."
+          "Olena förs som barn till Bengt Olofsson och Bengta Börjesdotter enligt Träslövs födelseindex. Platsen John/Jon Nilsgård knyts i morfarsfilen till Wahlagården/Jon Nilsgård-spåret.",
+          "Familjeanteckningen kan ge en viktig bild av Olenas livsvillkor, men ordet dövstum ska tills vidare behandlas som en möjlig uppgift och inte som ett fastställt medicinskt faktum."
         ],
         "parents": [
           "bengt_olofsson_1784",
           "bengta_borjesdotter_1793"
         ],
-        "children": []
+        "children": [],
+        "sources": [
+          "Mormors handskrivna släktanteckningar, mottagna 2026-08-31; sekundär familjekälla."
+        ],
+        "uncertainties": [
+          "Uppgiften 'dövstum' behöver prövas mot samtida husförhörslängder."
+        ]
       }
     },
     {
@@ -2431,16 +2759,31 @@
           [
             "Källstatus",
             "Indexpost; originalnotis återstår"
+          ],
+          [
+            "Familjeanteckning",
+            "Ordet 'dödförklarad' står vid Anna Beatas rad i det tydligare familjebladet"
+          ],
+          [
+            "Källstatus",
+            "Betydelsen är okänd och får inte tolkas som ett dödsdatum utan ytterligare källa"
           ]
         ],
         "story": [
-          "Anna Beata förs som barn till Bengt Olofsson och Bengta Börjesdotter enligt Träslövs födelseindex. Originalnotisen återstår att kontrollera."
+          "Anna Beata förs som barn till Bengt Olofsson och Bengta Börjesdotter enligt Träslövs födelseindex. Originalnotisen återstår att kontrollera.",
+          "Det tydligare handskrivna bladet visar att noteringen dödförklarad hör till Anna Beata och inte till systern Olena. Det är oklart om ordet återger en juridisk åtgärd, en kyrkoboksuppgift eller en privat markering."
         ],
         "parents": [
           "bengt_olofsson_1784",
           "bengta_borjesdotter_1793"
         ],
-        "children": []
+        "children": [],
+        "sources": [
+          "Mormors handskrivna släktanteckningar, mottagna 2026-08-31; sekundär familjekälla."
+        ],
+        "uncertainties": [
+          "Noteringen 'dödförklarad' saknar datum och förklaring och får inte användas som dödsuppgift."
+        ]
       }
     },
     {
@@ -2687,6 +3030,10 @@
           [
             "Källa",
             "Träslöv CI:4 (1747-1798), Bild 490 / Sida 87"
+          ],
+          [
+            "Husförhör 1773–1788",
+            "Står som dottern Anna, född 1767, i Olof Anderssons och Anna Mårtensdotters hushåll på Jon Nils gård"
           ]
         ],
         "story": [
@@ -2710,6 +3057,10 @@
           [
             "1793-10-25",
             "Dottern Bengta föds."
+          ],
+          [
+            "1773–1788",
+            "Återfinns som barn i föräldrahushållet på Jon Nils gård."
           ]
         ],
         "parents": [
@@ -2718,6 +3069,9 @@
         ],
         "children": [
           "bengta_borjesdotter_1793"
+        ],
+        "sources": [
+          "Riksarkivets husförhörslängd 1773–1788, Jon Nils gård; exakt volym, bild och sida återstår."
         ]
       }
     },
@@ -2836,12 +3190,25 @@
           [
             "Källvärde",
             "Mårtens bouppteckning 1762 nämner en dotter Anna, 30 år, vilket passar födelsen 1732."
+          ],
+          [
+            "Husförhör 1773–1788",
+            "Står med maken Olof Andersson och dottern Anna under Jon Nils gård"
+          ],
+          [
+            "Faddrar vid dopet 1732",
+            "H. Ingeborg Paulin och h. Beata Jönsdotter är starkt lästa; en tredje kvinnlig fadder är oläst. Olof Börjesson och Anders Andersson är relativt sannolika manliga läsningar."
+          ],
+          [
+            "Fadderkretsens betydelse",
+            "Två kvinnor med tydlig koppling till Polinmiljön visar ett nära socialt nätverk, men bevisar inte i sig exakta släktrelationer"
           ]
         ],
         "story": [
           "Anna Mårtensdotter föds 24 april 1732 och döps 28 april. Födelsenotisen anger föräldrarna Mårten Andersson och Helena Jönsdotter.",
           "Mårten Anderssons bouppteckning 1762 nämner dottern Anna, cirka 30 år, vilket stämmer med födelsenotisen 1732. Vid vigseln 1765 anges Anna som piga från Träslöv Jön Nilsgård.",
-          "Genom Anna går den källbelagda gårdskedjan vidare från Mårten och Helena till dottern Anna Olofsdotter och senare Bengta Börjesdotter."
+          "Genom Anna går den källbelagda gårdskedjan vidare från Mårten och Helena till dottern Anna Olofsdotter och senare Bengta Börjesdotter.",
+          "Vid Annas dop 1732 omgavs familjen av en fadderkrets med tydlig anknytning till Polin-/Paulinmiljön. Ingeborg Paulin är starkt läst, och Beata Jönsdotter är en stark kandidat till Helenas syster Beata Jönsdotter Polin, men identiteten ska fortsatt hållas källkritiskt öppen."
         ],
         "timeline": [
           [
@@ -2863,6 +3230,14 @@
           [
             "1767-06-17",
             "Dottern Anna Olofsdotter föds vid Jon Nilsgård."
+          ],
+          [
+            "1732-04-28",
+            "Döps med bland andra Ingeborg Paulin och sannolikt Beata Jönsdotter som faddrar."
+          ],
+          [
+            "1773–1788",
+            "Återfinns med make och dotter under Jon Nils gård."
           ]
         ],
         "parents": [
@@ -2873,7 +3248,12 @@
           "anna_olofsdotter_1767"
         ],
         "sources": [
-          "Träslöv födelse- och dopbok 1732, originalsid 65; Träslöv (N) CI:4, Bild 1180 / Sida 223."
+          "Träslöv födelse- och dopbok 1732, originalsid 65; Träslöv (N) CI:4, Bild 1180 / Sida 223.",
+          "Träslövs födelse- och dopbok 1732, originalsid 65; exakt ArkivDigital-volym och bildnummer återstår.",
+          "Riksarkivets husförhörslängd 1773–1788, Jon Nils gård; exakt volym, bild och sida återstår."
+        ],
+        "uncertainties": [
+          "Beata Jönsdotters identitet som Helenas syster och flera övriga fadderläsningar behöver ytterligare originalkontroll."
         ]
       }
     },
@@ -2929,6 +3309,10 @@
           [
             "Korrigerad läsning",
             "Den femåriga personen i N:o 42-materialet omkring 1700 är Kirsti/Kerstin Andersdotter, inte Mårten Andersson."
+          ],
+          [
+            "Tidigaste starka gårdsspår",
+            "Sonen Nils födelsenotis 1740 placerar familjen med hög sannolikhet vid Jöns Nilsgården"
           ]
         ],
         "story": [
@@ -2957,6 +3341,10 @@
           [
             "1762-10-21",
             "Bouppteckning förrättas efter honom."
+          ],
+          [
+            "1740-08-08",
+            "Sonen Nils föds med starkt läst anknytning till Jöns Nilsgården."
           ]
         ],
         "parents": [],
@@ -2971,7 +3359,8 @@
           "borje_martensson"
         ],
         "sources": [
-          "Träslöv (N) CI:4, Bild 1410 / Sida 267; Himle häradsrätt FIIb:3, originalsid 9."
+          "Träslöv (N) CI:4, Bild 1410 / Sida 267; Himle häradsrätt FIIb:3, originalsid 9.",
+          "Träslövs födelse- och dopbok 1740, originalnotis i morfars master v125."
         ]
       }
     },
@@ -3036,6 +3425,14 @@
           [
             "Åldersskillnad i Valagården-mastern",
             "Personöversikten återger den äldre sekundära uppskattningen omkring 1709, medan den befintliga originaltolkningen anger födelse 1713-10-06/07. Båda uppgifterna bevaras med olika källstatus."
+          ],
+          [
+            "Husförhör 1773–1788",
+            "Står som änkan Helena Jönsdotter under Jon Nils gård; längden anger det avvikande födelseåret 1712"
+          ],
+          [
+            "Tre generationer på gårdssidan",
+            "Helena, dottern Anna Mårtensdotter och dotterdottern Anna Olofsdotter finns under samma gårdsrubrik"
           ]
         ],
         "story": [
@@ -3043,7 +3440,8 @@
           "Fadderkretsen är ovanligt intressant: den innehåller ämbetsmannamässiga namn, personer från Varberg och Lunden samt en möjlig Polin/Bolin-person. Det passar väl med Jöns Polins roll som klockare och hans Varbergskoppling.",
           "Vid vigseln med Mårten Andersson 1731 anges Helena som piga från Skultagården. Det visar hemvist vid vigseln, men inte säkert födelsegård.",
           "Bouppteckningen efter Helena 1800 placerar henne vid N:o 5 Jon Nilsgård och nämner dottern Anna, gift med Olof Andersson. Det ger ytterligare stöd för Valagård/Jon Nilsgård-kedjan.",
-          "Valagården-masterns personöversikt återger en äldre ungefärlig födelsetid omkring 1709. Webbplatsens redan publicerade uppgift 1713 bygger på den starkare födelse- och dopnotisen och behålls; avvikelsen dokumenteras i stället för att jämnas ut."
+          "Valagården-masterns personöversikt återger en äldre ungefärlig födelsetid omkring 1709. Webbplatsens redan publicerade uppgift 1713 bygger på den starkare födelse- och dopnotisen och behålls; avvikelsen dokumenteras i stället för att jämnas ut.",
+          "Ett husförhör 1773–1788 samlar tre generationer av den direkta kvinnolinjen under Jon Nils gård. Helena står som änka, medan dottern Anna Mårtensdotter och dotterdottern Anna Olofsdotter finns i Olof Anderssons hushåll."
         ],
         "timeline": [
           [
@@ -3065,6 +3463,10 @@
           [
             "1800-10-13",
             "Bouppteckning förrättas vid N:o 5 Jon Nilsgård."
+          ],
+          [
+            "1773–1788",
+            "Står som änka under Jon Nils gård tillsammans med den större gårdsmiljö där dottern och dotterdottern återfinns."
           ]
         ],
         "parents": [
@@ -3082,7 +3484,11 @@
           "borje_martensson"
         ],
         "sources": [
-          "Himle häradsrätt FIIa:11 (1800-1802), bouppteckning efter Helena Jönsdotter."
+          "Himle häradsrätt FIIa:11 (1800-1802), bouppteckning efter Helena Jönsdotter.",
+          "Riksarkivets husförhörslängd 1773–1788, Jon Nils gård; exakt volym, bild och sida återstår."
+        ],
+        "uncertainties": [
+          "Längdens födelseår 1712 ersätter inte originalnotisen från 1713."
         ]
       }
     },
@@ -3168,8 +3574,8 @@
       "content": {
         "name": "Nils Mårtensson",
         "role": "Syskon till Anna Mårtensdotter",
-        "born": "ca 1740",
-        "status": "likely",
+        "born": "1740-08-08",
+        "status": "confirmed",
         "place": "Valagård / Jöns Nilsgård, Träslöv",
         "facts": [
           [
@@ -3183,16 +3589,50 @@
           [
             "Källstatus",
             "Bouppteckning + sekundär uppgift"
+          ],
+          [
+            "Född",
+            "1740-08-08"
+          ],
+          [
+            "Döpt",
+            "1740-08-10 i Träslövs kyrka"
+          ],
+          [
+            "Gårdsfras",
+            "Kan med hög sannolikhet läsas 'af Jöns Nilsgården'"
+          ],
+          [
+            "Faddrar",
+            "Lars Andersson, Hans Mårtensson i Träslöv, Börje Andersson, Elisabet Börgesdotter och pigan Anna Olofsdotter; flera gårds- och namnformer är preliminära"
           ]
         ],
         "story": [
-          "Nils räknas upp som barn i bouppteckningen efter Mårten Andersson. Leif Lundquists antavla anger födelsedatumet 1740-08-08 vid Valagård, vilket bör kontrolleras i original."
+          "Nils räknas upp som barn i bouppteckningen efter Mårten Andersson. Leif Lundquists antavla anger födelsedatumet 1740-08-08 vid Valagård, vilket bör kontrolleras i original.",
+          "Den återfunna originalnotisen bekräftar Nils födelse och dop samt föräldrarna Mårten Andersson och Helena Jönsdotter. Gårdsfrasen Jöns Nilsgården är stark men något mindre säker än personnamnen och datumen.",
+          "Fyndet flyttar familjens tidigaste nuvarande originalspår vid Jöns/Jon Nilsgård tillbaka till 1740. Det visar gårdsanknytning men inte köp, arv, ägande eller åborätt."
         ],
         "parents": [
           "marten_andersson_1701",
           "helena_jonsdotter_1713"
         ],
-        "children": []
+        "children": [],
+        "timeline": [
+          [
+            "1740-08-08",
+            "Föds med stark gårdsanknytning till Jöns Nilsgården."
+          ],
+          [
+            "1740-08-10",
+            "Döps i Träslövs kyrka."
+          ]
+        ],
+        "sources": [
+          "Träslövs födelse- och dopbok 1740, originalnotis återgiven i morfars master v125; full arkivsignatur återstår."
+        ],
+        "uncertainties": [
+          "Gårdsordet och flera faddrars patronymikon eller hemvist behöver kontrolleras i bästa originalbild."
+        ]
       }
     },
     {
@@ -3404,6 +3844,18 @@
           [
             "Källstatus",
             "Vigsel, Helenas födelsenotis och Jöns dödsnotis originalkontrollerade; fadder- och syskonspår från v102 är delvis starka men ska fortsatt omläsas"
+          ],
+          [
+            "Gård 1729",
+            "Ett lokalt gårdsblad återger Jöns Paulin som åbo på 1/4 mantal krono Lars Trulsgård/Klockaregården med hustru, två döttrar och en dräng"
+          ],
+          [
+            "Namnhypotes",
+            "Polin kan möjligen ha samband med Pölen/Jöns i Pölen, men detta är en uttrycklig hypotes och inte källbelagt"
+          ],
+          [
+            "Klockaregårdens efterföljare",
+            "Mågen Bengt Ehn och dottern Anna Polin återfinns på N:o 1 Klockaregården 1773–1788"
           ]
         ],
         "story": [
@@ -3411,7 +3863,9 @@
           "V102-materialet gör honom mer levande: han förekommer sannolikt som fadder vid Skultagården redan 1704, året före vigseln med Karin Helgesdotter. Det bevisar inte hemvist där, men visar troligen ett tidigt socialt band till Karins familjemiljö.",
           "I kyrkoboken för 1707 finns en stark signatur/årsslutsnotering som läses J. A. Polin. Den passar Jöns Andersson Polin och antyder att han själv kan ha varit inblandad i förandet eller sammanställningen av kyrkoboken.",
           "Specialavsnittet för Klockaregården/Prästgården ger starka Polin-familjehändelser: Beata 1707, Helena 1713 och Petter 1721. Senare poster för Kerstin/Kirsti 1725 och Anna 1728 hör också till familjens sidospår.",
-          "Slutraderna i dödsnotisen bedöms sannolikt beskriva gravplatsen: vid västra kyrkogaveln, nära stora porten, på norra sidan. Uppgiften är viktig för lokalhistorien men ska hållas försiktigt tills ordalydelsen är helt säker."
+          "Slutraderna i dödsnotisen bedöms sannolikt beskriva gravplatsen: vid västra kyrkogaveln, nära stora porten, på norra sidan. Uppgiften är viktig för lokalhistorien men ska hållas försiktigt tills ordalydelsen är helt säker.",
+          "Det lokala gårdsbladet placerar Jöns Paulin som åbo på Lars Trulsgård/Klockaregården 1729. Avskriften beskriver ett hushåll med hustru, två döttrar och en dräng samt gårdens byggnader och odling.",
+          "En möjlig språklig koppling mellan Polin och tillnamnet Jöns i Pölen har väckts i forskningen. Den ska endast visas som hypotes tills originalmaterial visar hur och när släktnamnet började användas."
         ],
         "timeline": [
           [
@@ -3465,6 +3919,14 @@
           [
             "1758-06-04",
             "Begravs. Gravplatsen tolkas sannolikt som vid västra kyrkogaveln, nära stora porten, på norra sidan."
+          ],
+          [
+            "1729",
+            "Placeras som åbo på Lars Trulsgård/Klockaregården i ett sekundärt gårdsblad som återger landsbeskrivningen."
+          ],
+          [
+            "1773–1788",
+            "Dottern Anna Polin och mågen Bengt Ehn återfinns på N:o 1 Klockaregården."
           ]
         ],
         "parents": [
@@ -3477,6 +3939,13 @@
           "petter_jonsson_polin",
           "kerstin_jonsdotter_polin_1725",
           "anna_jonsdotter_polin_1728"
+        ],
+        "sources": [
+          "historia klockaregård.HEIC, lokalt maskinskrivet gårdsblad; sekundär källa.",
+          "Riksarkivets husförhör 1773–1788, N:o 1 Klockaregården; full referens återstår."
+        ],
+        "uncertainties": [
+          "1729 års landsbeskrivning behöver kontrolleras i original och de två onamngivna döttrarna får inte identifieras säkert."
         ]
       }
     },
@@ -3773,11 +4242,29 @@
           [
             "Källstatus",
             "Polin-familjepost i v102; fadderlistan är ännu inte fullständigt normaliserad"
+          ],
+          [
+            "Make",
+            "Klockaren Bengt Ehn"
+          ],
+          [
+            "Husförhör 1773–1788",
+            "Står som hustru Anna Polin på N:o 1 Klockaregården"
+          ],
+          [
+            "Dödsnotering i husförhör",
+            "Mycket stark läsning: död 1779-03-06; separat dödbokskontroll återstår"
+          ],
+          [
+            "Barn i matrikel",
+            "Eric, Jöns, Anders och Hans Ehn; kyrkoböcker bör kontrolleras"
           ]
         ],
         "story": [
           "Anna är ett sidospår i Polin-familjen och visar att familjen fortfarande är aktiv i den kyrkliga/klockareanknutna miljön i slutet av 1720-talet.",
-          "Fadderlistan är lång men ännu för osäker för att normaliseras fullt ut i trädet."
+          "Fadderlistan är lång men ännu för osäker för att normaliseras fullt ut i trädet.",
+          "Anna Jönsdotter Polin förde Klockaregårdens ämbetsmiljö vidare genom äktenskapet med Bengt Ehn, som efterträdde hennes far Jöns Polin som klockare.",
+          "Husförhöret 1773–1788 placerar paret på N:o 1 Klockaregården. En marginalnotering anger mycket sannolikt Annas död den 6 mars 1779, men datumet ska kontrolleras i dödboken."
         ],
         "timeline": [
           [
@@ -3787,13 +4274,38 @@
           [
             "1728-01-26",
             "Döps."
+          ],
+          [
+            "1773–1788",
+            "Återfinns som hustru till klockaren Bengt Ehn på N:o 1 Klockaregården."
+          ],
+          [
+            "1779-03-06",
+            "Mycket stark dödsnotering i husförhör; separat dödbokskontroll återstår."
           ]
         ],
         "parents": [
           "jons_polin_1682",
           "karin_helgesdotter_1685"
         ],
-        "children": []
+        "children": [
+          "eric_ehn_1748",
+          "jons_ehn_1750",
+          "anders_ehn_1757",
+          "hans_ehn"
+        ],
+        "aliases": [
+          "Anna Polin",
+          "Anna Jönsdotter Polin"
+        ],
+        "sources": [
+          "Riksarkivets husförhörslängd 1773–1788, N:o 1 Klockaregården; exakt volym, bild och sida återstår.",
+          "Carl Sjöström, Göteborgs nation i Lund 1669–1906 (1907), s. 198."
+        ],
+        "uncertainties": [
+          "Dödsdatumet behöver bekräftas i separat död- eller begravningsnotis."
+        ],
+        "partner": "bengt_ehn_1726"
       }
     },
     {
@@ -3875,14 +4387,43 @@
           [
             "Källstatus",
             "Leif Lundquist"
+          ],
+          [
+            "Sekundära levnadsår",
+            "Född 1645 och död 1706 enligt ortnamnsregister till 50 halländska antavlor"
+          ],
+          [
+            "Originalkandidat 1706",
+            "En Anders Jönsson begravdes 1706-06-06 på gamla kyrkogården i Varberg, 65 år gammal; Polin-namn och yrke saknas i notisen"
+          ],
+          [
+            "Möjlig far",
+            "Jöns Andersson, kallad Jöns i Pölen, enligt sekundära antavlor"
           ]
         ],
         "story": [
-          "Anders Jönsson Polin förs in som far till Jöns/Jonas Andersson Polin enligt Leif Lundquists Halländsk antavla 4. Uppgiften är en accepterad arbetsgenealogi och ska originalkontrolleras när källor hittas."
+          "Anders Jönsson Polin förs in som far till Jöns/Jonas Andersson Polin enligt Leif Lundquists Halländsk antavla 4. Uppgiften är en accepterad arbetsgenealogi och ska originalkontrolleras när källor hittas.",
+          "En originalpost i Varbergs dödbok 1706 är den starkaste kandidaten hittills till Anders begravning. Namn, ort och år passar, men eftersom notisen saknar både Polin och yrket sadelmakare betraktas identiteten som sannolik men obekräftad."
         ],
-        "parents": [],
+        "parents": [
+          "jons_andersson_polen"
+        ],
         "children": [
           "jons_polin_1682"
+        ],
+        "timeline": [
+          [
+            "1706-06-06",
+            "En möjlig Anders Jönsson begravs på gamla kyrkogården i Varberg, 65 år gammal; identiteten är inte slutligt bevisad."
+          ]
+        ],
+        "sources": [
+          "Varbergs död- och begravningsbok 1706, sida 88; kandidatpost.",
+          "Leif Lundquist, Halländsk antavla 4; sekundär forskning.",
+          "Ortnamnsregistret till 50 halländska antavlor; sekundär forskning."
+        ],
+        "uncertainties": [
+          "Kandidatposten 1706 saknar Polin-namn och yrkestitel och kan därför inte låsas som Anders Jönsson Polin."
         ]
       }
     },
@@ -3917,6 +4458,14 @@
           [
             "Notering",
             "Patronymikonet Andersdotter ska inte låsas utan ytterligare källa"
+          ],
+          [
+            "Namnstatus",
+            "Ingrid hos Leif Lundquist; Inger Andersdotter i ortnamnsregister och Ancestry, samtliga sekundära källor"
+          ],
+          [
+            "Gårdsavgränsning",
+            "Sonen Jöns knyts till Lars Trulsgård/Klockaregården, men Ingrid är inte själv belagd som boende eller död där"
           ]
         ],
         "story": [
@@ -3925,6 +4474,16 @@
         "parents": [],
         "children": [
           "jons_polin_1682"
+        ],
+        "aliases": [
+          "Inger Andersdotter"
+        ],
+        "sources": [
+          "Leif Lundquist, Halländsk antavla 4.",
+          "Ortnamnsregistret till 50 halländska antavlor; sekundär källa."
+        ],
+        "uncertainties": [
+          "Namnformen Inger Andersdotter är stärkt av två sekundära källor men inte originalbelagd."
         ]
       }
     },
@@ -3972,12 +4531,26 @@
           [
             "Källstatus",
             "Föräldrakopplingen bygger på Leif Lundquist och stärks kraftigt av hushållet på Nils Olsgård; begravningsuppgiften behöver hållas källkritiskt"
+          ],
+          [
+            "Originalbekräftad begravning",
+            "Begravd 1731-04-16 och uttryckligen kallad mannen 'af Skultagården', 80 år gammal"
+          ],
+          [
+            "Gravplats",
+            "Notisen anger att han ligger i gårdens gravställe"
+          ],
+          [
+            "Dödsdatum enligt sekundär forskning",
+            "1731-04-02 hos Leif Lundquist; dagen står inte i begravningsnotisen"
           ]
         ],
         "story": [
           "Helge Svensson förs in som far till Karin Helgesdotter enligt Leif Lundquist, men v102 ger ett mycket starkare gårds- och hushållsspår. På N:o 26 Niels Olufs Hemman i Träslöv finns ett hushåll som med hög sannolikhet innehåller Helge, hustrun Kerstin Olsdotter och flera barn, däribland Karin.",
           "Åldersuppgifterna passar den övriga källbilden: Helge anges omkring 40 år i hushållet och omkring 80 år vid begravningen 1731, vilket pekar mot födelse omkring 1650-1651.",
-          "Arbetsbilden är nu att Helge och familjen först hör till Nils Olsgård/Niels Olufs Hemman, medan kopplingen till Skultagården blir tydligare senare. Det viktiga framåt är att hitta exakt när och varför familjen flyttar eller knyts dit."
+          "Arbetsbilden är nu att Helge och familjen först hör till Nils Olsgård/Niels Olufs Hemman, medan kopplingen till Skultagården blir tydligare senare. Det viktiga framåt är att hitta exakt när och varför familjen flyttar eller knyts dit.",
+          "En tydligare originalbild har rättat det äldre arbetsläget: Helge Svensson finns i begravningsboken den 16 april 1731 och anges uttryckligen vara från Skultagården. Därmed är hans anknytning till gården originalbelagd.",
+          "Notisen säger att han ligger i gårdens gravställe. Det separata dödsdatumet 2 april kommer fortsatt från sekundär forskning och ska inte blandas ihop med det bekräftade begravningsdatumet."
         ],
         "timeline": [
           [
@@ -3995,11 +4568,21 @@
           [
             "1731-04-16",
             "Begravs enligt v102-materialets samlade bedömning; äldre datum 1731-04-02 hålls som sekundärt/ej exakt säkrat."
+          ],
+          [
+            "1731-04-16",
+            "Begravs som mannen från Skultagården, 80 år gammal; notisen anger gårdens gravställe."
           ]
         ],
         "parents": [],
         "children": [
           "karin_helgesdotter_1685"
+        ],
+        "sources": [
+          "Träslövs död- och begravningsbok 1731, originalsid 225; originalbild kontrollerad i v125."
+        ],
+        "uncertainties": [
+          "Dödsdatumet 1731-04-02 är sekundärt och återstår att belägga separat."
         ]
       }
     },
@@ -4538,20 +5121,60 @@
       "alt_name": null,
       "branch": "mother",
       "is_direct": false,
-      "is_living": false,
-      "visibility": "public",
+      "is_living": true,
+      "visibility": "family",
       "content": {
         "name": "Ingemar Bengtsson",
         "status": "confirmed",
         "role": "Barn",
         "story": [
-          "Son till Karin och Harry. Grenen är ännu inte utforskad."
+          "Son till Karin och Harry. Grenen är ännu inte utforskad.",
+          "Hans Ingemar Bengtsson övertog enligt familjeberättelsen Korsberg 1985. Det handskrivna släktbladet anger Inger Christel Matsson som maka och Hans Christian och Karl Robert som barn."
         ],
         "parents": [
           "karin_margit",
           "harry_bengtsson"
         ],
-        "children": []
+        "children": [
+          "hans_christian_bengtsson_1985",
+          "karl_robert_bengtsson_1988"
+        ],
+        "born": "1955-05-17",
+        "aliases": [
+          "Hans Ingemar Bengtsson"
+        ],
+        "facts": [
+          [
+            "Födelsedatum",
+            "1955-05-17 enligt handskrivet familjematerial"
+          ],
+          [
+            "Maka",
+            "Inger Christel Matsson"
+          ],
+          [
+            "Barn",
+            "Hans Christian och Karl Robert"
+          ],
+          [
+            "Korsberg",
+            "Övertog gården efter Axel Harry 1985 enligt familjeberättelsen"
+          ]
+        ],
+        "timeline": [
+          [
+            "1955-05-17",
+            "Föds enligt handskrivet familjematerial."
+          ],
+          [
+            "1985",
+            "Övertar Korsberg enligt familjeberättelsen."
+          ]
+        ],
+        "sources": [
+          "Mormors handskrivna släktblad och levnadsberättelse, mottagna 2026-08-31; sekundära familjekällor."
+        ],
+        "partner": "inger_christel_matsson_1959"
       }
     },
     {
@@ -4576,11 +5199,20 @@
           [
             "Barn",
             "Axel och Ebba"
+          ],
+          [
+            "Valagården",
+            "Övertog enligt familjeberättelsen Valagården 1990"
+          ],
+          [
+            "Källstatus gårdsövergång",
+            "Privat familjeuppgift; juridisk form och exakt datum behöver verifieras"
           ]
         ],
         "story": [
           "Gerd föds 6 augusti 1958, dotter till Karin och Harry.",
-          "Gerd gifter sig med Göran Nilsson. Tillsammans får de två barn: Axel och Ebba."
+          "Gerd gifter sig med Göran Nilsson. Tillsammans får de två barn: Axel och Ebba.",
+          "Gerd Elisabeth Bengtsson utgör den moderna familjegrenen på Valagården. Enligt familjeberättelsen överläts släktgården till henne 1990."
         ],
         "parents": [
           "karin_margit",
@@ -4589,6 +5221,18 @@
         "children": [
           "axel_nilsson",
           "ebba_nilsson"
+        ],
+        "aliases": [
+          "Gerd Elisabeth Bengtsson"
+        ],
+        "timeline": [
+          [
+            "1990",
+            "Övertar Valagården enligt familjeberättelsen."
+          ]
+        ],
+        "sources": [
+          "Mormors handskrivna släktblad och levnadsberättelse, mottagna 2026-08-31; sekundära familjekällor."
         ]
       }
     },
@@ -4622,6 +5266,10 @@
           [
             "Far",
             "Nils Stig Henning Nilsson"
+          ],
+          [
+            "Fullständigare namnform",
+            "Nils Göran Nilsson enligt handskrivet familjeblad"
           ]
         ],
         "story": [
@@ -4635,6 +5283,12 @@
         "children": [
           "axel_nilsson",
           "ebba_nilsson"
+        ],
+        "aliases": [
+          "Nils Göran Nilsson"
+        ],
+        "sources": [
+          "Mormors handskrivna släktblad, mottaget 2026-08-31; sekundär familjekälla."
         ]
       }
     },
@@ -7883,7 +8537,22 @@
           "gerd_bengtsson",
           "goran_nilsson"
         ],
-        "children": []
+        "children": [],
+        "aliases": [
+          "Nils Axel"
+        ],
+        "facts": [
+          [
+            "Alternativ full namnform",
+            "Nils Axel enligt handskrivet familjeblad; namnformen är inte användarbekräftad"
+          ]
+        ],
+        "sources": [
+          "Mormors handskrivna släktblad, mottaget 2026-08-31; sekundär familjekälla."
+        ],
+        "uncertainties": [
+          "Namnformen Nils Axel ska bekräftas av personen själv innan den används som huvudnamn."
+        ]
       }
     },
     {
@@ -7907,7 +8576,947 @@
           "gerd_bengtsson",
           "goran_nilsson"
         ],
-        "children": []
+        "children": [],
+        "aliases": [
+          "Ebba Viktoria"
+        ],
+        "facts": [
+          [
+            "Alternativ full namnform",
+            "Ebba Viktoria enligt handskrivet familjeblad"
+          ]
+        ],
+        "sources": [
+          "Mormors handskrivna släktblad, mottaget 2026-08-31; sekundär familjekälla."
+        ]
+      }
+    },
+    {
+      "id": "inger_christel_matsson_1959",
+      "slug": "inger-christel-matsson",
+      "name": "Inger Christel Matsson",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": true,
+      "visibility": "family",
+      "content": {
+        "name": "Inger Christel Matsson",
+        "born": "1959-04-07",
+        "role": "Maka till Hans Ingemar",
+        "status": "working",
+        "branch": "mother",
+        "facts": [
+          [
+            "Make",
+            "Hans Ingemar Bengtsson"
+          ],
+          [
+            "Källstatus",
+            "Privat handskrivet familjematerial; inte originalkontrollerat"
+          ]
+        ],
+        "story": [
+          "Inger Christel Matsson förs in som maka till Hans Ingemar Bengtsson enligt mormors handskrivna släktblad."
+        ],
+        "parents": [],
+        "children": [
+          "hans_christian_bengtsson_1985",
+          "karl_robert_bengtsson_1988"
+        ],
+        "sources": [
+          "Mormors handskrivna släktblad, mottagna 2026-08-31; sekundär familjekälla."
+        ],
+        "partner": "ingemar_bengtsson"
+      }
+    },
+    {
+      "id": "hans_christian_bengtsson_1985",
+      "slug": "hans-christian",
+      "name": "Hans Christian",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": true,
+      "visibility": "family",
+      "content": {
+        "name": "Hans Christian",
+        "autoLink": false,
+        "born": "1985-07-02",
+        "role": "Barn till Hans Ingemar",
+        "status": "working",
+        "branch": "mother",
+        "facts": [
+          [
+            "Källstatus",
+            "Privat handskrivet familjematerial; inte originalkontrollerat"
+          ]
+        ],
+        "story": [
+          "Hans Christian finns i den moderna sidogrenen efter Hans Ingemar Bengtsson och Inger Christel Matsson."
+        ],
+        "parents": [
+          "ingemar_bengtsson",
+          "inger_christel_matsson_1959"
+        ],
+        "children": [],
+        "sources": [
+          "Mormors handskrivna släktblad, mottagna 2026-08-31; sekundär familjekälla."
+        ]
+      }
+    },
+    {
+      "id": "karl_robert_bengtsson_1988",
+      "slug": "karl-robert",
+      "name": "Karl Robert",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": true,
+      "visibility": "family",
+      "content": {
+        "name": "Karl Robert",
+        "autoLink": false,
+        "born": "1988-04-02",
+        "role": "Barn till Hans Ingemar",
+        "status": "working",
+        "branch": "mother",
+        "facts": [
+          [
+            "Källstatus",
+            "Privat handskrivet familjematerial; inte originalkontrollerat"
+          ]
+        ],
+        "story": [
+          "Karl Robert finns i den moderna sidogrenen efter Hans Ingemar Bengtsson och Inger Christel Matsson."
+        ],
+        "parents": [
+          "ingemar_bengtsson",
+          "inger_christel_matsson_1959"
+        ],
+        "children": [],
+        "sources": [
+          "Mormors handskrivna släktblad, mottagna 2026-08-31; sekundär familjekälla."
+        ]
+      }
+    },
+    {
+      "id": "sven_august_robert_bengtsson_1918",
+      "slug": "sven-august-robert-bengtsson",
+      "name": "Sven August Robert Bengtsson",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": true,
+      "visibility": "family",
+      "content": {
+        "name": "Sven August Robert Bengtsson",
+        "aliases": [
+          "Robert Bengtsson"
+        ],
+        "born": "1918-04-24",
+        "role": "Syskon till Axel Harry",
+        "status": "working",
+        "branch": "mother",
+        "place": "Korsberg, Klastorp / Falkenberg",
+        "facts": [
+          [
+            "Maka",
+            "Namnformen ser ut som Viarna Olsson och måste kontrolleras"
+          ],
+          [
+            "Vigsel",
+            "1957 enligt familjeberättelsen"
+          ],
+          [
+            "Försörjning",
+            "Uppges ha varit delägare i ett Falkenbergsföretag vars namn möjligen läses Wulken"
+          ],
+          [
+            "Källstatus",
+            "Handskriven familjeberättelse; namn och företagsuppgift är osäkra"
+          ]
+        ],
+        "story": [
+          "Sven August Robert Bengtsson föds 24 april 1918 som son till Sven Adolf Bengtsson och Gertrud Petersson/Persdotter enligt familjeberättelsen.",
+          "Han uppges ha gift sig 1957 med en kvinna från Sjönevad i Vessige. Hennes namn ser ut som Viarna Olsson, men den ovanliga läsningen ska inte låsas före kontroll."
+        ],
+        "timeline": [
+          [
+            "1918-04-24",
+            "Föds enligt handskrivet familjematerial."
+          ],
+          [
+            "1957",
+            "Gifter sig enligt familjeberättelsen; makans namn är osäkert."
+          ]
+        ],
+        "parents": [
+          "sven_adolf_bengtsson",
+          "gertrud_persdotter"
+        ],
+        "children": [],
+        "sources": [
+          "Mormors handskrivna levnadsberättelse, mottagen 2026-08-31; sekundär familjekälla."
+        ],
+        "uncertainties": [
+          "Makans namn och företagsnamnet i Falkenberg är svårlästa och får inte behandlas som säkra."
+        ],
+        "partner": "viarna_olsson_sjonevad"
+      }
+    },
+    {
+      "id": "torsten_verner_bengtsson_1920",
+      "slug": "torsten-verner-bengtsson",
+      "name": "Torsten Verner Bengtsson",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": true,
+      "visibility": "family",
+      "content": {
+        "name": "Torsten Verner Bengtsson",
+        "born": "1920-01-06",
+        "role": "Syskon till Axel Harry",
+        "status": "working",
+        "branch": "mother",
+        "place": "Hansa, Klastorp",
+        "facts": [
+          [
+            "Maka",
+            "Anna-Lisa Karlsson"
+          ],
+          [
+            "Vigsel",
+            "1955 enligt familjeberättelsen"
+          ],
+          [
+            "Verksamhet",
+            "Byggde 1954 en bilverkstad med bostad på Hansa"
+          ],
+          [
+            "Källstatus",
+            "Handskriven familjeberättelse; inte originalkontrollerat"
+          ]
+        ],
+        "story": [
+          "Torsten Verner Bengtsson föds 6 januari 1920 som son till Sven Adolf Bengtsson och Gertrud Petersson/Persdotter enligt familjematerialet.",
+          "År 1954 uppges han ha byggt en bilverkstad med bostad på Hansa. Han gifte sig 1955 med Anna-Lisa Karlsson från Länna församling i Roslagen."
+        ],
+        "timeline": [
+          [
+            "1920-01-06",
+            "Föds enligt handskrivet familjematerial."
+          ],
+          [
+            "1954",
+            "Bygger enligt familjeberättelsen bilverkstad och bostad på Hansa."
+          ],
+          [
+            "1955",
+            "Gifter sig med Anna-Lisa Karlsson enligt familjeberättelsen."
+          ]
+        ],
+        "parents": [
+          "sven_adolf_bengtsson",
+          "gertrud_persdotter"
+        ],
+        "children": [],
+        "sources": [
+          "Mormors handskrivna levnadsberättelse, mottagen 2026-08-31; sekundär familjekälla."
+        ],
+        "partner": "anna_lisa_karlsson_lanna"
+      }
+    },
+    {
+      "id": "anna_lisa_karlsson_lanna",
+      "slug": "anna-lisa-karlsson",
+      "name": "Anna-Lisa Karlsson",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": false,
+      "visibility": "public",
+      "content": {
+        "name": "Anna-Lisa Karlsson",
+        "role": "Maka till Torsten Verner",
+        "status": "working",
+        "branch": "mother",
+        "place": "Länna, Roslagen, Uppland",
+        "facts": [
+          [
+            "Make",
+            "Torsten Verner Bengtsson"
+          ],
+          [
+            "Vigsel",
+            "1955 enligt familjeberättelsen"
+          ],
+          [
+            "Ursprung",
+            "Länna församling i Roslagen, Uppland"
+          ],
+          [
+            "Källstatus",
+            "Handskriven familjeberättelse; inte originalkontrollerat"
+          ]
+        ],
+        "story": [
+          "Anna-Lisa Karlsson uppges i familjeberättelsen komma från Länna församling i Roslagen och ha gift sig med Torsten Verner Bengtsson 1955."
+        ],
+        "parents": [],
+        "children": [],
+        "sources": [
+          "Mormors handskrivna levnadsberättelse, mottagen 2026-08-31; sekundär familjekälla."
+        ],
+        "partner": "torsten_verner_bengtsson_1920"
+      }
+    },
+    {
+      "id": "viarna_olsson_sjonevad",
+      "slug": "viarna-olsson",
+      "name": "Viarna Olsson?",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": false,
+      "visibility": "public",
+      "content": {
+        "name": "Viarna Olsson?",
+        "role": "Möjligen maka till Sven August Robert",
+        "status": "open",
+        "branch": "mother",
+        "place": "Sjönevad, Vessige",
+        "facts": [
+          [
+            "Namnstatus",
+            "Den handskrivna namnformen är ovanlig och svårläst"
+          ],
+          [
+            "Vigsel",
+            "1957 enligt familjeberättelsen"
+          ],
+          [
+            "Källstatus",
+            "Öppet namnspår; får inte visas som säker identifikation"
+          ]
+        ],
+        "story": [
+          "Familjeberättelsen uppger att Sven August Robert gifte sig 1957 med en kvinna från Sjönevad i Vessige. Namnet ser ut som Viarna Olsson men måste kontrolläsas."
+        ],
+        "parents": [],
+        "children": [],
+        "sources": [
+          "Mormors handskrivna levnadsberättelse, mottagen 2026-08-31; sekundär familjekälla."
+        ],
+        "uncertainties": [
+          "Både förnamn och full identitet är osäkra."
+        ],
+        "partner": "sven_august_robert_bengtsson_1918"
+      }
+    },
+    {
+      "id": "beata_sofia_1842_nilsdotter_branch",
+      "slug": "beata-sofia",
+      "name": "Beata Sofia",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": false,
+      "visibility": "public",
+      "content": {
+        "name": "Beata Sofia",
+        "autoLink": false,
+        "born": "1842-09-30",
+        "role": "Barn till Nils Bengtsson",
+        "status": "working",
+        "branch": "mother",
+        "facts": [
+          [
+            "Källstatus",
+            "Handskriven familjesammanställning; namnform och datum ska originalkontrolleras"
+          ]
+        ],
+        "story": [
+          "Beata Sofia förs som barn till Nils Bengtsson och Gunnild/Gunneld enligt mormors handskrivna anteckning."
+        ],
+        "parents": [
+          "nils_bengtsson_1814",
+          "gunnild_alfredsdotter"
+        ],
+        "children": [],
+        "sources": [
+          "Mormors handskrivna släktanteckningar, mottagna 2026-08-31; sekundär familjekälla."
+        ]
+      }
+    },
+    {
+      "id": "carl_johan_1844_nilsdotter_branch",
+      "slug": "carl-johan",
+      "name": "Carl Johan",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": false,
+      "visibility": "public",
+      "content": {
+        "name": "Carl Johan",
+        "autoLink": false,
+        "born": "1844",
+        "role": "Barn till Nils Bengtsson",
+        "status": "working",
+        "branch": "mother",
+        "facts": [
+          [
+            "Motstridigt födelsedatum",
+            "Ett familjeblad anger 1844-02-24 och ett annat 1844-09-22"
+          ],
+          [
+            "Källstatus",
+            "Handskrivna familjekällor; originalkontroll krävs"
+          ]
+        ],
+        "story": [
+          "Carl Johan förs som barn till Nils Bengtsson och Gunnild/Gunneld. Två familjeblad motsäger varandra om födelsedagen, så endast året visas som huvuduppgift."
+        ],
+        "parents": [
+          "nils_bengtsson_1814",
+          "gunnild_alfredsdotter"
+        ],
+        "children": [],
+        "sources": [
+          "Mormors handskrivna släktanteckningar, mottagna 2026-08-31; sekundära familjekällor."
+        ],
+        "uncertainties": [
+          "Födelsedatum 1844-02-24 eller 1844-09-22 måste avgöras i originalkälla."
+        ]
+      }
+    },
+    {
+      "id": "anna_christina_1846_nilsdotter_branch",
+      "slug": "anna-christina",
+      "name": "Anna Christina",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": false,
+      "visibility": "public",
+      "content": {
+        "name": "Anna Christina",
+        "autoLink": false,
+        "born": "1846-09-16",
+        "role": "Barn till Nils Bengtsson",
+        "status": "working",
+        "branch": "mother",
+        "facts": [
+          [
+            "Källstatus",
+            "Handskriven familjesammanställning; originalkontroll krävs"
+          ]
+        ],
+        "story": [
+          "Anna Christina förs som barn till Nils Bengtsson och Gunnild/Gunneld enligt mormors handskrivna anteckning."
+        ],
+        "parents": [
+          "nils_bengtsson_1814",
+          "gunnild_alfredsdotter"
+        ],
+        "children": [],
+        "sources": [
+          "Mormors handskrivna släktanteckningar, mottagna 2026-08-31; sekundär familjekälla."
+        ]
+      }
+    },
+    {
+      "id": "anders_1849_nilsdotter_branch",
+      "slug": "anders",
+      "name": "Anders",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": false,
+      "visibility": "public",
+      "content": {
+        "name": "Anders",
+        "autoLink": false,
+        "born": "1849-06-03",
+        "role": "Barn till Nils Bengtsson",
+        "status": "working",
+        "branch": "mother",
+        "facts": [
+          [
+            "Källstatus",
+            "Handskriven familjesammanställning; originalkontroll krävs"
+          ]
+        ],
+        "story": [
+          "Anders förs som barn till Nils Bengtsson och Gunnild/Gunneld enligt mormors handskrivna anteckning."
+        ],
+        "parents": [
+          "nils_bengtsson_1814",
+          "gunnild_alfredsdotter"
+        ],
+        "children": [],
+        "sources": [
+          "Mormors handskrivna släktanteckningar, mottagna 2026-08-31; sekundär familjekälla."
+        ]
+      }
+    },
+    {
+      "id": "beata_lovisa_1851_nilsdotter_branch",
+      "slug": "beata-lovisa",
+      "name": "Beata Lovisa",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": false,
+      "visibility": "public",
+      "content": {
+        "name": "Beata Lovisa",
+        "autoLink": false,
+        "born": "1851-10-24",
+        "role": "Barn till Nils Bengtsson",
+        "status": "working",
+        "branch": "mother",
+        "facts": [
+          [
+            "Källstatus",
+            "Handskriven familjesammanställning; originalkontroll krävs"
+          ]
+        ],
+        "story": [
+          "Beata Lovisa förs som barn till Nils Bengtsson och Gunnild/Gunneld enligt mormors handskrivna anteckning."
+        ],
+        "parents": [
+          "nils_bengtsson_1814",
+          "gunnild_alfredsdotter"
+        ],
+        "children": [],
+        "sources": [
+          "Mormors handskrivna släktanteckningar, mottagna 2026-08-31; sekundär familjekälla."
+        ]
+      }
+    },
+    {
+      "id": "ingeborg_paulin_1731",
+      "slug": "ingeborg-paulin",
+      "name": "Ingeborg Paulin",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": false,
+      "visibility": "public",
+      "content": {
+        "name": "Ingeborg Paulin",
+        "role": "Fadder i Polin-/Paulin-nätverket",
+        "status": "confirmed",
+        "branch": "mother",
+        "place": "Träslöv",
+        "facts": [
+          [
+            "Originalbelägg",
+            "Namnet H. Ingeborg Paulin förekommer i dopnotiser 1731-06-04 och omkring juli–augusti 1731"
+          ],
+          [
+            "Annas dop 1732",
+            "Återkommer som fadder vid Anna Mårtensdotters dop 1732-04-28"
+          ],
+          [
+            "Titelns tolkning",
+            "H. betyder sannolikt hustru i sammanhanget; maken är inte identifierad"
+          ],
+          [
+            "Källstatus",
+            "Personens namn är starkt originalbelagt, men hennes relation till Jöns Polin är okänd"
+          ]
+        ],
+        "story": [
+          "Ingeborg Paulin återkommer som fadder i minst tre dopnotiser 1731–1732. Det visar att hon var en verklig och återkommande person i Träslövs lokala dopnätverk.",
+          "Hennes närvaro vid Anna Mårtensdotters dop binder henne socialt till familjen efter Helena Jönsdotter. Hon kan ha varit släkting, ingift släkting eller nära kontakt, men materialet bevisar inte vilken relation hon hade till Jöns Polin."
+        ],
+        "timeline": [
+          [
+            "1731-06-04",
+            "Står som H. Ingeborg Paulin bland faddrarna vid Annas dop."
+          ],
+          [
+            "1731-07/08",
+            "Förekommer åter som fadder vid ett dop av ett barn Börge; exakt dopdatum är svårläst."
+          ],
+          [
+            "1732-04-28",
+            "Är fadder vid Anna Mårtensdotters dop."
+          ]
+        ],
+        "parents": [],
+        "children": [],
+        "sources": [
+          "Träslövs födelse- och dopbok 1731–1732, originalbilder genomgångna i morfars master v125; fullständiga arkivreferenser återstår."
+        ],
+        "uncertainties": [
+          "Släktskapet med Jöns Andersson Polin och övriga Polin-/Paulin-personer är en öppen hypotes."
+        ]
+      }
+    },
+    {
+      "id": "jons_andersson_polen",
+      "slug": "jons-andersson",
+      "name": "Jöns Andersson",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": false,
+      "visibility": "public",
+      "content": {
+        "name": "Jöns Andersson",
+        "aliases": [
+          "Jöns i Pölen"
+        ],
+        "role": "Möjlig far till Anders Jönsson Polin",
+        "status": "working",
+        "branch": "mother",
+        "place": "Pölen, Gödestad / Varberg",
+        "facts": [
+          [
+            "Ställning",
+            "Borgare i Varberg enligt sekundär forskning"
+          ],
+          [
+            "Dödsår",
+            "1675 i en antavla och 1676 i ett publikt webtrees-träd"
+          ],
+          [
+            "Släktuppgift",
+            "Anges som far till Anders Jönsson Polin och stamfar till klockaresläkten Polin"
+          ],
+          [
+            "Källstatus",
+            "Sekundär forskning; originalbelägg saknas"
+          ]
+        ],
+        "story": [
+          "Jöns Andersson, kallad Jöns i Pölen, förs som ett nytt men ännu obekräftat generationsspår före Anders Jönsson Polin.",
+          "Halländsk antavla 4 och en antavla sammanställd av Ivar Larsson binder honom till Pölen i Gödestad och Varbergs borgarmiljö. Uppgifterna är forskningsledning och inte ett originalbevis."
+        ],
+        "timeline": [
+          [
+            "1675/1676",
+            "Motstridigt dödsår i två sekundära sammanställningar."
+          ]
+        ],
+        "parents": [],
+        "children": [
+          "anders_jonsson_polin"
+        ],
+        "sources": [
+          "Leif Lundquist, Halländsk antavla 4.",
+          "Ivar Larssons antavla i Ingemund Bengtsson II – Varbergs berömde son.",
+          "Hallqvist–Winroth, publikt webtrees-träd; sekundär källa."
+        ],
+        "uncertainties": [
+          "Far–son-kopplingen till Anders Jönsson Polin, dödsåret och uppgiften om Pölen måste verifieras i originalmaterial."
+        ]
+      }
+    },
+    {
+      "id": "bengt_ehn_1726",
+      "slug": "bengt-ehn",
+      "name": "Bengt Ehn",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": false,
+      "visibility": "public",
+      "content": {
+        "name": "Bengt Ehn",
+        "born": "1726",
+        "died": "1792",
+        "role": "Klockare och måg till Jöns Polin",
+        "status": "likely",
+        "branch": "mother",
+        "place": "Klockaregården, Träslöv",
+        "facts": [
+          [
+            "Yrke",
+            "Klockare"
+          ],
+          [
+            "Första maka",
+            "Anna Jönsdotter Polin"
+          ],
+          [
+            "Senare maka",
+            "Anna/Anne Maja Lomberg"
+          ],
+          [
+            "Klockaretjänst",
+            "Tog över tjänsten efter svärfadern Jöns Polin"
+          ],
+          [
+            "Källstatus",
+            "Husförhör 1773–1788 och tryckt matrikel ger starkt stöd; full arkivreferens till husförhöret återstår"
+          ]
+        ],
+        "story": [
+          "Bengt Ehn tog över klockaretjänsten efter sin svärfar Jöns Polin och återfinns med titeln klockare på N:o 1 Klockaregården i husförhörslängden 1773–1788.",
+          "Äktenskapet med Anna Jönsdotter Polin visar hur tjänsten och gårdsmiljön fördes vidare genom en sidogren. Senare återfinns också Anna/Anne Maja Lomberg i hushållet."
+        ],
+        "parents": [],
+        "children": [
+          "eric_ehn_1748",
+          "jons_ehn_1750",
+          "anders_ehn_1757",
+          "hans_ehn",
+          "johannes_ehn_1771"
+        ],
+        "sources": [
+          "Riksarkivets husförhörslängd 1773–1788, N:o 1 Klockaregården; exakt volym, bild och sida återstår.",
+          "Carl Sjöström, Göteborgs nation i Lund 1669–1906 (1907), s. 198.",
+          "Jöns Polins dödsnotis 1758."
+        ],
+        "uncertainties": [
+          "Gårdsbladets tjänsteår 1756–1789 är en sekundär sammanställning och har frågetecken; originalnotisen säger att övertagandet skedde efter 1747."
+        ],
+        "partner": "anna_jonsdotter_polin_1728"
+      }
+    },
+    {
+      "id": "anne_maja_lomberg_1754",
+      "slug": "anna-maja-lomberg",
+      "name": "Anna Maja Lomberg",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": false,
+      "visibility": "public",
+      "content": {
+        "name": "Anna Maja Lomberg",
+        "aliases": [
+          "Anne Maja Lomberg"
+        ],
+        "born": "1754",
+        "role": "Senare maka till Bengt Ehn",
+        "status": "likely",
+        "branch": "mother",
+        "place": "Klockaregården, Träslöv",
+        "facts": [
+          [
+            "Make",
+            "Bengt Ehn"
+          ],
+          [
+            "Källstatus",
+            "Starkt läst i husförhörslängden 1773–1788"
+          ]
+        ],
+        "story": [
+          "Anna eller Anne Maja Lomberg står som senare hustru till klockaren Bengt Ehn på N:o 1 Klockaregården."
+        ],
+        "parents": [],
+        "children": [],
+        "sources": [
+          "Riksarkivets husförhörslängd 1773–1788, N:o 1 Klockaregården; exakt volym, bild och sida återstår."
+        ]
+      }
+    },
+    {
+      "id": "eric_ehn_1748",
+      "slug": "eric-ehn",
+      "name": "Eric Ehn",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": false,
+      "visibility": "public",
+      "content": {
+        "name": "Eric Ehn",
+        "born": "1748-06-14",
+        "died": "1790-05-04",
+        "role": "Son till Bengt Ehn och Anna Polin",
+        "status": "likely",
+        "branch": "mother",
+        "place": "Träslöv / Göteborg",
+        "facts": [
+          [
+            "Utbildning",
+            "Gick åtta år i Varbergs skola"
+          ],
+          [
+            "Verksamhet",
+            "Amanuens vid Göteborgs konsistorium 1774"
+          ],
+          [
+            "Källstatus",
+            "Tryckt biografisk matrikel från 1907; kyrkoböcker bör kontrolleras"
+          ]
+        ],
+        "story": [
+          "Eric Ehn var son i Klockaregårdens Ehn–Polin-gren och gick enligt matrikeln åtta år i Varbergs skola innan han blev amanuens vid Göteborgs konsistorium."
+        ],
+        "parents": [
+          "bengt_ehn_1726",
+          "anna_jonsdotter_polin_1728"
+        ],
+        "children": [],
+        "sources": [
+          "Carl Sjöström, Göteborgs nation i Lund 1669–1906 (1907), s. 198."
+        ]
+      }
+    },
+    {
+      "id": "jons_ehn_1750",
+      "slug": "jons-ehn",
+      "name": "Jöns Ehn",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": false,
+      "visibility": "public",
+      "content": {
+        "name": "Jöns Ehn",
+        "born": "1750-01-15",
+        "died": "1776-12-16",
+        "role": "Son till Bengt Ehn och Anna Polin",
+        "status": "likely",
+        "branch": "mother",
+        "place": "Träslöv / Göteborg",
+        "facts": [
+          [
+            "Utbildning",
+            "Gick åtta år i Varbergs skola"
+          ],
+          [
+            "Verksamhet",
+            "Vice kollega i Göteborg 1774; teologie studerande vid döden"
+          ],
+          [
+            "Källstatus",
+            "Tryckt biografisk matrikel från 1907; kyrkoböcker bör kontrolleras"
+          ]
+        ],
+        "story": [
+          "Jöns Ehn hör till Klockaregårdens Ehn–Polin-gren. Familjen försökte enligt matrikeln föra honom och brodern Eric vidare till akademiska studier efter skolgång i Varberg."
+        ],
+        "parents": [
+          "bengt_ehn_1726",
+          "anna_jonsdotter_polin_1728"
+        ],
+        "children": [],
+        "sources": [
+          "Carl Sjöström, Göteborgs nation i Lund 1669–1906 (1907), s. 198."
+        ]
+      }
+    },
+    {
+      "id": "anders_ehn_1757",
+      "slug": "anders-ehn",
+      "name": "Anders Ehn",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": false,
+      "visibility": "public",
+      "content": {
+        "name": "Anders Ehn",
+        "born": "1757",
+        "died": "1816",
+        "role": "Son till Bengt Ehn och Anna Polin",
+        "status": "likely",
+        "branch": "mother",
+        "place": "Träslöv / Lindberg",
+        "facts": [
+          [
+            "Yrke",
+            "Senare klockare i Lindberg"
+          ],
+          [
+            "Källstatus",
+            "Tryckt biografisk matrikel från 1907"
+          ]
+        ],
+        "story": [
+          "Anders Ehn uppges i den tryckta matrikeln vara son till Bengt Ehn och Anna Polin och blev senare klockare i Lindberg."
+        ],
+        "parents": [
+          "bengt_ehn_1726",
+          "anna_jonsdotter_polin_1728"
+        ],
+        "children": [],
+        "sources": [
+          "Carl Sjöström, Göteborgs nation i Lund 1669–1906 (1907), s. 198."
+        ]
+      }
+    },
+    {
+      "id": "hans_ehn",
+      "slug": "hans-ehn",
+      "name": "Hans Ehn",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": false,
+      "visibility": "public",
+      "content": {
+        "name": "Hans Ehn",
+        "role": "Son till Bengt Ehn och Anna Polin",
+        "status": "working",
+        "branch": "mother",
+        "facts": [
+          [
+            "Källstatus",
+            "Namngiven som bror i tryckt matrikel; full biografisk notis har inte mappats"
+          ]
+        ],
+        "story": [
+          "Hans Ehn namnges som en son i Ehn–Polin-grenen, men fler personuppgifter återstår att kontrollera."
+        ],
+        "parents": [
+          "bengt_ehn_1726",
+          "anna_jonsdotter_polin_1728"
+        ],
+        "children": [],
+        "sources": [
+          "Carl Sjöström, Göteborgs nation i Lund 1669–1906 (1907), s. 198."
+        ]
+      }
+    },
+    {
+      "id": "johannes_ehn_1771",
+      "slug": "johannes-ehn",
+      "name": "Johannes Ehn",
+      "alt_name": null,
+      "branch": "mother",
+      "is_direct": false,
+      "is_living": false,
+      "visibility": "public",
+      "content": {
+        "name": "Johannes Ehn",
+        "born": "1771-06-20",
+        "role": "Son i Bengt Ehns hushåll",
+        "status": "likely",
+        "branch": "mother",
+        "place": "Klockaregården, Träslöv",
+        "facts": [
+          [
+            "Senare roll",
+            "Gårdsbladet anger honom som nästa klockare 1791–1842?"
+          ],
+          [
+            "Källstatus",
+            "Födelsedatumet är starkt läst i husförhör 1773–1788; modern är inte fastställd i importen"
+          ]
+        ],
+        "story": [
+          "Johannes står som son i Bengt Ehns hushåll på Klockaregården. Gårdsbladet för honom vidare som klockare, men tjänsteåren behöver originalkontrolleras."
+        ],
+        "parents": [
+          "bengt_ehn_1726"
+        ],
+        "children": [],
+        "sources": [
+          "Riksarkivets husförhörslängd 1773–1788, N:o 1 Klockaregården; exakt volym, bild och sida återstår.",
+          "Lokalt gårdshistoriskt blad om Klockaregården, sekundär källa."
+        ]
       }
     }
   ],
@@ -7970,7 +9579,7 @@
           "Hwalagården",
           "Joen Nielsons gård"
         ],
-        "note": "Gård i morfarslinjen. V89 stärker tolkningen att Wahlagården/Valagården och Jon/Jöns Nilsgård avser samma gårdsenhet i Träslöv nr 5. Kedjan går från Mårten Andersson och Helena Jönsdotter via Anna Mårtensdotter och Olof Andersson till Anna Olofsdotter, Bengta Börjesdotter och familjen Bengt Olofsson/Bengta Börjesdotter vid Wahlagården/Jon Nilsgård.",
+        "note": "Gård i morfarslinjen. v125 stärker tolkningen att Wahlagården/Valagården och Jon/Jöns Nilsgård avser samma gårdsenhet i Träslöv nr 5. Kedjan går från Mårten Andersson och Helena Jönsdotter via Anna Mårtensdotter och Olof Andersson till Anna Olofsdotter, Bengta Börjesdotter och familjen Bengt Olofsson/Bengta Börjesdotter vid Wahlagården/Jon Nilsgård.",
         "facts": [
           [
             "Gårdsidentitet",
@@ -8031,10 +9640,22 @@
           [
             "Arrende 1958-1963",
             "Originalkontraktet visar att Lars Emil Bengtsson ägde Träslöv 5:7 och arrenderade ut fastigheten till brorsonen Harry Bengtsson för 900 kronor per år."
+          ],
+          [
+            "Tidigaste originalspår för familjen",
+            "Nils Mårtenssons födelse- och dopnotis 1740 placerar med hög sannolikhet Mårten Anderssons och Helena Jönsdotters familj vid Jöns Nilsgården"
+          ],
+          [
+            "Tre generationer 1773–1788",
+            "Helena Jönsdotter, Anna Mårtensdotter och Anna Olofsdotter återfinns under samma gårdsrubrik Jon Nils gård"
+          ],
+          [
+            "Modern familjeövergång",
+            "Axel Harry och Karin flyttade enligt familjeberättelsen till Valagården 1985; gården överläts till Gerd 1990"
           ]
         ],
         "story": [
-          "Valagård/Wahlagården är en av de viktigaste gårdsmiljöerna i morfars Bengtssonlinje. I källorna växlar namnen mellan Jöns Nilsgård, Jon Nilsgård, Joen Nilsgård, Wahlagården, Valagården och Välagården, men v89-underlaget behandlar dem som samma gårdsenhet i Träslöv nr 5.",
+          "Valagård/Wahlagården är en av de viktigaste gårdsmiljöerna i morfars Bengtssonlinje. I källorna växlar namnen mellan Jöns Nilsgård, Jon Nilsgård, Joen Nilsgård, Wahlagården, Valagården och Välagården, men v125-underlaget behandlar dem som samma gårdsenhet i Träslöv nr 5.",
           "Den säkra släktkedjan börjar med att Mårten Andersson och Helena Jönsdotter är belagda vid Jöns Nilsgård genom Mårtens död och bouppteckning 1762. Deras dotter Anna Mårtensdotter gifter sig med Olof Andersson från Dagsås och dottern Anna Olofsdotter föds på Jon Nilsgård 1767.",
           "Gården fortsätter sedan genom Anna Olofsdotter och Börje Pehrsson till Bengta Börjesdotter. När Bengta gifter sig med Bengt Olofsson 1813 anges hon komma från Wahlagården, och barnens födelsenotiser 1814-1820 visar att Wahlagården och Jon Nilsgård används parallellt för samma miljö.",
           "Det äldre materialet kring N:o 42 Jon Nils Hemman och Träslöv N:o 5 för gårdshistorien bakåt mot 1600- och tidigt 1700-tal. Där finns starka gårdsspår, men vissa personkopplingar ska hållas som hypoteser tills fler originalkällor är säkrade.",
@@ -8049,7 +9670,10 @@
           "Lokalundersökningen 1915 visar Valagård som ett intensivt brukat jordbruk på 12 hektar, nästan helt odlat. Där odlades spannmål, potatis, foderrotfrukter, hö och grönfoder, och gården hade hästar, nötkreatur, grisar och höns. Bengt Nilsson den äldre står i ägarfältet, men blanketten avgör inte om Sara Britta Andersdotter hade en juridisk andel.",
           "Familjens material från 1920-talet visar flera åbor och yrkesarbetande barn inom den äldre gårdsmiljön. Ett originalskuldebrev från 1928 visar dessutom att Lars Emil Bengtsson, under namnet Emil Bengtsson och adressen nr 5 Träslöv, erkände en skuld på 3 000 kronor till brodern Sven Adolf Bengtsson i Klastorp. Räntan anges löpa från 1920, vilket kan tyda på ett äldre lån men ännu är en tolkning.",
           "Svenska Gods och Gårdar 1939 och 1946 återger två olika ägarlängder för Träslöv 5:3 Valagården. En går genom Bengt Olsson, Nils Bengtsson, Bengt August Nilsson och Lars Emil Bengtsson; en annan genom Karl Andersson, Emil Johansson, Algot Leonard Andersson och Sten Andersson. Skillnaden bevaras som en öppen fråga och får inte jämnas ut utan kontroll av utgåvor, brukningsdelar och tidsskeden.",
-          "Arvskiftet efter Alma Josefina Bengtsson 1955 placerar Lars Emil Bengtsson på Valagården och dokumenterar syskon och amerikanska arvingar. Ett originalkontrakt från 1958 visar sedan att Lars Emil, som skrev sig Emil Bengtsson, ägde Träslöv 5:7 och arrenderade ut fastigheten till brorsonen Harry Bengtsson till 1963. Emil behöll Smedlyckan bakom ladan för eget bruk, medan Harry fick bruka jorden och använda lada och loge."
+          "Arvskiftet efter Alma Josefina Bengtsson 1955 placerar Lars Emil Bengtsson på Valagården och dokumenterar syskon och amerikanska arvingar. Ett originalkontrakt från 1958 visar sedan att Lars Emil, som skrev sig Emil Bengtsson, ägde Träslöv 5:7 och arrenderade ut fastigheten till brorsonen Harry Bengtsson till 1963. Emil behöll Smedlyckan bakom ladan för eget bruk, medan Harry fick bruka jorden och använda lada och loge.",
+          "V125 flyttar det tidigaste nuvarande originalspåret för den direkta familjen på gården tillbaka till 1740. Sonen Nils föds och döps som barn till Mårten Andersson och Helena Jönsdotter, och gårdsfrasen kan med hög sannolikhet läsas Jöns Nilsgården.",
+          "Husförhöret 1773–1788 visar tre generationer av den direkta kvinnolinjen under samma gårdsrubrik: änkan Helena Jönsdotter, dottern Anna Mårtensdotter och dotterdottern Anna Olofsdotter. Det bevisar gemensam gårdsmiljö men inte nödvändigtvis samma bostadshus.",
+          "Den handskrivna familjeberättelsen för gårdens historia fram till nutid: Axel Harry och Karin återvände 1985 till Valagården, som uttryckligen kallades släktgården, och 1990 överläts den enligt berättelsen till dottern Gerd. Juridisk form och exakta datum behöver fastighetsakter."
         ],
         "timeline": [
           [
@@ -8183,6 +9807,22 @@
           [
             "1958-04-01–1963-04-01",
             "Harry Bengtsson arrenderar Träslöv 5:7 för 900 kronor per år. Emil behåller Smedlyckan bakom ladan."
+          ],
+          [
+            "1740-08-08",
+            "Nils Mårtensson föds; originalnotisen har en starkt läst gårdsfras Jöns Nilsgården."
+          ],
+          [
+            "1773–1788",
+            "Tre generationer av direktlinjen återfinns under rubriken Jon Nils gård."
+          ],
+          [
+            "1985",
+            "Axel Harry och Karin flyttar från Korsberg till Valagården enligt familjeberättelsen."
+          ],
+          [
+            "1990",
+            "Valagården överlåts enligt familjeberättelsen till Gerd Elisabeth Bengtsson."
           ]
         ],
         "sources": [
@@ -8205,7 +9845,9 @@
           "Arvskifte efter Alma 1955.HEIC: originalutdrag efter Alma Josefina Bengtsson, förrättat 1955-01-12.",
           "IMG_6532.HEIC: originalarrendekontrakt mellan Lars Emil Bengtsson och Harry Bengtsson, daterat 1958-03-25.",
           "Leif Lundquist, Halländsk antavla 4, Hallands Släktforskarföreningen.",
-          "Hallands Släktforskarförenings gårds- och ortnamnsregister."
+          "Hallands Släktforskarförenings gårds- och ortnamnsregister.",
+          "Morfars master v125, daterad 2026-09-01: originalnotis för Nils Mårtensson 1740 och husförhör 1773–1788.",
+          "Mormors handskrivna levnadsberättelse och släktblad, mottagna 2026-08-31; sekundära familjekällor."
         ],
         "uncertainties": [
           "Familjeuppgiften om klosterhemman 1649 behöver spåras till bakomliggande originalkälla.",
@@ -8226,7 +9868,9 @@
           "Arrendets fortsättning eller upphörande efter 1 april 1963 är inte känd.",
           "Smedlyckans exakta läge bakom ladan behöver identifieras på karta.",
           "Skillnaden mellan skuldebrevets datering 1928 och räntans startår 1920 behöver förklaras.",
-          "Amerikaspåren för Anders Gustaf, Karl Oskar och Johan Albin Bengtsson behöver beläggas med utflyttningslängder och amerikanska källor."
+          "Amerikaspåren för Anders Gustaf, Karl Oskar och Johan Albin Bengtsson behöver beläggas med utflyttningslängder och amerikanska källor.",
+          "Full arkivsignatur för Nils Mårtenssons födelsenotis och husförhöret 1773–1788 återstår.",
+          "Gårdsövergångarna 1985 och 1990 behöver verifieras i lagfart, köpebrev, gåvobrev eller fastighetsregister."
         ]
       }
     },
@@ -8245,7 +9889,9 @@
         "aliases": [
           "Skultagården",
           "Skultagård",
-          "N:o 39 Skultagården"
+          "N:o 39 Skultagården",
+          "Börje Andersgård",
+          "Träslöv nr 2"
         ],
         "note": "Separat men närliggande gårdsmiljö till Valagården. Helena Jönsdotter anges som piga från Skultagården vid vigseln 1731, och Jöns Polin förekommer sannolikt som fadder i Skultagårdsmaterialet redan 1704.",
         "facts": [
@@ -8268,13 +9914,55 @@
           [
             "Direkt släktkoppling",
             "Helena Jönsdotter, dotter till Jöns Polin och Karin Helgesdotter, anges som piga från Skultagården vid vigseln 1731."
+          ],
+          [
+            "Fasta namn och nummer",
+            "Träslöv nr 2 Skultagården, även Börje Andersgård; äldre N:o 39 är kyrkoboksvolymens interna ordningspost"
+          ],
+          [
+            "Historisk funktion",
+            "Sekundärt gårdsblad beskriver en äldre prästgård som senare blev borgmästarboställe under Varbergs stad"
+          ],
+          [
+            "Jordnatur 1729",
+            "Ett mantal krono, delat mellan Börge Björnsson och Anders Larsson med ett halvt mantal vardera"
+          ],
+          [
+            "Boskapspest",
+            "En kyrkoboksavskrift anger att boskapssjukan började på Skultagården i oktober 1747 och spreds i pastoraten"
+          ],
+          [
+            "Torp 1823",
+            "Wästra Torp, Södra Lid, Badstubrå och Badstukärr enligt lokalt gårdsblad"
+          ],
+          [
+            "Laga skifte 1839",
+            "Änkorna Maria Persdotter och Pernilla Olsdotter brukade var sitt halvt mantal"
+          ],
+          [
+            "Arbetsplats 1920",
+            "Johan Julius Severinsson, Johan Emil Persson, Oskar Emil Karlsson och Bernhard Antonsson var statdrängar; Johan Bernt Svensson var jordbruksarbetare och Karl Persson smed. Samtliga anges med sina familjer."
+          ],
+          [
+            "Arrendekedja",
+            "P. J. Hedenbergh 1844–1874, Bengt Andersson 'Skulta-Bengt' 1874–1887, Adolf Lundqvist och hans sterbhus 1887–1907, Herder Kullberg 1907–1921, Berta Kullberg 1922–1933 samt Carl Larsson från 1933 enligt gårdsbladet"
+          ],
+          [
+            "Omfattning 1942",
+            "150 tunnland åker och 10 tunnland utmark enligt gårdsbladet; original och modern omräkning återstår"
           ]
         ],
         "story": [
           "Skultagården är en egen gårdsmiljö i Träslöv och ska inte blandas ihop med Valagården/Wahlagården. V102 gör denna åtskillnad viktig, eftersom flera personer rör sig i samma lokala nätverk utan att gårdarna därför blir samma plats.",
           "Gårdssidan innehåller hushålls- och åldersuppgifter samt löpande notiser om dop, vigslar och begravningar från omkring 1690 till 1713. Den visar en äldre Börge-, Lars- och Jöns-miljö innan Polin-kopplingen blir tydlig.",
           "Det mest intressanta Polin-spåret är 1704-07-10, där Jöns Polin sannolikt förekommer som fadder eller vittne i Skultagårdens material. Det bevisar inte att han bodde där, men visar sannolikt att han ingick i gårdens sociala nätverk redan året före vigseln med Karin Helgesdotter.",
-          "Skultagården blir senare viktig genom att Helena Jönsdotter anges som piga därifrån när hon gifter sig med Mårten Andersson 1731. Kopplingen mellan Helge Svenssons familj, Polin-familjen och Skultagården ska därför fortsätta följas kronologiskt."
+          "Skultagården blir senare viktig genom att Helena Jönsdotter anges som piga därifrån när hon gifter sig med Mårten Andersson 1731. Kopplingen mellan Helge Svenssons familj, Polin-familjen och Skultagården ska därför fortsätta följas kronologiskt.",
+          "V125 identifierar gården som Träslöv nr 2 Skultagården, även Börje Andersgård. Den äldre beteckningen N:o 39 hör till kyrkoboksvolymens interna ordning och är inte ett konkurrerande fastighetsnummer.",
+          "Ett lokalt gårdsblad beskriver Skultagården som en tidigare prästgård som övergick till borgmästarboställe. Karl XI ska ha bekräftat ordningen 1683, och gårdens avkastning knöts senare till Varbergs stads ekonomi. Detta är sekundär lokalhistorik tills bakomliggande handlingar har lokaliserats.",
+          "År 1729 beskrivs Skultagården som ett kronohemman om ett mantal, delat mellan Börge Björnsson och Anders Larsson. Varken Helge Svensson, Karin Helgesdotter eller Helena Jönsdotter namnges som brukare i denna sammanställning, så deras släktkoppling ska hållas skild från gårdens allmänna historia.",
+          "En avskrift ur kyrkoboken berättar att en boskapspest började på Skultagården i oktober 1747 och spreds till Hunnestads och Grimetons pastorat samt Träslövs prästgård. Händelsen hör till gårdens social- och ekonomihistoria, inte som bevis för att direktlinjen bodde där då.",
+          "Under 1800-talet brukades gården med hjälp av torpare. Skiftesmaterialet 1839 namnger två änkor som innehavare av var sin halva, och den senare sammanställningen följer övergången till arrendatorer, statare och en större arbetsplats med flera familjer.",
+          "Helge Svenssons originalkontrollerade begravningsnotis 1731 ger nu ett direkt belägg för att han var från Skultagården och skulle ligga i gårdens gravställe. Det är den starkaste direkta familjekopplingen till gården, medan exakt boendeform och tidpunkt för flytten från Nils Olsgård fortfarande är öppna."
         ],
         "timeline": [
           [
@@ -8304,7 +9992,62 @@
           [
             "1731-04-25",
             "Helena Jönsdotter anges som piga från Skultagården vid vigseln med Mårten Andersson."
+          ],
+          [
+            "ca 1630–1640",
+            "Sekundärt gårdsblad beskriver flytt av slottsprästens prästgård och Skultagårdens övergång till borgmästarboställe."
+          ],
+          [
+            "1683",
+            "Karl XI uppges ha bekräftat gårdens ställning som borgmästarboställe; originalkälla återstår."
+          ],
+          [
+            "1729",
+            "Landsbeskrivningen återges med Börge Björnsson och Anders Larsson som halvmantalsbrukare."
+          ],
+          [
+            "1731-04-16",
+            "Helge Svensson begravs som mannen från Skultagården och anges ligga i gårdens gravställe."
+          ],
+          [
+            "1747-10–1748",
+            "Boskapspest uppges börja på gården och spridas i området."
+          ],
+          [
+            "1823",
+            "Fyra torp eller lägenheter anges under gården."
+          ],
+          [
+            "1839",
+            "Maria Persdotter och Pernilla Olsdotter står för var sin halva i skiftesbeskrivningen."
+          ],
+          [
+            "1920",
+            "Gården är en arbetsplats för minst sex namngivna arbetare med familjer enligt sammanställningen."
+          ],
+          [
+            "1933",
+            "Carl Larsson flyttar in; Varbergs stad uppges rusta byggnaderna."
+          ],
+          [
+            "1942",
+            "Gården anges omfatta 150 tunnland åker och 10 tunnland utmark."
           ]
+        ],
+        "relatedPersonIds": [
+          "helge_svensson",
+          "karin_helgesdotter_1685",
+          "helena_jonsdotter_1713"
+        ],
+        "sources": [
+          "Skultagård historia.HEIC och Skultagård historia-2.HEIC, lokala maskinskrivna gårdssammanställningar; sekundära källor.",
+          "Träslövs död- och begravningsbok 1731, originalsid 225: Helge Svenssons begravning.",
+          "Morfars master v125, sammanställning av originalbilder och lokala gårdsblad."
+        ],
+        "uncertainties": [
+          "Etymologin Skultagården från scultus är en lokal hypotes, inte bevisad namnhistoria.",
+          "De administrativa uppgifterna från 1522, 1683 och 1872 samt arealen 1942 behöver kontrolleras mot original.",
+          "Helges exakta boende- och brukningsställning på gården före begravningen är fortfarande okänd."
         ]
       }
     },
@@ -8344,7 +10087,9 @@
           "Klockargården",
           "Lars Tungård",
           "Träslöv 1",
-          "Träslöv nr 1"
+          "Träslöv nr 1",
+          "Lars Ringsgård",
+          "Lars Trulsgård"
         ],
         "relatedPersonIds": [
           "jons_polin_1682",
@@ -8353,7 +10098,10 @@
           "helena_jonsdotter_1713",
           "petter_jonsson_polin",
           "kerstin_jonsdotter_polin_1725",
-          "anna_jonsdotter_polin_1728"
+          "anna_jonsdotter_polin_1728",
+          "bengt_ehn_1726",
+          "anne_maja_lomberg_1754",
+          "johannes_ehn_1771"
         ],
         "note": "Klockaregården är en egen gård i Träslöv nr 1, även kallad Lars Tungård. Gården är det viktigaste platsspåret för klockaren Jöns Andersson Polin och hans familj, men deras exakta bosättning där är ännu inte slutligt originalbekräftad.",
         "facts": [
@@ -8400,6 +10148,38 @@
           [
             "Källstatus",
             "Gårdsidentiteten Träslöv nr 1/Lars Tungård/Klockaregården stöds av gårdsregistret. Polin-familjens exakta boende och flera fadderläsningar behöver fortsatt originalkontroll."
+          ],
+          [
+            "Namn enligt gårdsblad",
+            "Träslöv nr 1 Klockaregården, även Lars Ringsgård och Lars Trulsgård; Lars Tungård kommer från ett separat register"
+          ],
+          [
+            "Jordnatur",
+            "1/4 mantal krono; Jöns Paulin anges som åbo 1729 i en sekundär avskrift av landsbeskrivningen"
+          ],
+          [
+            "Klockarföljd",
+            "Lars Ring, Jöns Polin, Bengt Ehn och den fortsatta Ehn-linjen enligt lokalt gårdsblad; exakta tjänsteår behöver originalkontroll"
+          ],
+          [
+            "Originalstöd 1773–1788",
+            "Husförhör visar N:o 1 Klockaregården med klockaren Bengt Ehn, Anna Polin, Anna/Anne Maja Lomberg och sonen Johannes"
+          ],
+          [
+            "Byggnader 1729",
+            "Stuga, två härbärgen, liten kammare, loge, korn- och höladar, stall, fårhus, portskjul och ett svårläst 'hiemelhus'"
+          ],
+          [
+            "Odling 1729",
+            "Kålhage med små äppelträd, stengärdesgårdar och ekbuskar på ängen enligt gårdsbladets avskrift"
+          ],
+          [
+            "Besiktning 1839",
+            "Äldre manhus i försvarligt skick, delvis ny ladugård och en fruktträdgård intill kyrkogårdsmuren"
+          ],
+          [
+            "Senare brukare",
+            "Anders Svensson arrendator 1910 och 1920; H. J. Henriksson köpare 1949, Olof Larsson 1961 och Peter Karlsson köpare av tomten 1984 enligt gårdsbladet"
           ]
         ],
         "story": [
@@ -8410,7 +10190,12 @@
           "Vid slutet av 1707 års kyrkoboksanteckningar står sannolikt 'Finis hujus Anni. J. A. Polin'. Initialerna och det ovanliga namnet passar Jöns Andersson Polin mycket väl. Signaturen kan vara hans egen och antyder att han deltog i kyrkobokens förande eller sammanställning, men exakt hand och arbetsinsats är ännu inte absolut bevisade.",
           "Fadderkretsen ger gårdsmiljön ett större socialt sammanhang. Lars Polin förekommer sannolikt vid Beatas dop 1707. Vid Helenas dop 1713 syns bland andra Jöns Grimberg, Mathias Höök, Olof Börgesson i Lunden, Anders Gillberg/Cillberg och Elisabet Bruhn samt personer från Varberg. År 1721 återkommer Klastorp, Lunden och möjliga Greta eller andra Polin/Paulin-personer.",
           "Mantalslängden 1731 är viktig eftersom gårdsföljden sannolikt börjar med Träslöv nr 1 Klockaregården. Namnen i det första blocket är dock ännu för svårlästa för att Jöns ska föras in som säker boende. Jämförelse med 1730 och 1732 kan visa vem som brukade gården och hur tjänste- eller hushållsrollen förändrades.",
-          "En tidigare arbetsidé försökte koppla N:o 38 till Klockaregården. Den är korrigerad: N:o 38 är Börge Anders hemman och hör till ett annat gårdsspår. Klockaregården ska följas separat genom Lars Tungård, Träslöv nr 1, klockartiteln och Polin-familjens uttryckliga källspår."
+          "En tidigare arbetsidé försökte koppla N:o 38 till Klockaregården. Den är korrigerad: N:o 38 är Börge Anders hemman och hör till ett annat gårdsspår. Klockaregården ska följas separat genom Lars Tungård, Träslöv nr 1, klockartiteln och Polin-familjens uttryckliga källspår.",
+          "Ett lokalt gårdsblad identifierar uttryckligen Klockaregården, Lars Ringsgård och Lars Trulsgård som samma gårdsmiljö i Träslöv nr 1. Lars Tungård bevaras som en separat registervariant. Bladet är en sekundär sammanställning och de äldre handlingarna behöver återfinnas i original.",
+          "Landsbeskrivningen 1729 återges med Jöns Paulin som åbo på ett fjärdedels mantal krono. Hushållet bestod av en hustru, två onamngivna döttrar och en dräng. Helena är en rimlig men inte säker kandidat till en av döttrarna.",
+          "Gårdsbladets byggnadsbeskrivning gör miljön konkret: en stuga, förvaringshus, liten kammare, loge, lador, stall och fårhus omgavs av kålhage, små äppelträd och stengärdesgårdar. Uppgifterna beskriver klockarhushållets vardagsmiljö men ska jämföras med 1729 års original.",
+          "Husförhöret 1773–1788 ger oberoende originalstöd för nästa generation. Klockaren Bengt Ehn och hustrun Anna Polin återfinns på N:o 1 Klockaregården tillsammans med den senare hustrun Anna/Anne Maja Lomberg och sonen Johannes.",
+          "Besiktningen 1839 placerar gårdens mindre fruktträdgård direkt vid kyrkogårdsmuren. Senare notiser följer miljön från arrendegård 1910–1920 till köp av gård eller tomt 1949, 1961 och 1984."
         ],
         "timeline": [
           [
@@ -8460,6 +10245,34 @@
           [
             "1758-05-24",
             "Jöns Polin dör; dödsnotisen beskriver sannolikt hans gravplats vid Träslövs kyrka."
+          ],
+          [
+            "1729",
+            "Sekundär avskrift placerar Jöns Paulin som åbo på Lars Trulsgård/Klockaregården och beskriver hushåll, byggnader och odling."
+          ],
+          [
+            "1773–1788",
+            "Originalhusförhör visar Bengt Ehn och Anna Polin på N:o 1 Klockaregården."
+          ],
+          [
+            "1839",
+            "Besiktning inför laga skifte beskriver byggnader och fruktträdgård intill kyrkogårdsmuren."
+          ],
+          [
+            "1910–1920",
+            "Anders Svensson anges som arrendator enligt gårdsbladet."
+          ],
+          [
+            "1949",
+            "H. J. Henriksson köper gården enligt gårdsbladet."
+          ],
+          [
+            "1961",
+            "Olof Larsson köper gården enligt gårdsbladet."
+          ],
+          [
+            "1984",
+            "Peter Karlsson köper tomten enligt gårdsbladet."
           ]
         ],
         "sources": [
@@ -8467,7 +10280,10 @@
           "Träslövs mantalslängd 1731, gårdsföljden omkring sidorna 700-701; första gårdsblocket behöver fortsatt transkription.",
           "Träslövs kyrkoboks specialavsnitt för Klockaregården samt Prästgården, med granskade poster 1701-1728.",
           "Externt ortnamnsregister till 50 halländska antavlor, med Beata Jönsdotter Polin och Petter Jönsson Polin placerade vid Träslöv Klockaregården.",
-          "Jöns Andersson Polins vigselnotis 1705, Helenas födelse- och dopnotis 1713 samt Jöns dödsnotis 1758."
+          "Jöns Andersson Polins vigselnotis 1705, Helenas födelse- och dopnotis 1713 samt Jöns dödsnotis 1758.",
+          "historia klockaregård.HEIC, lokalt maskinskrivet gårdsblad mottaget 2026-08-31; sekundär källa.",
+          "Riksarkivets husförhörslängd 1773–1788, N:o 1 Klockaregården; exakt volym, bild och sida återstår.",
+          "Carl Sjöström, Göteborgs nation i Lund 1669–1906 (1907), s. 198."
         ],
         "uncertainties": [
           "Klockaregården och Prästgården är olika platser; poster i deras gemensamt rubricerade kyrkoboksavsnitt måste fördelas källkritiskt.",
@@ -8475,7 +10291,9 @@
           "Jöns och Karin är ännu inte slutligt originalbelagda som boende på Klockaregården trots den starka yrkes- och familjekopplingen.",
           "N:o 38 får inte kopplas till Klockaregården; det är Börge Anders hemman.",
           "Lars Polins släktskap med Jöns samt läsningarna Agneta Polin, Greta Polin och ytterligare Polin/Paulin-personer är inte bekräftade.",
-          "Den möjliga Mårten Andersson i 1725 års fadderlista behöver prioriterad omläsning."
+          "Den möjliga Mårten Andersson i 1725 års fadderlista behöver prioriterad omläsning.",
+          "Landsbeskrivningen 1729, besiktningen 1839 och den senare ägarlängden behöver kontrolleras mot bakomliggande original.",
+          "De två onamngivna döttrarna i hushållet 1729 får inte automatiskt identifieras som Helena eller någon särskild syster."
         ]
       }
     },
@@ -10168,6 +11986,247 @@
           "Uppala"
         ],
         "note": "Karlshamn-post där Alma Sofia Nilsson står som tjänarinna 1918. Platsnamnet ska inte förväxlas med staden Uppsala."
+      }
+    },
+    {
+      "id": "lille_svensgard",
+      "slug": "lille-svensgard-lilla-svensgard",
+      "name": "Lille Svensgård / Lilla Svensgård",
+      "area": "Tvååker",
+      "latitude": null,
+      "longitude": null,
+      "visibility": "public",
+      "content": {
+        "id": "lille_svensgard",
+        "name": "Lille Svensgård / Lilla Svensgård",
+        "area": "Tvååker",
+        "aliases": [
+          "Lille Svensgård",
+          "Lilla Svensgård"
+        ],
+        "note": "Bengt Arfvidssons födelsenotis 1768 placerar Arvid Svensson och Elin Bengtsdotter här före familjens senare poster i Munkaskog. Exakt gårdsidentitet och kartläge återstår.",
+        "relatedPersonIds": [
+          "arvid_svensson",
+          "elin_bengtsdotter",
+          "bengt_arfvidsson"
+        ],
+        "facts": [
+          [
+            "Källspår",
+            "Födelsenotis för Bengt Arfvidsson 1768"
+          ],
+          [
+            "Tolkning",
+            "Platsväxlingen till Munkaskog 1771 kan avspegla flytt eller en ännu okänd gårds-/hemmankoppling"
+          ]
+        ],
+        "sources": [
+          "Tvååkers födelsebok 1768 enligt syskon-/fadderfilen 2026-07-06; full referens återstår."
+        ]
+      }
+    },
+    {
+      "id": "korsberg_klastorp",
+      "slug": "korsberg",
+      "name": "Korsberg",
+      "area": "Klastorp",
+      "latitude": null,
+      "longitude": null,
+      "visibility": "public",
+      "content": {
+        "id": "korsberg_klastorp",
+        "name": "Korsberg",
+        "area": "Klastorp",
+        "aliases": [
+          "Korsberg i Klastorp"
+        ],
+        "note": "Modern familjegård i Bengtssonlinjen. Familjeberättelsen placerar Sven Adolf och Gertrud här från omkring 1916 och Axel Harry som brukare från 1954 till 1985.",
+        "relatedPersonIds": [
+          "sven_adolf_bengtsson",
+          "gertrud_persdotter",
+          "harry_bengtsson",
+          "karin_margit",
+          "ingemar_bengtsson"
+        ],
+        "facts": [
+          [
+            "Källstatus",
+            "Handskriven familjeberättelse; fastighetsakter och lagfarter återstår"
+          ],
+          [
+            "Handel",
+            "Gertruds speceriaffär uppges ha flyttats hit"
+          ],
+          [
+            "Generationsskifte",
+            "Axel Harry övertog gården 1954 och Hans Ingemar 1985 enligt familjeberättelsen"
+          ]
+        ],
+        "story": [
+          "Korsberg blev enligt familjeberättelsen både bostad, jordbruksmiljö och plats för Gertruds affär efter Sven Adolfs återkomst från Amerika omkring 1916.",
+          "Axel Harry övertog gården 1954 och överlät den till sonen Hans Ingemar 1985, när Axel Harry och Karin flyttade till Valagården."
+        ],
+        "timeline": [
+          [
+            "ca 1916",
+            "Sven Adolf och Gertrud etablerar familjen på Korsberg enligt familjeberättelsen."
+          ],
+          [
+            "1954",
+            "Axel Harry övertar gården."
+          ],
+          [
+            "1985",
+            "Hans Ingemar övertar gården; Axel Harry och Karin flyttar till Valagården."
+          ]
+        ],
+        "sources": [
+          "Mormors handskrivna levnadsberättelse, mottagen 2026-08-31; sekundär familjekälla."
+        ]
+      }
+    },
+    {
+      "id": "hansa_klastorp",
+      "slug": "hansa",
+      "name": "Hansa",
+      "area": "Klastorp",
+      "latitude": null,
+      "longitude": null,
+      "visibility": "public",
+      "content": {
+        "id": "hansa_klastorp",
+        "name": "Hansa",
+        "area": "Klastorp",
+        "aliases": [
+          "Hansa i Klastorp"
+        ],
+        "note": "Gård eller fastighet som Sven Adolf enligt familjeberättelsen köpte tillsammans med Korsberg efter återkomsten från Amerika. Torsten Verner byggde bilverkstad och bostad här 1954.",
+        "relatedPersonIds": [
+          "sven_adolf_bengtsson",
+          "torsten_verner_bengtsson_1920"
+        ],
+        "facts": [
+          [
+            "Källstatus",
+            "Handskriven familjeberättelse; fastighets- och företagskällor återstår"
+          ]
+        ],
+        "timeline": [
+          [
+            "ca 1916",
+            "Köps enligt familjeberättelsen av Sven Adolf efter återkomsten från Amerika."
+          ],
+          [
+            "1954",
+            "Torsten Verner uppges bygga bilverkstad med bostad här."
+          ]
+        ],
+        "sources": [
+          "Mormors handskrivna levnadsberättelse, mottagen 2026-08-31; sekundär familjekälla."
+        ]
+      }
+    },
+    {
+      "id": "sodra_nas",
+      "slug": "sodra-nas",
+      "name": "Södra Näs",
+      "area": "Halland",
+      "latitude": null,
+      "longitude": null,
+      "visibility": "public",
+      "content": {
+        "id": "sodra_nas",
+        "name": "Södra Näs",
+        "area": "Halland",
+        "aliases": [
+          "Södra Näs"
+        ],
+        "note": "Familjeberättelsen anger Södra Näs som ursprung för Gertrud Petersson/Persdotter och hennes syster Anna. Exakt socken och kartläge ska verifieras.",
+        "relatedPersonIds": [
+          "gertrud_persdotter"
+        ],
+        "sources": [
+          "Mormors handskrivna levnadsberättelse, mottagen 2026-08-31; sekundär familjekälla."
+        ]
+      }
+    },
+    {
+      "id": "lanna_roslagen",
+      "slug": "lanna",
+      "name": "Länna",
+      "area": "Roslagen, Uppland",
+      "latitude": null,
+      "longitude": null,
+      "visibility": "public",
+      "content": {
+        "id": "lanna_roslagen",
+        "name": "Länna",
+        "area": "Roslagen, Uppland",
+        "aliases": [
+          "Länna församling"
+        ],
+        "note": "Ursprungsförsamling för Anna-Lisa Karlsson enligt familjeberättelsen.",
+        "relatedPersonIds": [
+          "anna_lisa_karlsson_lanna"
+        ],
+        "sources": [
+          "Mormors handskrivna levnadsberättelse, mottagen 2026-08-31; sekundär familjekälla."
+        ]
+      }
+    },
+    {
+      "id": "sjonevad_vessige",
+      "slug": "sjonevad",
+      "name": "Sjönevad",
+      "area": "Vessige",
+      "latitude": null,
+      "longitude": null,
+      "visibility": "public",
+      "content": {
+        "id": "sjonevad_vessige",
+        "name": "Sjönevad",
+        "area": "Vessige",
+        "aliases": [
+          "Sjönevad i Vessige"
+        ],
+        "note": "Uppgiven födelseort för den osäkert namngivna kvinnan som gifte sig med Sven August Robert Bengtsson 1957.",
+        "relatedPersonIds": [
+          "viarna_olsson_sjonevad"
+        ],
+        "sources": [
+          "Mormors handskrivna levnadsberättelse, mottagen 2026-08-31; sekundär familjekälla."
+        ]
+      }
+    },
+    {
+      "id": "polen_godestad",
+      "slug": "polen",
+      "name": "Pölen",
+      "area": "Gödestad",
+      "latitude": null,
+      "longitude": null,
+      "visibility": "public",
+      "content": {
+        "id": "polen_godestad",
+        "name": "Pölen",
+        "area": "Gödestad",
+        "aliases": [
+          "Pölen i Gödestad"
+        ],
+        "note": "Sekundära antavlor knyter Jöns Andersson, kallad Jöns i Pölen, till platsen. Varken identiteten eller släktkopplingen är originalbelagd.",
+        "relatedPersonIds": [
+          "jons_andersson_polen"
+        ],
+        "facts": [
+          [
+            "Källstatus",
+            "Sekundär forskning och hypotes; ska inte presenteras som säker födelse- eller släktplats"
+          ]
+        ],
+        "sources": [
+          "Leif Lundquist, Halländsk antavla 4.",
+          "Ivar Larssons antavla i Ingemund Bengtsson II – Varbergs berömde son."
+        ]
       }
     }
   ],
@@ -12367,6 +14426,11 @@
       "kind": "parent"
     },
     {
+      "person_id": "anders_jonsson_polin",
+      "related_person_id": "jons_andersson_polen",
+      "kind": "parent"
+    },
+    {
       "person_id": "olof_nilsson_1750",
       "related_person_id": "nils_wangersson",
       "kind": "parent"
@@ -13049,6 +15113,141 @@
     {
       "person_id": "ebba_nilsson",
       "related_person_id": "goran_nilsson",
+      "kind": "parent"
+    },
+    {
+      "person_id": "hans_christian_bengtsson_1985",
+      "related_person_id": "ingemar_bengtsson",
+      "kind": "parent"
+    },
+    {
+      "person_id": "hans_christian_bengtsson_1985",
+      "related_person_id": "inger_christel_matsson_1959",
+      "kind": "parent"
+    },
+    {
+      "person_id": "karl_robert_bengtsson_1988",
+      "related_person_id": "ingemar_bengtsson",
+      "kind": "parent"
+    },
+    {
+      "person_id": "karl_robert_bengtsson_1988",
+      "related_person_id": "inger_christel_matsson_1959",
+      "kind": "parent"
+    },
+    {
+      "person_id": "sven_august_robert_bengtsson_1918",
+      "related_person_id": "sven_adolf_bengtsson",
+      "kind": "parent"
+    },
+    {
+      "person_id": "sven_august_robert_bengtsson_1918",
+      "related_person_id": "gertrud_persdotter",
+      "kind": "parent"
+    },
+    {
+      "person_id": "torsten_verner_bengtsson_1920",
+      "related_person_id": "sven_adolf_bengtsson",
+      "kind": "parent"
+    },
+    {
+      "person_id": "torsten_verner_bengtsson_1920",
+      "related_person_id": "gertrud_persdotter",
+      "kind": "parent"
+    },
+    {
+      "person_id": "beata_sofia_1842_nilsdotter_branch",
+      "related_person_id": "nils_bengtsson_1814",
+      "kind": "parent"
+    },
+    {
+      "person_id": "beata_sofia_1842_nilsdotter_branch",
+      "related_person_id": "gunnild_alfredsdotter",
+      "kind": "parent"
+    },
+    {
+      "person_id": "carl_johan_1844_nilsdotter_branch",
+      "related_person_id": "nils_bengtsson_1814",
+      "kind": "parent"
+    },
+    {
+      "person_id": "carl_johan_1844_nilsdotter_branch",
+      "related_person_id": "gunnild_alfredsdotter",
+      "kind": "parent"
+    },
+    {
+      "person_id": "anna_christina_1846_nilsdotter_branch",
+      "related_person_id": "nils_bengtsson_1814",
+      "kind": "parent"
+    },
+    {
+      "person_id": "anna_christina_1846_nilsdotter_branch",
+      "related_person_id": "gunnild_alfredsdotter",
+      "kind": "parent"
+    },
+    {
+      "person_id": "anders_1849_nilsdotter_branch",
+      "related_person_id": "nils_bengtsson_1814",
+      "kind": "parent"
+    },
+    {
+      "person_id": "anders_1849_nilsdotter_branch",
+      "related_person_id": "gunnild_alfredsdotter",
+      "kind": "parent"
+    },
+    {
+      "person_id": "beata_lovisa_1851_nilsdotter_branch",
+      "related_person_id": "nils_bengtsson_1814",
+      "kind": "parent"
+    },
+    {
+      "person_id": "beata_lovisa_1851_nilsdotter_branch",
+      "related_person_id": "gunnild_alfredsdotter",
+      "kind": "parent"
+    },
+    {
+      "person_id": "eric_ehn_1748",
+      "related_person_id": "bengt_ehn_1726",
+      "kind": "parent"
+    },
+    {
+      "person_id": "eric_ehn_1748",
+      "related_person_id": "anna_jonsdotter_polin_1728",
+      "kind": "parent"
+    },
+    {
+      "person_id": "jons_ehn_1750",
+      "related_person_id": "bengt_ehn_1726",
+      "kind": "parent"
+    },
+    {
+      "person_id": "jons_ehn_1750",
+      "related_person_id": "anna_jonsdotter_polin_1728",
+      "kind": "parent"
+    },
+    {
+      "person_id": "anders_ehn_1757",
+      "related_person_id": "bengt_ehn_1726",
+      "kind": "parent"
+    },
+    {
+      "person_id": "anders_ehn_1757",
+      "related_person_id": "anna_jonsdotter_polin_1728",
+      "kind": "parent"
+    },
+    {
+      "person_id": "hans_ehn",
+      "related_person_id": "bengt_ehn_1726",
+      "kind": "parent"
+    },
+    {
+      "person_id": "hans_ehn",
+      "related_person_id": "anna_jonsdotter_polin_1728",
+      "kind": "parent"
+    },
+    {
+      "person_id": "johannes_ehn_1771",
+      "related_person_id": "bengt_ehn_1726",
       "kind": "parent"
     }
   ]

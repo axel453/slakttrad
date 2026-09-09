@@ -71,7 +71,7 @@ function entityTargets(){
     if(!rows.has(key)) rows.set(key,{alias,target});
     else if(rows.get(key)?.target?.id!==target.id || rows.get(key)?.target?.type!==target.type) rows.set(key,null);
   };
-  Object.entries(PEOPLE).forEach(([id,person])=>{
+  Object.entries(PEOPLE).filter(([,person])=>person.autoLink !== false).forEach(([id,person])=>{
     [person.name,...(person.formerNames||[])].flatMap(referenceVariants).forEach(alias=>add(alias,{type:"person",id,label:person.name,replaceLabel:true}));
     personAliases(person).flatMap(referenceVariants).filter(alias=>alias.includes(" ")).forEach(alias=>add(alias,{type:"person",id,label:person.name,replaceLabel:false}));
   });

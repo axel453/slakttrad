@@ -562,7 +562,7 @@ function entityReferenceTargets(){
     else if(targets.get(key)?.target?.id !== target.id || targets.get(key)?.target?.type !== target.type) targets.set(key,null);
     else if(replaceLabel) targets.get(key).target.replaceLabel = true;
   };
-  Object.entries(PEOPLE).forEach(([id,person])=>{
+  Object.entries(PEOPLE).filter(([,person])=>person.autoLink !== false).forEach(([id,person])=>{
     const historical = BASE_PERSON_REFERENCE_NAMES[id] || {};
     const historyNames = (manualData.history || []).filter(item=>item.type === "person" && item.id === id).flatMap(item=>[item.before?.name,item.after?.name]);
     [person.name,historical.name,...(person.formerNames || []),...(historical.formerNames || []),...historyNames].filter(Boolean).flatMap(referenceNameVariants).forEach(alias=>add(alias,{type:"person",id,label:person.name},true));
