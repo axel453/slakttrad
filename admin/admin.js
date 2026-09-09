@@ -58,6 +58,16 @@
   function pairText(value){ return (value||[]).map(row=>Array.isArray(row)?`${row[0]}: ${row[1]}`:String(row)).join('\n'); }
   function imageText(value){ return (value||[]).map(row=>typeof row==='string'?row:`${row.src||row.url||''}${row.caption?` | ${row.caption}`:''}`).filter(Boolean).join('\n'); }
   function images(value){ return rows(value).map(row=>{const [src,...caption]=row.split('|');return {src:src.trim(),caption:caption.join('|').trim()};}).filter(row=>row.src); }
+  function profileCrop(record={}){
+    const crop=record.photoCrop||{};
+    const clamp=(value,min,max,fallback)=>{const number=Number(value);return Number.isFinite(number)?Math.min(max,Math.max(min,number)):fallback;};
+    return {x:clamp(crop.x,0,100,50),y:clamp(crop.y,0,100,50),zoom:clamp(crop.zoom,1,3,1)};
+  }
+  function profileCropStyle(record){const crop=profileCrop(record);return `--photo-x:${crop.x}%;--photo-y:${crop.y}%;--photo-zoom:${crop.zoom};`;}
+  function profileCropValue(){
+    const crop=profileCrop({photoCrop:{x:val('fPhotoX'),y:val('fPhotoY'),zoom:val('fPhotoZoom')}});
+    return {x:Math.round(crop.x),y:Math.round(crop.y),zoom:Math.round(crop.zoom*100)/100};
+  }
   function galleryPreview(items,type='place',coverImage=''){
     if(!items.length) return `<div class="gallery-empty">${icon('images')}<span>Inga bilder i galleriet ännu.</span></div>`;
     return items.map((item,index)=>{const src=item.src||item.url,selected=type==='place'&&src===coverImage;return `<article class="gallery-admin-item${selected?' cover-selected':''}" data-gallery-index="${index}"><img src="${esc(src)}" alt="" loading="lazy" onerror="this.closest('article').classList.add('image-error')"><div><label><span>Bildtext</span><input type="text" value="${esc(item.caption||'')}" data-gallery-caption="${index}" placeholder="Vilka, var och när?"></label><div class="gallery-item-actions">${type==='person'?`<button class="gallery-profile" type="button" data-gallery-profile="${index}">${icon('user-round')} Använd som profilbild</button>`:''}${type==='place'?`<button class="gallery-cover" type="button" data-gallery-cover="${index}">${icon(selected?'check':'image')} ${selected?'Vald som omslag':'Använd som omslag'}</button>`:''}<button class="gallery-remove" type="button" data-gallery-remove="${index}">${icon('trash-2')} Ta bort från galleriet</button></div></div></article>`;}).join('');
@@ -65,18 +75,21 @@
   function galleryEditor(type,id,record,isNew){
     const items=images(imageText(record.images));
     const uploadAllowed=!isNew&&canReview();
-    const uploadCopy=isNew?'Spara posten först. Därefter kan du ladda upp bilder.':uploadAllowed?'JPG, PNG eller WebP, högst 15 MB. Bilden blir offentlig när posten sparas.':'Du kan lägga till bildlänkar. En redaktör hanterar filuppladdning och publicering.';
-    return `<div class="gallery-manager" data-gallery-manager data-entity-type="${type}" data-entity-id="${esc(id)}"><div class="gallery-admin-grid" data-gallery-preview>${galleryPreview(items,type,record.coverImage||'')}</div><div class="gallery-upload-card"><div><strong>Ladda upp ny bild</strong><p>${esc(uploadCopy)}</p></div><div class="gallery-upload-fields"><label class="field"><span>Bildfil</span><input type="file" accept="image/jpeg,image/png,image/webp" data-gallery-file${uploadAllowed?'':' disabled'}></label><label class="field"><span>Bildtext</span><input type="text" data-gallery-upload-caption placeholder="Personer, plats och ungefärligt år"${uploadAllowed?'':' disabled'}></label><button class="secondary-button" type="button" data-gallery-upload${uploadAllowed?'':' disabled'}>${icon('upload')} Ladda upp</button></div></div><details class="gallery-link-entry"><summary>Lägg till eller kontrollera bildadress</summary><label class="field"><span>En bild per rad</span><textarea id="fImages" data-gallery-source placeholder="https://…/bild.jpg | Bildtext">${esc(imageText(record.images))}</textarea><small class="field-help">Format: bildadress | bildtext. Befintliga länkar fortsätter fungera.</small></label></details></div>`;
+    const uploadCopy=isNew?'Spara posten först. Därefter kan du ladda upp bilder.':uploadAllowed?'Välj en eller flera bilder i JPG, PNG eller WebP, högst 15 MB per bild. Bilderna blir offentliga när posten sparas.':'Du kan lägga till bildlänkar. En redaktör hanterar filuppladdning och publicering.';
+    return `<div class="gallery-manager" data-gallery-manager data-entity-type="${type}" data-entity-id="${esc(id)}"><div class="gallery-admin-grid" data-gallery-preview>${galleryPreview(items,type,record.coverImage||'')}</div><div class="gallery-upload-card"><div><strong>Ladda upp bilder</strong><p>${esc(uploadCopy)}</p></div><div class="gallery-upload-fields"><label class="field"><span>Bildfiler</span><input type="file" accept="image/jpeg,image/png,image/webp" data-gallery-file multiple${uploadAllowed?'':' disabled'}><small class="field-help" data-gallery-file-summary>Inga bilder valda</small></label><label class="field"><span>Gemensam bildtext (valfri)</span><input type="text" data-gallery-upload-caption placeholder="Personer, plats och ungefärligt år"${uploadAllowed?'':' disabled'}></label><button class="secondary-button" type="button" data-gallery-upload${uploadAllowed?'':' disabled'}>${icon('upload')} Ladda upp bilder</button></div><p class="gallery-upload-state" data-gallery-upload-state aria-live="polite"></p></div><details class="gallery-link-entry"><summary>Lägg till eller kontrollera bildadress</summary><label class="field"><span>En bild per rad</span><textarea id="fImages" data-gallery-source placeholder="https://…/bild.jpg | Bildtext">${esc(imageText(record.images))}</textarea><small class="field-help">Format: bildadress | bildtext. Befintliga länkar fortsätter fungera.</small></label></details></div>`;
   }
-  function coverImageEditor(record){
+  function coverImageEditor(id,record,isNew){
     const cover=record.coverImage||'';
-    return `<div class="cover-image-manager" data-cover-manager><div class="cover-image-preview${cover?' has-image':''}" data-cover-preview>${cover?`<img src="${esc(cover)}" alt="Förhandsvisning av omslagsbild">`:icon('image')}</div><div class="cover-image-controls"><strong>Omslagsbild</strong><p>Visas bakom platsens rubrik med en mörk toning. Välj en liggande bild i galleriet för bäst resultat.</p><button class="text-button cover-remove" type="button" data-cover-remove${cover?'':' hidden'}>Ta bort omslagsbild</button><details class="gallery-link-entry cover-link-entry"><summary>Använd en befintlig bildadress</summary><label class="field"><span>Bildadress</span><input id="fCoverImage" type="text" value="${esc(cover)}" data-cover-url placeholder="https://…/gard.jpg"></label></details></div></div>`;
+    const uploadAllowed=!isNew&&canReview();
+    const help=isNew?'Spara platsen först. Därefter kan du ladda upp en omslagsbild.':uploadAllowed?'Välj gärna en liggande bild. Den läggs även automatiskt i platsens galleri.':'En redaktör behöver ladda upp och publicera omslagsbilden.';
+    return `<div class="cover-image-manager" data-cover-manager data-place-id="${esc(id)}"><div class="cover-image-preview${cover?' has-image':''}" data-cover-preview>${cover?`<img src="${esc(cover)}" alt="Förhandsvisning av omslagsbild">`:icon('image')}</div><div class="cover-image-controls"><strong>Omslagsbild</strong><p>${esc(help)}</p><div class="cover-image-actions"><label class="secondary-button${uploadAllowed?'':' disabled'}">${icon('image-plus')} Välj bild<input type="file" accept="image/jpeg,image/png,image/webp" data-cover-file${uploadAllowed?'':' disabled'} hidden></label><button class="primary-button" type="button" data-cover-upload${uploadAllowed?'':' disabled'}>${icon('upload')} Ladda upp</button><button class="text-button cover-remove" type="button" data-cover-remove${cover?'':' hidden'}>Ta bort omslagsbild</button></div><span class="cover-upload-state" data-cover-state aria-live="polite"></span><details class="gallery-link-entry cover-link-entry"><summary>Använd en befintlig bildadress</summary><label class="field"><span>Bildadress</span><input id="fCoverImage" type="text" value="${esc(cover)}" data-cover-url placeholder="https://…/gard.jpg"></label></details></div></div>`;
   }
   function profileImageEditor(id,record,isNew){
     const uploadAllowed=!isNew&&canReview();
     const photo=record.photo||'/assets/person-placeholder.svg';
+    const crop=profileCrop(record);
     const help=isNew?'Spara personen först. Därefter kan du ladda upp profilbilden.':uploadAllowed?'JPG, PNG eller WebP, högst 15 MB. Bilden läggs även i personens galleri.':'En redaktör behöver ladda upp och publicera profilbilden.';
-    return `<div class="profile-image-manager" data-profile-manager data-person-id="${esc(id)}"><img class="profile-image-preview" src="${esc(photo)}" alt="Förhandsvisning av profilbild" data-profile-preview><div class="profile-image-controls"><strong>Profilbild</strong><p>${esc(help)}</p><div class="profile-image-actions"><label class="secondary-button${uploadAllowed?'':' disabled'}">${icon('image-plus')} Välj bild<input type="file" accept="image/jpeg,image/png,image/webp" data-profile-file${uploadAllowed?'':' disabled'} hidden></label><button class="primary-button" type="button" data-profile-upload${uploadAllowed?'':' disabled'}>${icon('upload')} Ladda upp</button>${record.photo?`<button class="text-button profile-remove" type="button" data-profile-remove>Ta bort profilbild</button>`:''}</div><span class="profile-upload-state" data-profile-state aria-live="polite"></span><details class="gallery-link-entry profile-link-entry"><summary>Använd en befintlig bildadress</summary><label class="field"><span>Bildadress</span><input id="fPhoto" type="text" value="${esc(record.photo||'')}" data-profile-url placeholder="https://…/portratt.jpg"></label></details></div></div>`;
+    return `<div class="profile-image-manager" data-profile-manager data-person-id="${esc(id)}"><div class="profile-image-preview" data-profile-crop-preview style="${profileCropStyle(record)}"><img src="${esc(photo)}" alt="Förhandsvisning av profilbild" data-profile-preview></div><div class="profile-image-controls"><strong>Profilbild</strong><p>${esc(help)}</p><div class="profile-image-actions"><label class="secondary-button${uploadAllowed?'':' disabled'}">${icon('image-plus')} Välj bild<input type="file" accept="image/jpeg,image/png,image/webp" data-profile-file${uploadAllowed?'':' disabled'} hidden></label><button class="primary-button" type="button" data-profile-upload${uploadAllowed?'':' disabled'}>${icon('upload')} Ladda upp</button>${record.photo?`<button class="text-button profile-remove" type="button" data-profile-remove>Ta bort profilbild</button>`:''}</div><span class="profile-upload-state" data-profile-state aria-live="polite"></span><div class="profile-crop-controls"><div class="profile-crop-heading"><strong>Anpassa utsnitt</strong><button class="text-button" type="button" data-profile-crop-reset>Återställ</button></div><label><span>Zoom</span><input id="fPhotoZoom" type="range" min="1" max="3" step="0.05" value="${crop.zoom}" data-profile-crop><output data-profile-crop-output="zoom">${crop.zoom.toFixed(2)}×</output></label><label><span>Flytta i sidled</span><input id="fPhotoX" type="range" min="0" max="100" step="1" value="${crop.x}" data-profile-crop><output data-profile-crop-output="x">${Math.round(crop.x)}%</output></label><label><span>Flytta upp/ned</span><input id="fPhotoY" type="range" min="0" max="100" step="1" value="${crop.y}" data-profile-crop><output data-profile-crop-output="y">${Math.round(crop.y)}%</output></label><small>Justeringen ändrar bara hur bilden beskärs. Originalbilden finns kvar.</small></div><details class="gallery-link-entry profile-link-entry"><summary>Använd en befintlig bildadress</summary><label class="field"><span>Bildadress</span><input id="fPhoto" type="text" value="${esc(record.photo||'')}" data-profile-url placeholder="https://…/portratt.jpg"></label></details></div></div>`;
   }
   function refreshGalleryManager(manager){
     const source=manager.querySelector('[data-gallery-source]');
@@ -87,6 +100,31 @@
     const manager=document.querySelector('[data-cover-manager]'),preview=manager?.querySelector('[data-cover-preview]'),remove=manager?.querySelector('[data-cover-remove]');
     if(!preview)return;preview.classList.toggle('has-image',!!src);preview.innerHTML=src?`<img src="${esc(src)}" alt="Förhandsvisning av omslagsbild">`:icon('image');if(remove)remove.hidden=!src;icons();
   }
+  function previewCoverFile(input){
+    const file=input.files?.[0];if(!file)return;
+    if(!['image/jpeg','image/png','image/webp'].includes(file.type)){toast('Välj en bild i JPG-, PNG- eller WebP-format.',true);input.value='';return;}
+    if(file.size>15*1024*1024){toast('Bilden får vara högst 15 MB.',true);input.value='';return;}
+    setCoverPreview(URL.createObjectURL(file));
+  }
+  async function uploadCoverImage(button){
+    const manager=button.closest('[data-cover-manager]');
+    const fileInput=manager?.querySelector('[data-cover-file]');
+    const stateEl=manager?.querySelector('[data-cover-state]');
+    const file=fileInput?.files?.[0];
+    if(!file){toast('Välj en omslagsbild först.',true);return;}
+    button.disabled=true;button.innerHTML=`<span class="spinner small"></span> Laddar upp`;if(stateEl)stateEl.textContent='Laddar upp bilden…';
+    try{
+      const name=document.getElementById('fName')?.value.trim()||'platsen';
+      const item=await window.FamilyData.uploadPublicImage(file,'place',manager.dataset.placeId,`Omslagsbild för ${name}`);
+      const coverField=document.getElementById('fCoverImage');if(coverField)coverField.value=item.src;
+      setCoverPreview(item.src);
+      const gallery=document.querySelector('[data-gallery-manager][data-entity-type="place"]');
+      const source=gallery?.querySelector('[data-gallery-source]');
+      if(source){const items=images(source.value);if(!items.some(row=>row.src===item.src))items.unshift(item);source.value=imageText(items);refreshGalleryManager(gallery);}
+      fileInput.value='';if(stateEl)stateEl.textContent='Uppladdad. Spara platsen för att publicera omslagsbilden.';toast('Omslagsbilden är uppladdad. Spara platsen för att publicera ändringen.');
+    }catch(error){if(stateEl)stateEl.textContent='';toast(error.message||'Omslagsbilden kunde inte laddas upp.',true);}
+    finally{button.disabled=false;button.innerHTML=`${icon('upload')} Ladda upp`;icons();}
+  }
   function updateGalleryCaption(input){
     const manager=input.closest('[data-gallery-manager]');
     const source=manager?.querySelector('[data-gallery-source]');
@@ -95,24 +133,67 @@
     if(!items[index])return;
     items[index].caption=input.value.trim();source.value=imageText(items);
   }
-  async function uploadGalleryImage(button){
+  function updateGalleryFileSummary(input){
+    const count=input.files?.length||0;
+    const summary=input.closest('.field')?.querySelector('[data-gallery-file-summary]');
+    if(summary)summary.textContent=count?`${count} ${count===1?'bild vald':'bilder valda'}`:'Inga bilder valda';
+  }
+  async function uploadGalleryImages(button){
     const manager=button.closest('[data-gallery-manager]');
     const fileInput=manager?.querySelector('[data-gallery-file]');
     const captionInput=manager?.querySelector('[data-gallery-upload-caption]');
     const source=manager?.querySelector('[data-gallery-source]');
-    const file=fileInput?.files?.[0];
-    if(!file){toast('Välj en bildfil först.',true);return;}
-    button.disabled=true;button.innerHTML=`<span class="spinner small"></span> Laddar upp`;
-    try{
-      const item=await window.FamilyData.uploadPublicImage(file,manager.dataset.entityType,manager.dataset.entityId,captionInput.value.trim());
-      const items=images(source.value);items.push(item);source.value=imageText(items);refreshGalleryManager(manager);
-      fileInput.value='';captionInput.value='';toast('Bilden är uppladdad. Spara posten för att lägga den i galleriet.');
-    }catch(error){toast(error.message||'Bilden kunde inte laddas upp.',true);}
-    finally{button.disabled=false;button.innerHTML=`${icon('upload')} Ladda upp`;icons();}
+    const state=manager?.querySelector('[data-gallery-upload-state]');
+    const files=Array.from(fileInput?.files||[]);
+    if(!files.length){toast('Välj minst en bildfil först.',true);return;}
+    const caption=captionInput.value.trim();
+    const items=images(source.value),failures=[];
+    button.disabled=true;
+    for(let index=0;index<files.length;index+=1){
+      const file=files[index];
+      button.innerHTML=`<span class="spinner small"></span> ${index+1} av ${files.length}`;
+      if(state)state.textContent=`Laddar upp ${index+1} av ${files.length}: ${file.name}`;
+      try{
+        const item=await window.FamilyData.uploadPublicImage(file,manager.dataset.entityType,manager.dataset.entityId,caption);
+        if(!items.some(row=>row.src===item.src))items.push(item);
+        source.value=imageText(items);refreshGalleryManager(manager);
+      }catch(error){failures.push({file,error});}
+    }
+    const uploaded=files.length-failures.length;
+    if(uploaded){
+      fileInput.value='';captionInput.value='';updateGalleryFileSummary(fileInput);
+      if(state)state.textContent=`${uploaded} ${uploaded===1?'bild är uppladdad':'bilder är uppladdade'}. Spara posten för att publicera galleriet.`;
+      toast(`${uploaded} ${uploaded===1?'bild är uppladdad':'bilder är uppladdade'}. Spara posten för att publicera.`);
+    }
+    if(failures.length){
+      const failedNames=failures.map(row=>row.file.name).join(', ');
+      if(state)state.textContent=`${uploaded} uppladdade. Kunde inte ladda upp: ${failedNames}`;
+      toast(`${failures.length} ${failures.length===1?'bild kunde':'bilder kunde'} inte laddas upp.`,true);
+    }
+    button.disabled=false;button.innerHTML=`${icon('upload')} Ladda upp bilder`;icons();
   }
   function setProfilePreview(manager,src){
     const preview=manager?.querySelector('[data-profile-preview]');
     if(preview) preview.src=src||'/assets/person-placeholder.svg';
+  }
+  function updateProfileCrop(manager){
+    const preview=manager?.querySelector('[data-profile-crop-preview]');
+    if(!preview)return;
+    const crop=profileCropValue();
+    preview.style.setProperty('--photo-x',`${crop.x}%`);
+    preview.style.setProperty('--photo-y',`${crop.y}%`);
+    preview.style.setProperty('--photo-zoom',crop.zoom);
+    const xOutput=manager.querySelector('[data-profile-crop-output="x"]');
+    const yOutput=manager.querySelector('[data-profile-crop-output="y"]');
+    const zoomOutput=manager.querySelector('[data-profile-crop-output="zoom"]');
+    if(xOutput)xOutput.value=`${crop.x}%`;
+    if(yOutput)yOutput.value=`${crop.y}%`;
+    if(zoomOutput)zoomOutput.value=`${crop.zoom.toFixed(2)}×`;
+  }
+  function resetProfileCrop(button){
+    const manager=button.closest('[data-profile-manager]');
+    [['fPhotoX','50'],['fPhotoY','50'],['fPhotoZoom','1']].forEach(([id,value])=>{const input=document.getElementById(id);if(input)input.value=value;});
+    updateProfileCrop(manager);
   }
   function previewProfileFile(input){
     const file=input.files?.[0]; if(!file)return;
@@ -252,7 +333,7 @@
     event.preventDefault(); const button=event.submitter; button.disabled=true;
     const name=document.getElementById('fName').value.trim(); if(!name){toast('Personen behöver ett namn.',true);button.disabled=false;return;}
     const isNew=id==='ny'; const finalId=isNew?entityId('person'):id;
-    const aliases=editedAliases(val('fAliases'),name,current);const payload={...clone(current),name,slug:current.slug||uniqueSlug('person',name),aliases,alt:aliases.join(' / '),formerNames:formerNames(current,name),role:val('fRole'),place:val('fPlace'),born:val('fBorn'),died:val('fDied'),branch:val('fBranch'),status:val('fStatus'),direct:val('fDirect')==='yes',isLiving:val('fLiving')==='yes',visibility:val('fVisibility'),parents:[val('fParent1'),val('fParent2')].filter(Boolean),partner:val('fPartner'),story:rows(val('fStory')),timeline:pairs(val('fTimeline')),facts:pairs(val('fFacts')),sources:rows(val('fSources')),uncertainties:rows(val('fUncertainties')),photo:val('fPhoto'),images:images(val('fImages'))};
+    const aliases=editedAliases(val('fAliases'),name,current);const payload={...clone(current),name,slug:current.slug||uniqueSlug('person',name),aliases,alt:aliases.join(' / '),formerNames:formerNames(current,name),role:val('fRole'),place:val('fPlace'),born:val('fBorn'),died:val('fDied'),branch:val('fBranch'),status:val('fStatus'),direct:val('fDirect')==='yes',isLiving:val('fLiving')==='yes',visibility:val('fVisibility'),parents:[val('fParent1'),val('fParent2')].filter(Boolean),partner:val('fPartner'),story:rows(val('fStory')),timeline:pairs(val('fTimeline')),facts:pairs(val('fFacts')),sources:rows(val('fSources')),uncertainties:rows(val('fUncertainties')),photo:val('fPhoto'),photoCrop:profileCropValue(),images:images(val('fImages'))};
     try{const result=await window.FamilyData.submitChange('person',finalId,payload,isNew?'create':'update');toast(result.mode==='published'?publishedMessage('Personen',payload.visibility):'Ändringen är skickad för granskning.');await refreshData();navigate('people',result.mode==='published'?finalId:null);}catch(error){toast(error.message||'Ändringen kunde inte sparas.',true);}finally{button.disabled=false;}
   }
 
@@ -261,7 +342,7 @@
     ui.content.innerHTML=`<div class="editor-page">${heading(isNew?'Ny plats':p.name,isNew?'Skapa ett nytt gårds- eller platskort.':'Samla platsens historia och geografiska uppgifter.',`<button class="secondary-button" data-go="places">${icon('arrow-left')} Till registret</button>`)}<form id="placeForm" class="editor-layout"><div class="editor-card">
       <section class="editor-section"><h2>Grunduppgifter</h2><p>Huvudnamnet används i rubriker, register och länkar. Tidigare huvudnamn bevaras automatiskt.</p><div class="form-grid">${field('Huvudnamn','fName',p.name)}${field('Område','fArea',p.area||'')}${field('Latitud','fLat',p.lat??'',false,'text')}${field('Longitud','fLng',p.lng??'',false,'text')}${field('Sekundära namn','fAliases',aliasText(p),true,'textarea','Ett namn per rad, exempelvis äldre stavning eller annan gårdsbeteckning.')}<label class="field full"><span>Synlighet</span><select id="fVisibility"><option value="public"${p.visibility==='public'?' selected':''}>Offentlig</option><option value="family"${p.visibility==='family'?' selected':''}>Endast inloggad familj</option><option value="private"${p.visibility==='private'?' selected':''}>Privat för redaktionen</option></select></label></div></section>
       <section class="editor-section"><h2>Platsens historia</h2><p>Sammanfatta platsen först och bygg därefter ut berättelse och tidslinje.</p><div class="form-grid">${field('Kort sammanfattning','fNote',p.note||'',true,'textarea')}${field('Historia','fStory',(p.story||[]).join('\n'),true,'textarea')}${field('Tidslinje','fTimeline',pairText(p.timeline),true,'textarea')}${field('Källor','fSources',(p.sources||[]).map(x=>typeof x==='string'?x:x.text||x.citation||'').filter(Boolean).join('\n'),true,'textarea')}${field('Osäkerheter och öppna spår','fUncertainties',(p.uncertainties||[]).join('\n'),true,'textarea')}</div></section>
-      <section class="editor-section"><h2>Bilder och sidhuvud</h2><p>Samla gårdsbilder, kartor och dokument med tydliga bildtexter. En liggande galleribild kan användas som platsens omslag.</p>${coverImageEditor(p)}${galleryEditor('place',id,p,isNew)}</section></div>
+      <section class="editor-section"><h2>Bilder och sidhuvud</h2><p>Samla gårdsbilder, kartor och dokument med tydliga bildtexter. En liggande galleribild kan användas som platsens omslag.</p>${coverImageEditor(id,p,isNew)}${galleryEditor('place',id,p,isNew)}</section></div>
       <aside class="editor-side"><div class="save-card"><h3>Spara</h3><p class="save-note">${canReview()?'Platskortet publiceras direkt.':'Platskortet skickas för granskning.'}</p><button class="primary-button" type="submit">${canReview()?'Publicera ändring':'Skicka för granskning'}</button></div>${!isNew?`<div class="save-card"><h3>Publik sida</h3><a class="secondary-button" href="${esc(publicUrl('place',p))}">${icon('external-link')} Öppna platssida</a></div>`:''}</aside></form></div>`;
     document.getElementById('placeForm').addEventListener('submit',event=>savePlace(event,id,p));
   }
@@ -314,13 +395,15 @@
       const removeImage=event.target.closest('[data-gallery-remove]');if(removeImage){const manager=removeImage.closest('[data-gallery-manager]'),source=manager.querySelector('[data-gallery-source]'),items=images(source.value),removed=items[Number(removeImage.dataset.galleryRemove)],cover=document.getElementById('fCoverImage');items.splice(Number(removeImage.dataset.galleryRemove),1);source.value=imageText(items);if(cover&&removed?.src===cover.value){cover.value='';setCoverPreview('');}refreshGalleryManager(manager);return;}
       const profileImage=event.target.closest('[data-gallery-profile]');if(profileImage){const manager=profileImage.closest('[data-gallery-manager]'),item=images(manager.querySelector('[data-gallery-source]').value)[Number(profileImage.dataset.galleryProfile)],field=document.getElementById('fPhoto'),profileManager=document.querySelector('[data-profile-manager]');if(item&&field){field.value=item.src;setProfilePreview(profileManager,item.src);toast('Bilden används som profilbild när du sparar posten.');}return;}
       const coverImage=event.target.closest('[data-gallery-cover]');if(coverImage){const manager=coverImage.closest('[data-gallery-manager]'),item=images(manager.querySelector('[data-gallery-source]').value)[Number(coverImage.dataset.galleryCover)],field=document.getElementById('fCoverImage');if(item&&field){field.value=item.src;setCoverPreview(item.src);refreshGalleryManager(manager);toast('Bilden används som omslag när du sparar platsen.');}return;}
-      const uploadImage=event.target.closest('[data-gallery-upload]');if(uploadImage){uploadGalleryImage(uploadImage);return;}
+      const uploadImage=event.target.closest('[data-gallery-upload]');if(uploadImage){uploadGalleryImages(uploadImage);return;}
       const uploadProfile=event.target.closest('[data-profile-upload]');if(uploadProfile){uploadProfileImage(uploadProfile);return;}
+      const uploadCover=event.target.closest('[data-cover-upload]');if(uploadCover){uploadCoverImage(uploadCover);return;}
+      const resetCrop=event.target.closest('[data-profile-crop-reset]');if(resetCrop){resetProfileCrop(resetCrop);return;}
       const removeProfile=event.target.closest('[data-profile-remove]');if(removeProfile){const manager=removeProfile.closest('[data-profile-manager]'),field=document.getElementById('fPhoto');if(field)field.value='';setProfilePreview(manager,'');removeProfile.remove();manager.querySelector('[data-profile-state]').textContent='Profilbilden tas bort när du sparar personen.';return;}
       const removeCover=event.target.closest('[data-cover-remove]');if(removeCover){const field=document.getElementById('fCoverImage'),gallery=document.querySelector('[data-gallery-manager][data-entity-type="place"]');if(field)field.value='';setCoverPreview('');if(gallery)refreshGalleryManager(gallery);return;}
     });
-    document.addEventListener('input',event=>{if(event.target.matches('[data-gallery-caption]'))updateGalleryCaption(event.target);else if(event.target.matches('[data-gallery-source]'))refreshGalleryManager(event.target.closest('[data-gallery-manager]'));else if(event.target.matches('[data-profile-url]'))setProfilePreview(event.target.closest('[data-profile-manager]'),event.target.value.trim());else if(event.target.matches('[data-cover-url]')){setCoverPreview(event.target.value.trim());const gallery=document.querySelector('[data-gallery-manager][data-entity-type="place"]');if(gallery)refreshGalleryManager(gallery);}});
-    document.addEventListener('change',event=>{if(event.target.matches('[data-profile-file]'))previewProfileFile(event.target);});
+    document.addEventListener('input',event=>{if(event.target.matches('[data-gallery-caption]'))updateGalleryCaption(event.target);else if(event.target.matches('[data-gallery-source]'))refreshGalleryManager(event.target.closest('[data-gallery-manager]'));else if(event.target.matches('[data-profile-url]'))setProfilePreview(event.target.closest('[data-profile-manager]'),event.target.value.trim());else if(event.target.matches('[data-profile-crop]'))updateProfileCrop(event.target.closest('[data-profile-manager]'));else if(event.target.matches('[data-cover-url]')){setCoverPreview(event.target.value.trim());const gallery=document.querySelector('[data-gallery-manager][data-entity-type="place"]');if(gallery)refreshGalleryManager(gallery);}});
+    document.addEventListener('change',event=>{if(event.target.matches('[data-profile-file]'))previewProfileFile(event.target);else if(event.target.matches('[data-cover-file]'))previewCoverFile(event.target);else if(event.target.matches('[data-gallery-file]'))updateGalleryFileSummary(event.target);});
     document.addEventListener('change',async event=>{const select=event.target.closest('[data-member-role]');if(!select)return;select.disabled=true;try{await window.FamilyData.updateMemberRole(select.dataset.memberRole,select.value);toast('Användarens roll är uppdaterad.');await refreshData();}catch(error){toast(error.message||'Rollen kunde inte ändras.',true);}finally{select.disabled=false;}});
     addEventListener('popstate',renderRoute);addEventListener('hashchange',renderRoute);
     document.addEventListener('family-auth-change',event=>showAuth(event.detail));

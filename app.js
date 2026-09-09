@@ -50,6 +50,32 @@ const PERSON_PLACEHOLDER = location.protocol === "file:"
   ? new URL("assets/person-placeholder.svg",document.currentScript?.src || location.href).href
   : "/assets/person-placeholder.svg";
 function personPhoto(p){ return p.photo || p.image || PERSON_PLACEHOLDER; }
+function personPhotoCrop(p){
+  const crop = p?.photoCrop || {};
+  const clamp = (value,min,max,fallback)=>{
+    const number = Number(value);
+    return Number.isFinite(number) ? Math.min(max,Math.max(min,number)) : fallback;
+  };
+  return {
+    x:clamp(crop.x,0,100,50),
+    y:clamp(crop.y,0,100,50),
+    zoom:clamp(crop.zoom,1,3,1)
+  };
+}
+function personPhotoCropStyle(p){
+  const crop = personPhotoCrop(p);
+  return `--photo-x:${crop.x}%;--photo-y:${crop.y}%;--photo-zoom:${crop.zoom};`;
+}
+function personPortraitHTML(p,frameClass,alt="",loading="lazy"){
+  return `<span class="portrait-frame ${frameClass}" style="${personPhotoCropStyle(p)}"><img class="portrait-image" src="${escapeHtml(personPhoto(p))}" alt="${escapeHtml(alt)}" loading="${loading}" onerror="this.src='${PERSON_PLACEHOLDER}'"></span>`;
+}
+function applyPersonPhotoCrop(element,p){
+  if(!element) return;
+  const crop = personPhotoCrop(p);
+  element.style.setProperty("--photo-x",`${crop.x}%`);
+  element.style.setProperty("--photo-y",`${crop.y}%`);
+  element.style.setProperty("--photo-zoom",crop.zoom);
+}
 function formatDates(p){
   const b = p.born ? "★ "+p.born : "";
   const d = p.died ? "† "+p.died : "";
@@ -65,7 +91,7 @@ function personHTML(id, unit){
   const place = p.place ? `<span class="pplace">${escapeHtml(canonicalEntityText(p.place))}</span>` : "";
   return `<span class="person-card-shell">
     <button class="person${heir ? " heir" : ""}${unit?.ancestor ? " ancestor" : ""}" data-id="${id}" title="Öppna livshistoria">
-      <img class="pcard-photo" src="${escapeHtml(personPhoto(p))}" alt="" loading="lazy" onerror="this.src='${PERSON_PLACEHOLDER}'">
+      ${personPortraitHTML(p,"pcard-photo")}
       <span class="pcard-text">
         <span class="prole"><span class="sdot ${p.status || 'open'}"></span>${escapeHtml(role)}</span>
         <span class="pname">${escapeHtml(p.name)}${alt}</span>
@@ -676,6 +702,7 @@ function openPerson(id){
   panelEdit.title = `Redigera ${p.name}`;
   document.getElementById('panelEditForm').classList.remove('open');
   const photo = document.getElementById('pPhoto');
+  applyPersonPhotoCrop(document.getElementById('pPhotoFrame'),p);
   photo.style.display = "";
   photo.src = personPhoto(p);
   photo.alt = `Porträttbild för ${p.name}`;
@@ -1206,7 +1233,7 @@ function renderPersonDetail(id){
         ${personGenerationNavHTML(id)}
       </div>
       <div class="detail-hero-side">
-        <img class="detail-photo" src="${escapeHtml(personPhoto(p))}" alt="Porträtt av ${escapeHtml(p.name)}" loading="eager" onerror="this.src='${PERSON_PLACEHOLDER}'">
+        ${personPortraitHTML(p,"detail-photo",`Porträtt av ${p.name}`,"eager")}
         <div class="detail-actions">
           <button class="btn" type="button" data-show-in-tree="${escapeHtml(id)}">Visa i trädet</button>
           ${EMIGRANT_BRANCHES[id] ? `<a class="btn" href="${escapeHtml(emigrantPath(id))}" data-open-emigrant="${escapeHtml(id)}">Visa emigrantgren</a>` : ""}
@@ -1533,7 +1560,7 @@ function renderEmigrantPersonDetail(branchId,personId){
     <p class="detail-subtitle">${escapeHtml([person.relation,person.born ? `född ${person.born}` : "",person.died ? `avliden ${person.died}` : "",person.location].filter(Boolean).join(" · "))}</p>
     <span class="research-status ${escapeHtml(person.status || "open")}">${escapeHtml(emigrantResearchStatus(person.status))}</span>
     <p class="detail-summary">${escapeHtml(description)}</p>
-  </div><div class="detail-hero-side"><img class="detail-photo" src="${escapeHtml(personPhoto(person))}" alt="Porträtt av ${escapeHtml(person.name)}" loading="eager" onerror="this.src='${PERSON_PLACEHOLDER}'"><div class="detail-actions"><a class="btn" href="${escapeHtml(emigrantPath(branchId))}" data-open-emigrant="${escapeHtml(branchId)}">Visa hela emigrantgrenen</a>${shareButtonHTML({title:person.name,text:`Läs om ${person.name} i ${root.name}s emigrantgren.`,path,restricted:person.isLiving === true})}<button class="btn" type="button" data-print-page>Skriv ut</button></div></div></div>
+  </div><div class="detail-hero-side">${personPortraitHTML(person,"detail-photo",`Porträtt av ${person.name}`,"eager")}<div class="detail-actions"><a class="btn" href="${escapeHtml(emigrantPath(branchId))}" data-open-emigrant="${escapeHtml(branchId)}">Visa hela emigrantgrenen</a>${shareButtonHTML({title:person.name,text:`Läs om ${person.name} i ${root.name}s emigrantgren.`,path,restricted:person.isLiving === true})}<button class="btn" type="button" data-print-page>Skriv ut</button></div></div></div>
   <div class="detail-layout"><main class="detail-main">
     <section class="detail-section"><h3>Livshistoria</h3><div class="detail-story">${(person.story?.length ? person.story : [description]).map(text=>`<p>${escapeHtml(text)}</p>`).join("")}</div></section>
     <section class="detail-section"><h3>Livslinje</h3>${detailTimelineHTML(person.timeline || [])}</section>
