@@ -110,6 +110,19 @@
   .editor-label{font-family:"Spline Sans Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--thread)}
   .editor-field{width:100%;border:1px solid var(--rule);border-radius:8px;background:var(--paper);color:var(--ink);font:inherit;font-size:14.5px;line-height:1.25;padding:10px 11px}
   textarea.editor-field{min-height:86px;resize:vertical}
+  .person-picker{position:relative;width:100%;font-family:Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none}
+  .person-picker-native.is-enhanced{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important}
+  .person-picker-input{width:100%;min-height:42px;border:1px solid var(--rule);border-radius:8px;background:var(--paper);color:var(--ink);font:inherit;font-size:14px;line-height:1.25;padding:10px 38px 10px 11px}
+  .person-picker-input:focus{outline:2px solid var(--thread);outline-offset:2px}
+  .person-picker-clear{position:absolute;top:5px;right:5px;width:32px;height:32px;border:0;border-radius:6px;background:transparent;color:var(--ink-faint);font:600 18px/1 Inter,sans-serif;cursor:pointer}
+  .person-picker-clear:hover{background:var(--surface-2);color:var(--ink)}
+  .person-picker-results{position:absolute;z-index:90;top:calc(100% + 5px);left:0;right:0;max-height:280px;overflow-y:auto;border:1px solid var(--rule);border-radius:9px;background:var(--paper);box-shadow:0 18px 42px -24px rgba(23,33,29,.48);padding:5px}
+  .person-picker-results[hidden]{display:none}
+  .person-picker-option{display:grid;width:100%;gap:3px;border:0;border-radius:6px;background:transparent;color:var(--ink);padding:9px 10px;text-align:left;cursor:pointer}
+  .person-picker-option:hover,.person-picker-option.active{background:var(--surface-2)}
+  .person-picker-option strong{font-size:14px;line-height:1.25}
+  .person-picker-option span,.person-picker-empty{font-size:11px;line-height:1.35;color:var(--ink-faint)}
+  .person-picker-empty{display:block;padding:11px 10px}
   .editor-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
   .editor-note{font-size:13.5px;color:var(--ink-soft);margin:8px 0 0}
   .family-account{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0 18px;padding:12px 14px;border:1px solid var(--rule);background:var(--surface-soft);border-radius:8px}
@@ -632,9 +645,9 @@
     <div id="emigrantArchive" class="archive-grid"></div>
   </section>
 
-  <section class="block" id="platskarta" data-page="gardarkiv">
-    <p class="sec-kicker">Platsregister</p>
-    <h2>Alla orter, gårdar och socknar</h2>
+  <section class="block" id="platskarta" data-page="home">
+    <p class="sec-kicker">Gårdskarta</p>
+    <h2>Gårdar, orter och socknar i släktträdet</h2>
     <p class="sec-lead">Klicka på en plats för att se alla personer och textnotiser som är kopplade dit. Platser med kartpunkt zoomar in på kartan; platser utan exakt läge ligger ändå kvar i samma lista tills vi hittar bättre koordinater.</p>
     <div class="branch-filters" style="margin-top:16px" aria-label="Grenfilter för platser">
       <label class="branch-toggle"><input id="togglePlaceMother" data-branch-toggle="mother" type="checkbox" checked> Mammas sida</label>
@@ -803,6 +816,6 @@
 <script src="emigrants.js?v=20260904c"></script>
 <script src="supabase-config.js?v=20260903"></script>
 <script id="structuredData" type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Esther F. Benson Sholeen","alternateName":["Esther Benson","Esther Sholeen"],"birthDate":"sannolikt 1896-06-07","deathDate":"1978-06","description":"Nils Johans första kända barn och utgångspunkt för en stor Sholeen-gren.","url":"https://axels-slakt.vercel.app/emigranter/nils-johan-bengtsson/personer/esther-benson-sholeen/"}</script>
-<script src="app.js?v=20260906a"></script>
+<script src="app.js?v=20260910a"></script>
 </body>
 </html>

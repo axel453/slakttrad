@@ -8,6 +8,9 @@
   const state = {people:fallbackPeople,places:fallbackPlaces,overview:{changes:[],revisions:[],profiles:[]},status:null,ready:false};
   const labels = {contributor:'Bidragsgivare',editor:'Redaktör',admin:'Administratör',mother:'Bengtsson-ledet',father:'Nilsson-ledet',shared:'Gemensamt'};
   const routeTitles = {dashboard:'Översikt',people:'Personer',places:'Gårdar och platser',changes:'Ändringar',members:'Användare'};
+  const draftPrefix = 'family-admin-form-draft-v1:';
+  const restoredDrafts = new Set();
+  let draftTimer = 0;
 
   function esc(value){ return String(value ?? '').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
   function normalizeSearch(value){ return String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('sv').replace(/[^a-z0-9]+/g,' ').trim(); }
@@ -38,6 +41,40 @@
     return `${base}-${index}`;
   }
   function rows(value){ return String(value||'').split(/\n+/).map(row=>row.trim()).filter(Boolean); }
+  function draftStorageGet(key){try{return sessionStorage.getItem(key);}catch{return null;}}
+  function draftStorageSet(key,value){try{sessionStorage.setItem(key,value);}catch{}}
+  function draftStorageRemove(key){try{sessionStorage.removeItem(key);}catch{}}
+  function editorDraftKey(type,id){return `${draftPrefix}${type}:${id||'ny'}`;}
+  function saveEditorDraft(form){
+    if(!form||form.dataset.draftClean==='true'||!form.dataset.draftKey)return;
+    const values={};
+    form.querySelectorAll('input[id]:not([type="file"]),textarea[id],select[id]').forEach(field=>{values[field.id]=field.value;});
+    draftStorageSet(form.dataset.draftKey,JSON.stringify({values,updatedAt:new Date().toISOString()}));
+  }
+  function saveActiveEditorDraft(){saveEditorDraft(document.querySelector('#personForm,#placeForm'));}
+  function scheduleEditorDraft(){clearTimeout(draftTimer);draftTimer=setTimeout(saveActiveEditorDraft,180);}
+  function clearEditorDraft(form){
+    if(!form?.dataset.draftKey)return;
+    form.dataset.draftClean='true';
+    draftStorageRemove(form.dataset.draftKey);
+  }
+  function restoreEditorDraft(form,type,id){
+    const key=editorDraftKey(type,id);form.dataset.draftKey=key;
+    const raw=draftStorageGet(key);if(!raw)return false;
+    try{
+      const draft=JSON.parse(raw);
+      Object.entries(draft.values||{}).forEach(([fieldId,value])=>{const field=document.getElementById(fieldId);if(field&&form.contains(field)&&field.type!=='file')field.value=value;});
+      if(!restoredDrafts.has(key)){restoredDrafts.add(key);setTimeout(()=>toast('Ditt osparade utkast har återställts.'),0);}
+      return true;
+    }catch{draftStorageRemove(key);return false;}
+  }
+  function refreshRestoredMedia(form){
+    const profile=form.querySelector('[data-profile-manager]');
+    if(profile){setProfilePreview(profile,val('fPhoto'));updateProfileCrop(profile);}
+    const cover=form.querySelector('[data-cover-manager]');
+    if(cover)setCoverPreview(val('fCoverImage'));
+    form.querySelectorAll('[data-gallery-manager]').forEach(refreshGalleryManager);
+  }
   function uniqueNames(values,primaryName=''){
     const primaryKey=normalizeSearch(primaryName),seen=new Set();
     return values.flatMap(value=>Array.isArray(value)?value:[value]).map(value=>String(value||'').trim()).filter(value=>{
@@ -250,6 +287,7 @@
 
   async function refreshData(showToast=false){
     if(!state.status?.user) return;
+    saveActiveEditorDraft();
     ui.loading.hidden=false;
     try{
       const [snapshot,overview]=await Promise.all([window.FamilyData.loadSnapshot(),window.FamilyData.loadAdminOverview()]);
@@ -316,17 +354,42 @@
   function placeRow(p){const mapped=Number.isFinite(Number(p.lat))&&Number.isFinite(Number(p.lng)),aliases=uniqueNames(p.aliases||[],p.name);const hay=normalizeSearch([p.name,...aliases,...(p.formerNames||[]),p.area].join(' '));const imageCount=(p.images||[]).length;return `<tr data-search="${esc(hay)}" data-map="${mapped?'mapped':'unmapped'}"><td><div class="entity-cell"><span class="entity-avatar entity-icon">${icon('landmark')}</span><span><strong>${esc(p.name)}</strong><small>${esc(p.note||'Platskort')}${imageCount?` · ${imageCount} ${imageCount===1?'bild':'bilder'}`:''}</small></span></div></td><td data-label="Område">${esc(p.area||'Ej angivet')}</td><td data-label="Sekundära namn">${esc(aliases.slice(0,3).join(', ')||'Saknas')}</td><td data-label="Karta"><span class="badge ${mapped?'green':'amber'}">${mapped?'Kartlagd':'Saknas'}</span></td><td class="table-action"><button class="row-action" data-edit-place="${esc(p.id)}">Redigera</button></td></tr>`;}
 
   function personOptions(selected=''){ return `<option value="">Ingen vald</option>`+Object.entries(state.people).sort((a,b)=>a[1].name.localeCompare(b[1].name,'sv')).map(([id,p])=>`<option value="${esc(id)}"${id===selected?' selected':''}>${esc(p.name)}${p.born?` (${esc(p.born)})`:''}</option>`).join(''); }
+  function personPickerLabel(id){const p=state.people[id];if(!p)return '';const meta=[p.born,p.role].filter(Boolean).join(' · ');return `${p.name}${meta?` (${meta})`:''}`;}
+  function personPickerSearch(id,p){return normalizeSearch([p.name,...personAliases(p),...(p.formerNames||[]),p.born,p.died,p.role,p.place,id].filter(Boolean).join(' '));}
+  function enhancePersonPicker(select,excludeId=''){
+    if(!select||select.classList.contains('is-enhanced'))return;
+    select.classList.add('person-picker-native','is-enhanced');select.setAttribute('aria-hidden','true');select.tabIndex=-1;
+    const picker=document.createElement('div');picker.className='person-picker';
+    const fieldLabel=select.closest('.field')?.querySelector(':scope > span')?.textContent?.trim()||'person';
+    picker.innerHTML=`<input class="person-picker-input" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" autocomplete="off" placeholder="Sök ${esc(fieldLabel.toLocaleLowerCase('sv'))}..."><button class="person-picker-clear" type="button" aria-label="Rensa val" title="Rensa val">×</button><div class="person-picker-results" role="listbox" hidden></div>`;
+    select.insertAdjacentElement('afterend',picker);
+    const input=picker.querySelector('.person-picker-input'),results=picker.querySelector('.person-picker-results');let activeIndex=-1;
+    const close=()=>{results.hidden=true;input.setAttribute('aria-expanded','false');activeIndex=-1;};
+    const choose=id=>{select.value=id||'';input.value=personPickerLabel(select.value);select.dispatchEvent(new Event('change',{bubbles:true}));close();};
+    const show=()=>{const query=normalizeSearch(input.value);const rows=Object.entries(state.people).filter(([id,p])=>id!==excludeId&&(!query||personPickerSearch(id,p).includes(query))).sort((a,b)=>a[1].name.localeCompare(b[1].name,'sv')).slice(0,40);results.innerHTML=rows.length?rows.map(([id,p])=>{const aliases=personAliases(p).slice(0,2),meta=[p.born,p.role,aliases.length?`även ${aliases.join(', ')}`:''].filter(Boolean).join(' · ');return `<button type="button" class="person-picker-option" role="option" data-person-picker-id="${esc(id)}"><strong>${esc(p.name)}</strong>${meta?`<span>${esc(meta)}</span>`:''}</button>`;}).join(''):'<span class="person-picker-empty">Ingen person matchar sökningen.</span>';results.hidden=false;input.setAttribute('aria-expanded','true');activeIndex=-1;};
+    input.value=personPickerLabel(select.value);
+    input.addEventListener('focus',()=>{if(select.value&&input.value===personPickerLabel(select.value))input.select();show();});
+    input.addEventListener('input',show);
+    input.addEventListener('keydown',event=>{const options=[...results.querySelectorAll('.person-picker-option')];if(event.key==='Escape'){close();return;}if(event.key==='ArrowDown'||event.key==='ArrowUp'){event.preventDefault();if(results.hidden)show();if(!options.length)return;activeIndex=event.key==='ArrowDown'?Math.min(activeIndex+1,options.length-1):Math.max(activeIndex-1,0);options.forEach((option,index)=>option.classList.toggle('active',index===activeIndex));options[activeIndex]?.scrollIntoView({block:'nearest'});}else if(event.key==='Enter'&&options.length){event.preventDefault();choose(options[Math.max(activeIndex,0)]?.dataset.personPickerId);}});
+    results.addEventListener('click',event=>{const option=event.target.closest('[data-person-picker-id]');if(option)choose(option.dataset.personPickerId);});
+    picker.querySelector('.person-picker-clear').addEventListener('click',()=>{choose('');input.focus();show();});input.addEventListener('blur',()=>setTimeout(()=>{close();input.value=personPickerLabel(select.value);},120));
+  }
+  function enhancePersonPickers(excludeId=''){document.querySelectorAll('select[data-person-picker]').forEach(select=>enhancePersonPicker(select,excludeId));}
   function field(label,id,value='',wide=false,type='text',help=''){return `<label class="field${wide?' full':''}"><span>${esc(label)}</span>${type==='textarea'?`<textarea id="${id}">${esc(value)}</textarea>`:`<input id="${id}" type="${type}" value="${esc(value)}">`}${help?`<small class="field-help">${esc(help)}</small>`:''}</label>`;}
   function renderPersonEditor(id){
     const isNew=id==='ny'; const p=isNew?{name:'',branch:'shared',status:'working',parents:[],isLiving:true,visibility:'family'}:state.people[id]; if(!p){navigate('people');return;}
     const title=isNew?'Ny person':p.name;
     ui.content.innerHTML=`<div class="editor-page">${heading(title,isNew?'Skapa en ny person med ett stabilt internt ID.':'Uppdatera personens samlade arkivuppgifter.',`<button class="secondary-button" data-go="people">${icon('arrow-left')} Till registret</button>`)}<form id="personForm" class="editor-layout"><div class="editor-card">
       <section class="editor-section"><h2>Grunduppgifter</h2><p>Huvudnamnet används i rubriker, register och länkar. Tidigare huvudnamn bevaras automatiskt så att äldre hänvisningar fortsätter fungera.</p><div class="form-grid">${field('Huvudnamn','fName',p.name)}${field('Sekundära namn','fAliases',aliasText(p,'person'),true,'textarea','Ett namn per rad, exempelvis äldre stavning, flicknamn eller tilltalsnamn.')}${field('Roll eller relation','fRole',p.role||'')}${field('Huvudplats eller gård','fPlace',p.place||'')}${field('Född','fBorn',p.born||'')}${field('Avliden','fDied',p.died||'')}<label class="field"><span>Släktled</span><select id="fBranch"><option value="mother"${p.branch==='mother'?' selected':''}>Bengtsson-ledet</option><option value="father"${p.branch==='father'?' selected':''}>Nilsson-ledet</option><option value="shared"${!['mother','father'].includes(p.branch)?' selected':''}>Gemensamt</option></select></label><label class="field"><span>Bevisstatus</span><select id="fStatus"><option value="confirmed"${p.status==='confirmed'?' selected':''}>Bekräftat</option><option value="likely"${p.status==='likely'?' selected':''}>Starkt sannolikt</option><option value="working"${p.status==='working'?' selected':''}>Arbetsantagande</option><option value="open"${p.status==='open'?' selected':''}>Öppet spår</option></select></label><label class="field"><span>Direkt led till Axel</span><select id="fDirect"><option value="yes"${p.direct?' selected':''}>Ja</option><option value="no"${!p.direct?' selected':''}>Nej</option></select></label><label class="field"><span>Levnadsstatus</span><select id="fLiving"><option value="yes"${p.isLiving?' selected':''}>Levande</option><option value="no"${!p.isLiving?' selected':''}>Avliden</option></select></label><label class="field full"><span>Synlighet</span><select id="fVisibility"><option value="family"${p.visibility==='family'?' selected':''}>Endast inloggad familj</option><option value="public"${p.visibility==='public'?' selected':''}>Offentlig</option><option value="private"${p.visibility==='private'?' selected':''}>Privat för redaktionen</option></select></label></div></section>
-      <section class="editor-section"><h2>Relationer</h2><p>Relationerna sparas med personernas interna ID och påverkas därför inte av namnändringar.</p><div class="form-grid"><label class="field"><span>Förälder 1</span><select id="fParent1">${personOptions(p.parents?.[0])}</select></label><label class="field"><span>Förälder 2</span><select id="fParent2">${personOptions(p.parents?.[1])}</select></label><label class="field full"><span>Make eller maka</span><select id="fPartner">${personOptions(p.partner||'')}</select></label></div></section>
+      <section class="editor-section"><h2>Relationer</h2><p>Sök på namn, sekundärt namn, födelseår eller plats. Relationerna sparas med personernas interna ID och påverkas därför inte av namnändringar. Barn kopplas genom att välja förälder på barnets person.</p><div class="form-grid"><label class="field"><span>Förälder 1</span><select id="fParent1" data-person-picker>${personOptions(p.parents?.[0])}</select></label><label class="field"><span>Förälder 2</span><select id="fParent2" data-person-picker>${personOptions(p.parents?.[1])}</select></label><label class="field full"><span>Make eller maka</span><select id="fPartner" data-person-picker>${personOptions(p.partner||'')}</select></label></div></section>
       <section class="editor-section"><h2>Berättelse och källor</h2><p>En uppgift per rad. Datum i livslinjen skrivs som datum: notering.</p><div class="form-grid">${field('Livshistoria','fStory',(p.story||[]).join('\n'),true,'textarea')}${field('Livslinje','fTimeline',pairText(p.timeline),true,'textarea')}${field('Fakta','fFacts',pairText(p.facts),true,'textarea')}${field('Källor','fSources',(p.sources||[]).map(x=>typeof x==='string'?x:x.text||x.citation||'').filter(Boolean).join('\n'),true,'textarea')}${field('Osäkerheter och öppna spår','fUncertainties',(p.uncertainties||[]).join('\n'),true,'textarea')}</div></section>
       <section class="editor-section"><h2>Bilder</h2><p>Välj personens profilbild och samla porträtt, familjefoton och dokumentbilder i galleriet.</p>${profileImageEditor(id,p,isNew)}${galleryEditor('person',id,p,isNew)}</section></div>
-      <aside class="editor-side"><div class="save-card"><h3>Spara</h3><p class="save-note">${canReview()?'Ändringen publiceras direkt och registreras i historiken.':'Ändringen skickas till en redaktör för granskning innan den publiceras.'}</p><button class="primary-button" type="submit">${canReview()?'Publicera ändring':'Skicka för granskning'}</button></div>${!isNew?`<div class="save-card"><h3>Publik sida</h3><a class="secondary-button" href="${esc(publicUrl('person',p))}">${icon('external-link')} Öppna personsida</a></div>`:''}</aside></form></div>`;
-    document.getElementById('personForm').addEventListener('submit',event=>savePerson(event,id,p));
+      <aside class="editor-side"><div class="save-card"><h3>Spara</h3><p class="save-note">${canReview()?'Ändringen publiceras direkt och registreras i historiken.':'Ändringen skickas till en redaktör för granskning innan den publiceras.'} Utkastet sparas automatiskt i den här fliken medan du arbetar.</p><button class="primary-button" type="submit">${canReview()?'Publicera ändring':'Skicka för granskning'}</button></div>${!isNew?`<div class="save-card"><h3>Publik sida</h3><a class="secondary-button" href="${esc(publicUrl('person',p))}">${icon('external-link')} Öppna personsida</a></div>`:''}</aside></form></div>`;
+    const form=document.getElementById('personForm');
+    restoreEditorDraft(form,'person',id);
+    refreshRestoredMedia(form);
+    enhancePersonPickers(isNew?'':id);
+    form.addEventListener('submit',event=>savePerson(event,id,p));
   }
 
   async function savePerson(event,id,current){
@@ -334,7 +397,7 @@
     const name=document.getElementById('fName').value.trim(); if(!name){toast('Personen behöver ett namn.',true);button.disabled=false;return;}
     const isNew=id==='ny'; const finalId=isNew?entityId('person'):id;
     const aliases=editedAliases(val('fAliases'),name,current);const payload={...clone(current),name,slug:current.slug||uniqueSlug('person',name),aliases,alt:aliases.join(' / '),formerNames:formerNames(current,name),role:val('fRole'),place:val('fPlace'),born:val('fBorn'),died:val('fDied'),branch:val('fBranch'),status:val('fStatus'),direct:val('fDirect')==='yes',isLiving:val('fLiving')==='yes',visibility:val('fVisibility'),parents:[val('fParent1'),val('fParent2')].filter(Boolean),partner:val('fPartner'),story:rows(val('fStory')),timeline:pairs(val('fTimeline')),facts:pairs(val('fFacts')),sources:rows(val('fSources')),uncertainties:rows(val('fUncertainties')),photo:val('fPhoto'),photoCrop:profileCropValue(),images:images(val('fImages'))};
-    try{const result=await window.FamilyData.submitChange('person',finalId,payload,isNew?'create':'update');toast(result.mode==='published'?publishedMessage('Personen',payload.visibility):'Ändringen är skickad för granskning.');await refreshData();navigate('people',result.mode==='published'?finalId:null);}catch(error){toast(error.message||'Ändringen kunde inte sparas.',true);}finally{button.disabled=false;}
+    try{const result=await window.FamilyData.submitChange('person',finalId,payload,isNew?'create':'update');clearEditorDraft(event.currentTarget);toast(result.mode==='published'?publishedMessage('Personen',payload.visibility):'Ändringen är skickad för granskning.');await refreshData();navigate('people',result.mode==='published'?finalId:null);}catch(error){toast(error.message||'Ändringen kunde inte sparas.',true);}finally{button.disabled=false;}
   }
 
   function renderPlaceEditor(id){
@@ -343,14 +406,17 @@
       <section class="editor-section"><h2>Grunduppgifter</h2><p>Huvudnamnet används i rubriker, register och länkar. Tidigare huvudnamn bevaras automatiskt.</p><div class="form-grid">${field('Huvudnamn','fName',p.name)}${field('Område','fArea',p.area||'')}${field('Latitud','fLat',p.lat??'',false,'text')}${field('Longitud','fLng',p.lng??'',false,'text')}${field('Sekundära namn','fAliases',aliasText(p),true,'textarea','Ett namn per rad, exempelvis äldre stavning eller annan gårdsbeteckning.')}<label class="field full"><span>Synlighet</span><select id="fVisibility"><option value="public"${p.visibility==='public'?' selected':''}>Offentlig</option><option value="family"${p.visibility==='family'?' selected':''}>Endast inloggad familj</option><option value="private"${p.visibility==='private'?' selected':''}>Privat för redaktionen</option></select></label></div></section>
       <section class="editor-section"><h2>Platsens historia</h2><p>Sammanfatta platsen först och bygg därefter ut berättelse och tidslinje.</p><div class="form-grid">${field('Kort sammanfattning','fNote',p.note||'',true,'textarea')}${field('Historia','fStory',(p.story||[]).join('\n'),true,'textarea')}${field('Tidslinje','fTimeline',pairText(p.timeline),true,'textarea')}${field('Källor','fSources',(p.sources||[]).map(x=>typeof x==='string'?x:x.text||x.citation||'').filter(Boolean).join('\n'),true,'textarea')}${field('Osäkerheter och öppna spår','fUncertainties',(p.uncertainties||[]).join('\n'),true,'textarea')}</div></section>
       <section class="editor-section"><h2>Bilder och sidhuvud</h2><p>Samla gårdsbilder, kartor och dokument med tydliga bildtexter. En liggande galleribild kan användas som platsens omslag.</p>${coverImageEditor(id,p,isNew)}${galleryEditor('place',id,p,isNew)}</section></div>
-      <aside class="editor-side"><div class="save-card"><h3>Spara</h3><p class="save-note">${canReview()?'Platskortet publiceras direkt.':'Platskortet skickas för granskning.'}</p><button class="primary-button" type="submit">${canReview()?'Publicera ändring':'Skicka för granskning'}</button></div>${!isNew?`<div class="save-card"><h3>Publik sida</h3><a class="secondary-button" href="${esc(publicUrl('place',p))}">${icon('external-link')} Öppna platssida</a></div>`:''}</aside></form></div>`;
-    document.getElementById('placeForm').addEventListener('submit',event=>savePlace(event,id,p));
+      <aside class="editor-side"><div class="save-card"><h3>Spara</h3><p class="save-note">${canReview()?'Platskortet publiceras direkt.':'Platskortet skickas för granskning.'} Utkastet sparas automatiskt i den här fliken medan du arbetar.</p><button class="primary-button" type="submit">${canReview()?'Publicera ändring':'Skicka för granskning'}</button></div>${!isNew?`<div class="save-card"><h3>Publik sida</h3><a class="secondary-button" href="${esc(publicUrl('place',p))}">${icon('external-link')} Öppna platssida</a></div>`:''}</aside></form></div>`;
+    const form=document.getElementById('placeForm');
+    restoreEditorDraft(form,'place',id);
+    refreshRestoredMedia(form);
+    form.addEventListener('submit',event=>savePlace(event,id,p));
   }
   async function savePlace(event,id,current){
     event.preventDefault();const button=event.submitter;button.disabled=true;const name=val('fName');if(!name){toast('Platsen behöver ett namn.',true);button.disabled=false;return;}
     const lat=val('fLat'),lng=val('fLng');if((lat&&!lng)||(!lat&&lng)||Number.isNaN(Number(lat))||Number.isNaN(Number(lng))){toast('Fyll i både latitud och longitud med giltiga tal.',true);button.disabled=false;return;}
     const isNew=id==='ny',finalId=isNew?entityId('place'):id;const payload={...clone(current),id:finalId,name,slug:current.slug||uniqueSlug('place',name),area:val('fArea'),visibility:val('fVisibility'),aliases:editedAliases(val('fAliases'),name,current),formerNames:formerNames(current,name),note:val('fNote'),story:rows(val('fStory')),timeline:pairs(val('fTimeline')),sources:rows(val('fSources')),uncertainties:rows(val('fUncertainties')),coverImage:val('fCoverImage'),images:images(val('fImages'))};if(lat){payload.lat=Number(lat);payload.lng=Number(lng);}else{delete payload.lat;delete payload.lng;}
-    try{const result=await window.FamilyData.submitChange('place',finalId,payload,isNew?'create':'update');toast(result.mode==='published'?publishedMessage('Platsen',payload.visibility):'Platsen är skickad för granskning.');await refreshData();navigate('places',result.mode==='published'?finalId:null);}catch(error){toast(error.message||'Platsen kunde inte sparas.',true);}finally{button.disabled=false;}
+    try{const result=await window.FamilyData.submitChange('place',finalId,payload,isNew?'create':'update');clearEditorDraft(event.currentTarget);toast(result.mode==='published'?publishedMessage('Platsen',payload.visibility):'Platsen är skickad för granskning.');await refreshData();navigate('places',result.mode==='published'?finalId:null);}catch(error){toast(error.message||'Platsen kunde inte sparas.',true);}finally{button.disabled=false;}
   }
   function val(id){return document.getElementById(id)?.value.trim()||'';}
 
@@ -402,10 +468,10 @@
       const removeProfile=event.target.closest('[data-profile-remove]');if(removeProfile){const manager=removeProfile.closest('[data-profile-manager]'),field=document.getElementById('fPhoto');if(field)field.value='';setProfilePreview(manager,'');removeProfile.remove();manager.querySelector('[data-profile-state]').textContent='Profilbilden tas bort när du sparar personen.';return;}
       const removeCover=event.target.closest('[data-cover-remove]');if(removeCover){const field=document.getElementById('fCoverImage'),gallery=document.querySelector('[data-gallery-manager][data-entity-type="place"]');if(field)field.value='';setCoverPreview('');if(gallery)refreshGalleryManager(gallery);return;}
     });
-    document.addEventListener('input',event=>{if(event.target.matches('[data-gallery-caption]'))updateGalleryCaption(event.target);else if(event.target.matches('[data-gallery-source]'))refreshGalleryManager(event.target.closest('[data-gallery-manager]'));else if(event.target.matches('[data-profile-url]'))setProfilePreview(event.target.closest('[data-profile-manager]'),event.target.value.trim());else if(event.target.matches('[data-profile-crop]'))updateProfileCrop(event.target.closest('[data-profile-manager]'));else if(event.target.matches('[data-cover-url]')){setCoverPreview(event.target.value.trim());const gallery=document.querySelector('[data-gallery-manager][data-entity-type="place"]');if(gallery)refreshGalleryManager(gallery);}});
-    document.addEventListener('change',event=>{if(event.target.matches('[data-profile-file]'))previewProfileFile(event.target);else if(event.target.matches('[data-cover-file]'))previewCoverFile(event.target);else if(event.target.matches('[data-gallery-file]'))updateGalleryFileSummary(event.target);});
+    document.addEventListener('input',event=>{if(event.target.matches('[data-gallery-caption]'))updateGalleryCaption(event.target);else if(event.target.matches('[data-gallery-source]'))refreshGalleryManager(event.target.closest('[data-gallery-manager]'));else if(event.target.matches('[data-profile-url]'))setProfilePreview(event.target.closest('[data-profile-manager]'),event.target.value.trim());else if(event.target.matches('[data-profile-crop]'))updateProfileCrop(event.target.closest('[data-profile-manager]'));else if(event.target.matches('[data-cover-url]')){setCoverPreview(event.target.value.trim());const gallery=document.querySelector('[data-gallery-manager][data-entity-type="place"]');if(gallery)refreshGalleryManager(gallery);}if(event.target.closest('#personForm,#placeForm'))scheduleEditorDraft();});
+    document.addEventListener('change',event=>{if(event.target.matches('[data-profile-file]'))previewProfileFile(event.target);else if(event.target.matches('[data-cover-file]'))previewCoverFile(event.target);else if(event.target.matches('[data-gallery-file]'))updateGalleryFileSummary(event.target);if(event.target.closest('#personForm,#placeForm'))scheduleEditorDraft();});
     document.addEventListener('change',async event=>{const select=event.target.closest('[data-member-role]');if(!select)return;select.disabled=true;try{await window.FamilyData.updateMemberRole(select.dataset.memberRole,select.value);toast('Användarens roll är uppdaterad.');await refreshData();}catch(error){toast(error.message||'Rollen kunde inte ändras.',true);}finally{select.disabled=false;}});
-    addEventListener('popstate',renderRoute);addEventListener('hashchange',renderRoute);
+    addEventListener('popstate',renderRoute);addEventListener('hashchange',renderRoute);addEventListener('pagehide',saveActiveEditorDraft);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')saveActiveEditorDraft();});
     document.addEventListener('family-auth-change',event=>showAuth(event.detail));
     icons();
   }

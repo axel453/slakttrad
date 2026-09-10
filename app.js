@@ -1580,7 +1580,7 @@ function setPageMode(mode){
   document.body.classList.remove("page-home","page-personarkiv","page-gardarkiv","page-emigrantarkiv","page-contact","page-detail");
   document.body.classList.add(`page-${mode}`);
   if(mode !== "detail") resetMetaForPage(mode);
-  if(mode === "gardarkiv") refreshPlaceMapLayout();
+  if(mode === "home") refreshPlaceMapLayout();
 }
 function currentRoute(){
   const rawHash = decodeURIComponent(location.hash.slice(1));
@@ -1597,9 +1597,29 @@ function currentRoute(){
   if(rawHash.startsWith("plats/")) return `/gardar/${rawHash.slice(6)}/`;
   return location.pathname || "/";
 }
-const initializedFeatures = {home:false,branchFilters:false,archiveFilters:false,personarkiv:false,gardarkiv:false,emigrantarkiv:false};
+const initializedFeatures = {home:false,branchFilters:false,archiveFilters:false,personarkiv:false,gardarkiv:false,emigrantarkiv:false,placeMapScheduled:false,placeMapStarted:false};
 function activePageMode(){
   return ["home","personarkiv","gardarkiv","emigrantarkiv","contact","detail"].find(mode=>document.body.classList.contains(`page-${mode}`)) || "home";
+}
+function scheduleHomePlaceMap(){
+  if(initializedFeatures.placeMapScheduled) return;
+  initializedFeatures.placeMapScheduled=true;
+  const section=document.getElementById('platskarta');
+  const start=()=>{
+    if(initializedFeatures.placeMapStarted) return;
+    initializedFeatures.placeMapStarted=true;
+    initPlaceMap();
+  };
+  if(!section || !("IntersectionObserver" in window)){
+    start();
+    return;
+  }
+  const observer=new IntersectionObserver(entries=>{
+    if(!entries.some(entry=>entry.isIntersecting)) return;
+    observer.disconnect();
+    start();
+  },{rootMargin:"320px 0px"});
+  observer.observe(section);
 }
 function ensurePageFeatures(mode){
   if(["home","personarkiv","gardarkiv"].includes(mode) && !initializedFeatures.branchFilters){
@@ -1617,20 +1637,21 @@ function ensurePageFeatures(mode){
     initPersonSearch();
     initializedFeatures.home=true;
   }
+  if(mode === "home"){
+    scheduleHomePlaceMap();
+    if(initializedFeatures.placeMapStarted){
+      renderPlaceList();
+      refreshSelectedPlace();
+      refreshPlaceMapLayout();
+    }
+  }
   if(mode === "personarkiv"){
     renderPersonArchive();
     initializedFeatures.personarkiv=true;
   }
   if(mode === "gardarkiv"){
     renderPlaceArchive();
-    if(!initializedFeatures.gardarkiv){
-      initPlaceMap();
-      initializedFeatures.gardarkiv=true;
-    }else{
-      renderPlaceList();
-      refreshSelectedPlace();
-      refreshPlaceMapLayout();
-    }
+    initializedFeatures.gardarkiv=true;
   }
   if(mode === "emigrantarkiv"){
     renderEmigrantArchive();
@@ -1657,7 +1678,7 @@ function renderCurrentRoute(){
   if(parts[0] === "gardar" && parts.length === 1){
     setPageMode("gardarkiv");
     ensurePageFeatures("gardarkiv");
-    document.getElementById('platskarta')?.scrollIntoView({behavior:'auto',block:'start'});
+    document.getElementById('gardarkiv')?.scrollIntoView({behavior:'auto',block:'start'});
     return;
   }
   if(parts[0] === "emigranter" && parts.length === 1){
@@ -1734,7 +1755,7 @@ document.addEventListener('click', e=>{
   const mapJump = e.target.closest('[data-jump-place-map]');
   if(mapJump){
     const id = mapJump.dataset.jumpPlaceMap;
-    navigatePath("/gardar/");
+    navigatePath("/");
     window.setTimeout(()=>{
       document.getElementById('platskarta').scrollIntoView({behavior:'smooth',block:'start'});
       selectPlace(id);
@@ -1760,7 +1781,11 @@ function initBranchFilters(){
     setAll(motherInputs, branchState.mother);
     setAll(fatherInputs, branchState.father);
     const mode=activePageMode();
-    if(mode === "home") renderTree();
+    if(mode === "home"){
+      renderTree();
+      renderPlaceList();
+      refreshSelectedPlace();
+    }
     if(mode === "personarkiv") renderPersonArchive();
     if(mode === "gardarkiv"){
       renderPlaceList();
@@ -2337,8 +2362,8 @@ async function initPlaceMap(){
   PLACES.forEach(ensurePlaceMarker);
   const mappedPlaces = PLACES.filter(hasCoords);
   if(mappedPlaces.length) placeMap.fitBounds(window.L.latLngBounds(mappedPlaces.map(p=>[p.lat,p.lng])),{padding:[24,24]});
-  selectPlace('munkaskog');
-  if(document.body.classList.contains('page-gardarkiv')) refreshPlaceMapLayout();
+  selectPlace(currentPlaceId || 'munkaskog');
+  if(document.body.classList.contains('page-home')) refreshPlaceMapLayout();
 }
 function refreshSelectedPlace(){
   const places = visiblePlaces();
@@ -2657,11 +2682,114 @@ function selectOptions(){
     return `<option value="${escapeHtml(id)}">${escapeHtml(p.name)}${meta ? ` (${escapeHtml(meta)})` : ""}</option>`;
   }).join("");
 }
+function personPickerLabel(id){
+  const person = PEOPLE[id];
+  if(!person) return "";
+  const meta = [person.born, person.role].filter(Boolean).join(" · ");
+  return `${person.name}${meta ? ` (${meta})` : ""}`;
+}
+function personPickerSearchText(id, person){
+  return normalizeSearchText([
+    person.name,
+    ...personAliases(person),
+    ...(person.formerNames || []),
+    person.born,
+    person.died,
+    person.role,
+    person.place,
+    id
+  ].filter(Boolean).join(" "));
+}
+function syncPersonPicker(select){
+  const picker = select?.parentElement?.querySelector('.person-picker');
+  const input = picker?.querySelector('.person-picker-input');
+  if(input) input.value = personPickerLabel(select.value);
+}
+function enhancePersonPicker(select){
+  if(!select || select.classList.contains('is-enhanced')) return;
+  select.classList.add('person-picker-native','is-enhanced');
+  select.setAttribute('aria-hidden','true');
+  select.tabIndex = -1;
+  const picker = document.createElement('div');
+  picker.className = 'person-picker';
+  const label = select.closest('label')?.querySelector('.editor-label,.panel-edit-label')?.textContent?.trim() || 'person';
+  picker.innerHTML = `<input class="person-picker-input" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" autocomplete="off" placeholder="Sök ${escapeHtml(label.toLocaleLowerCase('sv'))}..."><button class="person-picker-clear" type="button" aria-label="Rensa val" title="Rensa val">×</button><div class="person-picker-results" role="listbox" hidden></div>`;
+  select.insertAdjacentElement('afterend',picker);
+  const input = picker.querySelector('.person-picker-input');
+  const clear = picker.querySelector('.person-picker-clear');
+  const results = picker.querySelector('.person-picker-results');
+  let activeIndex = -1;
+  const close = ()=>{
+    results.hidden = true;
+    input.setAttribute('aria-expanded','false');
+    activeIndex = -1;
+  };
+  const choose = id=>{
+    select.value = id || "";
+    input.value = personPickerLabel(select.value);
+    select.dispatchEvent(new Event('change',{bubbles:true}));
+    close();
+  };
+  const show = ()=>{
+    const query = normalizeSearchText(input.value);
+    const excludedId = select.id.startsWith('edit') ? currentPanelPersonId : "";
+    const rows = Object.entries(PEOPLE)
+      .filter(([id,person])=>id !== excludedId && (!query || personPickerSearchText(id,person).includes(query)))
+      .sort((a,b)=>a[1].name.localeCompare(b[1].name,'sv'))
+      .slice(0,40);
+    results.innerHTML = rows.length ? rows.map(([id,person])=>{
+      const aliases = personAliases(person).slice(0,2);
+      const meta = [person.born, person.role, aliases.length ? `även ${aliases.join(', ')}` : ""].filter(Boolean).join(" · ");
+      return `<button type="button" class="person-picker-option" role="option" data-person-picker-id="${escapeHtml(id)}"><strong>${escapeHtml(person.name)}</strong>${meta ? `<span>${escapeHtml(meta)}</span>` : ""}</button>`;
+    }).join("") : '<span class="person-picker-empty">Ingen person matchar sökningen.</span>';
+    results.hidden = false;
+    input.setAttribute('aria-expanded','true');
+    activeIndex = -1;
+  };
+  input.addEventListener('focus',()=>{
+    if(select.value && input.value === personPickerLabel(select.value)) input.select();
+    show();
+  });
+  input.addEventListener('input',()=>{
+    show();
+  });
+  input.addEventListener('keydown',event=>{
+    const options = [...results.querySelectorAll('.person-picker-option')];
+    if(event.key === 'Escape'){ close(); return; }
+    if(event.key === 'ArrowDown' || event.key === 'ArrowUp'){
+      event.preventDefault();
+      if(results.hidden) show();
+      if(!options.length) return;
+      activeIndex = event.key === 'ArrowDown' ? Math.min(activeIndex + 1, options.length - 1) : Math.max(activeIndex - 1, 0);
+      options.forEach((option,index)=>option.classList.toggle('active',index === activeIndex));
+      options[activeIndex]?.scrollIntoView({block:'nearest'});
+    }else if(event.key === 'Enter' && options.length){
+      event.preventDefault();
+      choose(options[Math.max(activeIndex,0)]?.dataset.personPickerId);
+    }
+  });
+  results.addEventListener('click',event=>{
+    const option = event.target.closest('[data-person-picker-id]');
+    if(option) choose(option.dataset.personPickerId);
+  });
+  clear.addEventListener('click',()=>{
+    choose("");
+    input.focus();
+    show();
+  });
+  input.addEventListener('blur',()=>window.setTimeout(()=>{
+    close();
+    input.value = personPickerLabel(select.value);
+  },120));
+  syncPersonPicker(select);
+}
 function refreshEditorSelects(){
   document.querySelectorAll('.person-select').forEach(select=>{
     const value = select.value;
     select.innerHTML = selectOptions();
     if(value && PEOPLE[value]) select.value = value;
+    enhancePersonPicker(select);
+    syncPersonPicker(select);
   });
 }
 function renderManualList(){
@@ -2761,7 +2889,10 @@ function textToTimeline(text){
 }
 function setSelectValue(id, value){
   const el = document.getElementById(id);
-  if(el) el.value = value || "";
+  if(el){
+    el.value = value || "";
+    syncPersonPicker(el);
+  }
 }
 function fillPanelEditor(id){
   const basePerson = PEOPLE[id]; if(!basePerson) return;
@@ -3232,4 +3363,7 @@ initSiteNavigation();
 renderCurrentRoute();
 scheduleSharedArchive();
 const mapJump=document.getElementById('mapJump');
-if(mapJump) mapJump.onclick=()=>navigatePath("/gardar/");
+if(mapJump) mapJump.onclick=()=>{
+  document.getElementById('platskarta')?.scrollIntoView({behavior:'smooth',block:'start'});
+  refreshPlaceMapLayout();
+};
