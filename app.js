@@ -591,7 +591,7 @@ function entityReferenceTargets(){
   Object.entries(PEOPLE).filter(([,person])=>person.autoLink !== false).forEach(([id,person])=>{
     const historical = BASE_PERSON_REFERENCE_NAMES[id] || {};
     const historyNames = (manualData.history || []).filter(item=>item.type === "person" && item.id === id).flatMap(item=>[item.before?.name,item.after?.name]);
-    [person.name,historical.name,...(person.formerNames || []),...(historical.formerNames || []),...historyNames].filter(Boolean).flatMap(referenceNameVariants).filter(alias=>alias.includes(" ")).forEach(alias=>add(alias,{type:"person",id,label:person.name},true));
+    [person.name,historical.name,...(person.formerNames || []),...(historical.formerNames || []),...historyNames].filter(Boolean).flatMap(referenceNameVariants).forEach(alias=>add(alias,{type:"person",id,label:person.name},true));
     [...personAliases(person),...(historical.aliases || [])].filter(Boolean).flatMap(referenceNameVariants).filter(alias=>alias.includes(" ")).forEach(alias=>add(alias,{type:"person",id,label:person.name},false));
   });
   PLACES.forEach(place=>{
