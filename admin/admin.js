@@ -5,7 +5,8 @@
   };
   const fallbackPeople = typeof PEOPLE === 'undefined' ? {} : JSON.parse(JSON.stringify(PEOPLE));
   const fallbackPlaces = typeof PLACES === 'undefined' ? [] : JSON.parse(JSON.stringify(PLACES));
-  const state = {people:fallbackPeople,places:fallbackPlaces,overview:{changes:[],revisions:[],profiles:[]},status:null,ready:false};
+  const fallbackUnits = typeof UNITS === 'undefined' ? [] : JSON.parse(JSON.stringify(UNITS));
+  const state = {people:fallbackPeople,places:fallbackPlaces,units:fallbackUnits,overview:{changes:[],revisions:[],profiles:[]},status:null,ready:false};
   const labels = {contributor:'Bidragsgivare',editor:'Redaktör',admin:'Administratör',mother:'Bengtsson-ledet',father:'Nilsson-ledet',shared:'Gemensamt'};
   const routeTitles = {dashboard:'Översikt',people:'Personer',places:'Gårdar och platser',changes:'Ändringar',members:'Användare'};
   const draftPrefix = 'family-admin-form-draft-v1:';
@@ -294,7 +295,9 @@
       state.people={...fallbackPeople,...(snapshot?.people||{})};
       const places=new Map(fallbackPlaces.map(item=>[item.id,item]));
       (snapshot?.places||[]).forEach(item=>places.set(item.id,{...(places.get(item.id)||{}),...item}));
-      state.places=[...places.values()]; state.overview=overview; state.ready=true;
+      const units=new Map(fallbackUnits.map(item=>[item.id,item]));
+      (snapshot?.units||[]).forEach(item=>units.set(item.id,{...(units.get(item.id)||{}),...item}));
+      state.places=[...places.values()]; state.units=[...units.values()]; state.overview=overview; state.ready=true;
       renderRoute(); if(showToast) toast('Familjearkivet är uppdaterat.');
     }catch(error){ toast(error.message||'Familjearkivet kunde inte hämtas.',true); }
     finally{ ui.loading.hidden=true; }
@@ -356,6 +359,76 @@
   function personOptions(selected=''){ return `<option value="">Ingen vald</option>`+Object.entries(state.people).sort((a,b)=>a[1].name.localeCompare(b[1].name,'sv')).map(([id,p])=>`<option value="${esc(id)}"${id===selected?' selected':''}>${esc(p.name)}${p.born?` (${esc(p.born)})`:''}</option>`).join(''); }
   function personPickerLabel(id){const p=state.people[id];if(!p)return '';const meta=[p.born,p.role].filter(Boolean).join(' · ');return `${p.name}${meta?` (${meta})`:''}`;}
   function personPickerSearch(id,p){return normalizeSearch([p.name,...personAliases(p),...(p.formerNames||[]),p.born,p.died,p.role,p.place,id].filter(Boolean).join(' '));}
+  function uniqueIds(values){return [...new Set((values||[]).filter(Boolean))];}
+  function unitForPerson(personId){return state.units.find(unit=>(unit.persons||[]).includes(personId));}
+  function parentUnitsFor(unitId){return state.units.filter(unit=>(unit.children||[]).includes(unitId));}
+  function unitBranch(unit){
+    if(!unit)return 'shared';
+    if(unit.branch&&unit.branch!=='shared')return unit.branch;
+    if(typeof MOTHER_UNITS!=='undefined'&&MOTHER_UNITS.has(unit.id))return 'mother';
+    if(typeof FATHER_UNITS!=='undefined'&&FATHER_UNITS.has(unit.id))return 'father';
+    return 'shared';
+  }
+  function unitLane(unit){
+    if(!unit)return '';
+    if(unit.lane)return unit.lane;
+    if(typeof MOTHER_MOTHER_UNITS!=='undefined'&&MOTHER_MOTHER_UNITS.has(unit.id))return 'mother-mother';
+    if(typeof MOTHER_FATHER_UNITS!=='undefined'&&MOTHER_FATHER_UNITS.has(unit.id))return 'mother-father';
+    if(typeof FATHER_MOTHER_UNITS!=='undefined'&&FATHER_MOTHER_UNITS.has(unit.id))return 'father-mother';
+    if(typeof FATHER_FATHER_UNITS!=='undefined'&&FATHER_FATHER_UNITS.has(unit.id))return 'father-father';
+    return '';
+  }
+  function personBranch(personId){
+    const person=state.people[personId];
+    if(person?.branch&&person.branch!=='shared')return person.branch;
+    return unitBranch(unitForPerson(personId));
+  }
+  function personRelations(current,currentId=''){
+    const siblingId=val('fSibling'),childId=val('fChild'),partnerId=val('fPartner');
+    let parentIds=uniqueIds([val('fParent1'),val('fParent2')]);
+    const sibling=state.people[siblingId];
+    const siblingUnit=unitForPerson(siblingId);
+    if(siblingId&&!parentIds.length){
+      parentIds=uniqueIds(sibling?.parents||[]);
+      if(!parentIds.length&&siblingUnit){
+        parentIds=uniqueIds(parentUnitsFor(siblingUnit.id).flatMap(unit=>unit.persons||[])).slice(0,2);
+      }
+    }
+    const chosenIds=[...parentIds,partnerId,childId,siblingId].filter(Boolean);
+    if(new Set(chosenIds).size!==chosenIds.length)throw new Error('Samma person kan inte väljas i flera olika relationer.');
+    const partnerUnit=unitForPerson(partnerId);
+    if(partnerUnit&&(partnerUnit.persons||[]).length>1&&!(partnerUnit.persons||[]).includes(currentId))throw new Error('Den valda maken eller makan ingår redan i ett parkort.');
+    let branch=val('fBranch');
+    if(branch==='shared'){
+      const inherited=[siblingId,childId,partnerId,...parentIds].map(personBranch).find(value=>value&&value!=='shared');
+      if(inherited)branch=inherited;
+    }
+    return {
+      parentIds,partnerId,childId,siblingId,branch,siblingUnit,partnerUnit,
+      childIds:uniqueIds([...(current.children||[]),childId]),
+      siblingIds:uniqueIds([...(current.siblings||[]),siblingId])
+    };
+  }
+  function personTreePlacement(personId,relations,direct){
+    const currentUnit=unitForPerson(personId);
+    const parentUnitIds=uniqueIds(relations.parentIds.map(id=>unitForPerson(id)?.id));
+    if(relations.siblingUnit)parentUnitsFor(relations.siblingUnit.id).forEach(unit=>parentUnitIds.push(unit.id));
+    const normalizedParentUnitIds=uniqueIds(parentUnitIds);
+    const childUnits=uniqueIds(relations.childIds.map(id=>unitForPerson(id)?.id)).map(id=>state.units.find(unit=>unit.id===id)).filter(Boolean);
+    const unplacedChildIds=relations.childIds.filter(id=>!unitForPerson(id));
+    const childUnit=childUnits[0];
+    const referenceUnit=currentUnit||relations.partnerUnit||relations.siblingUnit||childUnit||state.units.find(unit=>normalizedParentUnitIds.includes(unit.id));
+    const parentGenerations=normalizedParentUnitIds.map(id=>state.units.find(unit=>unit.id===id)?.gen).filter(Number.isFinite);
+    const generation=currentUnit?.gen??relations.partnerUnit?.gen??(parentGenerations.length?Math.max(...parentGenerations)+1:relations.siblingUnit?.gen??(Number.isFinite(childUnit?.gen)?childUnit.gen-1:8));
+    return {
+      unitId:currentUnit?.id||relations.partnerUnit?.id||`u_${personId}`,
+      generation:Math.max(0,generation),branch:relations.branch,lane:unitLane(referenceUnit),direct,
+      parentUnitIds:normalizedParentUnitIds,childUnitIds:[...childUnits.map(unit=>unit.id),...unplacedChildIds.map(id=>`u_${id}`)],
+      childUnitsToCreate:unplacedChildIds.map(id=>{const branch=personBranch(id);return {id:`u_${id}`,personId:id,generation:Math.max(0,generation+1),branch:branch==='shared'?relations.branch:branch,lane:unitLane(referenceUnit),direct:!!state.people[id]?.direct};}),
+      parentIds:relations.parentIds,childIds:relations.childIds,
+      partnerId:relations.partnerId,siblingIds:relations.siblingIds
+    };
+  }
   function enhancePersonPicker(select,excludeId=''){
     if(!select||select.classList.contains('is-enhanced'))return;
     select.classList.add('person-picker-native','is-enhanced');select.setAttribute('aria-hidden','true');select.tabIndex=-1;
@@ -381,7 +454,7 @@
     const title=isNew?'Ny person':p.name;
     ui.content.innerHTML=`<div class="editor-page">${heading(title,isNew?'Skapa en ny person med ett stabilt internt ID.':'Uppdatera personens samlade arkivuppgifter.',`<button class="secondary-button" data-go="people">${icon('arrow-left')} Till registret</button>`)}<form id="personForm" class="editor-layout"><div class="editor-card">
       <section class="editor-section"><h2>Grunduppgifter</h2><p>Huvudnamnet används i rubriker, register och länkar. Tidigare huvudnamn bevaras automatiskt så att äldre hänvisningar fortsätter fungera.</p><div class="form-grid">${field('Huvudnamn','fName',p.name)}${field('Sekundära namn','fAliases',aliasText(p,'person'),true,'textarea','Ett namn per rad, exempelvis äldre stavning, flicknamn eller tilltalsnamn.')}${field('Roll eller relation','fRole',p.role||'')}${field('Huvudplats eller gård','fPlace',p.place||'')}${field('Född','fBorn',p.born||'')}${field('Avliden','fDied',p.died||'')}<label class="field"><span>Släktled</span><select id="fBranch"><option value="mother"${p.branch==='mother'?' selected':''}>Bengtsson-ledet</option><option value="father"${p.branch==='father'?' selected':''}>Nilsson-ledet</option><option value="shared"${!['mother','father'].includes(p.branch)?' selected':''}>Gemensamt</option></select></label><label class="field"><span>Bevisstatus</span><select id="fStatus"><option value="confirmed"${p.status==='confirmed'?' selected':''}>Bekräftat</option><option value="likely"${p.status==='likely'?' selected':''}>Starkt sannolikt</option><option value="working"${p.status==='working'?' selected':''}>Arbetsantagande</option><option value="open"${p.status==='open'?' selected':''}>Öppet spår</option></select></label><label class="field"><span>Direkt led till Axel</span><select id="fDirect"><option value="yes"${p.direct?' selected':''}>Ja</option><option value="no"${!p.direct?' selected':''}>Nej</option></select></label><label class="field"><span>Levnadsstatus</span><select id="fLiving"><option value="yes"${p.isLiving?' selected':''}>Levande</option><option value="no"${!p.isLiving?' selected':''}>Avliden</option></select></label><label class="field full"><span>Synlighet</span><select id="fVisibility"><option value="family"${p.visibility==='family'?' selected':''}>Endast inloggad familj</option><option value="public"${p.visibility==='public'?' selected':''}>Offentlig</option><option value="private"${p.visibility==='private'?' selected':''}>Privat för redaktionen</option></select></label></div></section>
-      <section class="editor-section"><h2>Relationer</h2><p>Sök på namn, sekundärt namn, födelseår eller plats. Relationerna sparas med personernas interna ID och påverkas därför inte av namnändringar. Barn kopplas genom att välja förälder på barnets person.</p><div class="form-grid"><label class="field"><span>Förälder 1</span><select id="fParent1" data-person-picker>${personOptions(p.parents?.[0])}</select></label><label class="field"><span>Förälder 2</span><select id="fParent2" data-person-picker>${personOptions(p.parents?.[1])}</select></label><label class="field full"><span>Make eller maka</span><select id="fPartner" data-person-picker>${personOptions(p.partner||'')}</select></label></div></section>
+      <section class="editor-section"><h2>Relationer</h2><p>Sök på namn, sekundärt namn, födelseår eller plats. Relationerna sparas med personernas interna ID och påverkas därför inte av namnändringar. När du lägger till ett barn eller syskon kopplas relationen automatiskt åt båda håll.</p><div class="form-grid"><label class="field"><span>Förälder 1</span><select id="fParent1" data-person-picker>${personOptions(p.parents?.[0])}</select></label><label class="field"><span>Förälder 2</span><select id="fParent2" data-person-picker>${personOptions(p.parents?.[1])}</select></label><label class="field full"><span>Make eller maka</span><select id="fPartner" data-person-picker>${personOptions(p.partner||'')}</select></label><label class="field"><span>${isNew?'Befintligt barn':'Lägg till barn'}</span><select id="fChild" data-person-picker>${personOptions()}</select><small class="field-help">${p.children?.length?`${p.children.length} barn finns redan kopplade. `:''}Personen placeras som förälder ovanför barnets familjekort.</small></label><label class="field"><span>${isNew?'Befintligt syskon':'Lägg till syskon'}</span><select id="fSibling" data-person-picker>${personOptions()}</select><small class="field-help">${p.siblings?.length?`${p.siblings.length} syskon finns redan kopplade. `:''}Personen placeras bredvid syskonet och ärver dess kända föräldragren.</small></label></div></section>
       <section class="editor-section"><h2>Berättelse och källor</h2><p>En uppgift per rad. Datum i livslinjen skrivs som datum: notering.</p><div class="form-grid">${field('Livshistoria','fStory',(p.story||[]).join('\n'),true,'textarea')}${field('Livslinje','fTimeline',pairText(p.timeline),true,'textarea')}${field('Fakta','fFacts',pairText(p.facts),true,'textarea')}${field('Källor','fSources',(p.sources||[]).map(x=>typeof x==='string'?x:x.text||x.citation||'').filter(Boolean).join('\n'),true,'textarea')}${field('Osäkerheter och öppna spår','fUncertainties',(p.uncertainties||[]).join('\n'),true,'textarea')}</div></section>
       <section class="editor-section"><h2>Bilder</h2><p>Välj personens profilbild och samla porträtt, familjefoton och dokumentbilder i galleriet.</p>${profileImageEditor(id,p,isNew)}${galleryEditor('person',id,p,isNew)}</section></div>
       <aside class="editor-side"><div class="save-card"><h3>Spara</h3><p class="save-note">${canReview()?'Ändringen publiceras direkt och registreras i historiken.':'Ändringen skickas till en redaktör för granskning innan den publiceras.'} Utkastet sparas automatiskt i den här fliken medan du arbetar.</p><button class="primary-button" type="submit">${canReview()?'Publicera ändring':'Skicka för granskning'}</button></div>${!isNew?`<div class="save-card"><h3>Publik sida</h3><a class="secondary-button" href="${esc(publicUrl('person',p))}">${icon('external-link')} Öppna personsida</a></div>`:''}</aside></form></div>`;
@@ -396,7 +469,12 @@
     event.preventDefault(); const button=event.submitter; button.disabled=true;
     const name=document.getElementById('fName').value.trim(); if(!name){toast('Personen behöver ett namn.',true);button.disabled=false;return;}
     const isNew=id==='ny'; const finalId=isNew?entityId('person'):id;
-    const aliases=editedAliases(val('fAliases'),name,current);const payload={...clone(current),name,slug:current.slug||uniqueSlug('person',name),aliases,alt:aliases.join(' / '),formerNames:formerNames(current,name),role:val('fRole'),place:val('fPlace'),born:val('fBorn'),died:val('fDied'),branch:val('fBranch'),status:val('fStatus'),direct:val('fDirect')==='yes',isLiving:val('fLiving')==='yes',visibility:val('fVisibility'),parents:[val('fParent1'),val('fParent2')].filter(Boolean),partner:val('fPartner'),story:rows(val('fStory')),timeline:pairs(val('fTimeline')),facts:pairs(val('fFacts')),sources:rows(val('fSources')),uncertainties:rows(val('fUncertainties')),photo:val('fPhoto'),photoCrop:profileCropValue(),images:images(val('fImages'))};
+    let relations;
+    try{relations=personRelations(current,isNew?'':id);}
+    catch(error){toast(error.message,true);button.disabled=false;return;}
+    const aliases=editedAliases(val('fAliases'),name,current);const direct=val('fDirect')==='yes';const payload={...clone(current),name,slug:current.slug||uniqueSlug('person',name),aliases,alt:aliases.join(' / '),formerNames:formerNames(current,name),role:val('fRole'),place:val('fPlace'),born:val('fBorn'),died:val('fDied'),branch:relations.branch,status:val('fStatus'),direct,isLiving:val('fLiving')==='yes',visibility:val('fVisibility'),parents:relations.parentIds,children:relations.childIds,siblings:relations.siblingIds,partner:relations.partnerId,story:rows(val('fStory')),timeline:pairs(val('fTimeline')),facts:pairs(val('fFacts')),sources:rows(val('fSources')),uncertainties:rows(val('fUncertainties')),photo:val('fPhoto'),photoCrop:profileCropValue(),images:images(val('fImages'))};
+    const hasNewTreeRelation=isNew||relations.childId||relations.siblingId||relations.parentIds.some(parentId=>!(current.parents||[]).includes(parentId))||(relations.partnerId&&relations.partnerId!==current.partner);
+    if(hasNewTreeRelation)payload.treePlacement=personTreePlacement(finalId,relations,direct);
     try{const result=await window.FamilyData.submitChange('person',finalId,payload,isNew?'create':'update');clearEditorDraft(event.currentTarget);toast(result.mode==='published'?publishedMessage('Personen',payload.visibility):'Ändringen är skickad för granskning.');await refreshData();navigate('people',result.mode==='published'?finalId:null);}catch(error){toast(error.message||'Ändringen kunde inte sparas.',true);}finally{button.disabled=false;}
   }
 

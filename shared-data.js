@@ -256,20 +256,94 @@
     if(error) throw error;
   }
 
+  function uniqueIds(values){ return [...new Set((values || []).filter(Boolean))]; }
+
+  async function loadFamilyUnit(id){
+    if(!id) return null;
+    const {data,error} = await state.client.from('family_units').select('id,generation,branch,person_ids,child_unit_ids,content').eq('id',id).maybeSingle();
+    if(error) throw error;
+    return data;
+  }
+
+  async function updatePersonRelations(id, updater){
+    if(!id) return;
+    const {data,error:loadError} = await state.client.from('people').select('content').eq('id',id).maybeSingle();
+    if(loadError) throw loadError;
+    if(!data) return;
+    const content = updater({...data.content});
+    const {error} = await state.client.from('people').update({content,updated_by:state.user.id}).eq('id',id);
+    if(error) throw error;
+  }
+
+  async function applyTreePlacement(personId, placement){
+    if(!placement?.unitId) return;
+    for(const childUnit of placement.childUnitsToCreate || []){
+      const existingChildUnit = await loadFamilyUnit(childUnit.id);
+      if(existingChildUnit) continue;
+      const {error} = await state.client.from('family_units').upsert({
+        id:childUnit.id,generation:childUnit.generation ?? ((placement.generation ?? 7)+1),
+        branch:childUnit.branch || placement.branch || 'shared',person_ids:[childUnit.personId],child_unit_ids:[],
+        content:{...(childUnit.lane?{lane:childUnit.lane}:{}),direct:!!childUnit.direct,heir:!!childUnit.direct}
+      });
+      if(error) throw error;
+    }
+    const existing = await loadFamilyUnit(placement.unitId);
+    const content = {
+      ...(existing?.content || {}),
+      ...(placement.lane ? {lane:placement.lane} : {}),
+      direct:!!(existing?.content?.direct || placement.direct),
+      heir:!!(existing?.content?.heir || placement.direct)
+    };
+    const unitRow = {
+      id:placement.unitId,
+      generation:existing?.generation ?? placement.generation ?? 8,
+      branch:(existing?.branch && existing.branch !== 'shared') ? existing.branch : (placement.branch || existing?.branch || 'shared'),
+      person_ids:uniqueIds([...(existing?.person_ids || []),personId]),
+      child_unit_ids:uniqueIds([...(existing?.child_unit_ids || []),...(placement.childUnitIds || [])]),
+      content
+    };
+    const {error:unitError} = await state.client.from('family_units').upsert(unitRow);
+    if(unitError) throw unitError;
+
+    for(const parentUnitId of uniqueIds(placement.parentUnitIds)){
+      const parentUnit = await loadFamilyUnit(parentUnitId);
+      if(!parentUnit) continue;
+      const {error} = await state.client.from('family_units').update({
+        child_unit_ids:uniqueIds([...(parentUnit.child_unit_ids || []),placement.unitId])
+      }).eq('id',parentUnitId);
+      if(error) throw error;
+    }
+
+    for(const parentId of uniqueIds(placement.parentIds)){
+      await updatePersonRelations(parentId,current=>({...current,children:uniqueIds([...(current.children || []),personId])}));
+    }
+    for(const childId of uniqueIds(placement.childIds)){
+      await updatePersonRelations(childId,current=>({...current,parents:uniqueIds([...(current.parents || []),personId])}));
+    }
+    if(placement.partnerId){
+      await updatePersonRelations(placement.partnerId,current=>({...current,partner:personId}));
+    }
+    for(const siblingId of uniqueIds(placement.siblingIds || [placement.siblingId])){
+      await updatePersonRelations(siblingId,current=>({...current,siblings:uniqueIds([...(current.siblings || []),personId])}));
+    }
+  }
+
   async function submitChange(entityType, entityId, payload, operation='update'){
     if(!state.client || !state.user) return {mode:'local'};
     const role = state.profile?.role || 'contributor';
     if(role === 'editor' || role === 'admin'){
       if(entityType === 'person'){
-        const aliases = uniqueNames(payload.aliases || payload.alt || [],payload.name);
-        const content = {...payload,aliases,alt:aliases.join(' / ')};
+        const {treePlacement,...personPayload} = payload;
+        const aliases = uniqueNames(personPayload.aliases || personPayload.alt || [],personPayload.name);
+        const content = {...personPayload,aliases,alt:aliases.join(' / ')};
         const row = {
-          id:entityId, slug:payload.slug || entityId.replaceAll('_','-'), name:payload.name,
-          alt_name:aliases.join(' / ') || null, branch:payload.branch || 'shared', is_direct:!!payload.direct,
-          is_living:!!payload.isLiving, visibility:payload.visibility || 'public', content,
+          id:entityId, slug:personPayload.slug || entityId.replaceAll('_','-'), name:personPayload.name,
+          alt_name:aliases.join(' / ') || null, branch:personPayload.branch || 'shared', is_direct:!!personPayload.direct,
+          is_living:!!personPayload.isLiving, visibility:personPayload.visibility || 'public', content,
           updated_by:state.user.id
         };
         const {error} = await state.client.from('people').upsert(row); if(error) throw error;
+        if(treePlacement) await applyTreePlacement(entityId,treePlacement);
       }else if(entityType === 'place'){
         const content = {...payload,aliases:uniqueNames(payload.aliases || [],payload.name)};
         const row = {

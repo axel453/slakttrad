@@ -17,6 +17,7 @@ function uniqueNames(values, primaryName=""){
     return true;
   });
 }
+function uniqueIds(values){ return [...new Set((values || []).filter(Boolean))]; }
 function personAliases(person){
   const explicit = Array.isArray(person?.aliases) ? person.aliases : [];
   return uniqueNames(explicit.length ? explicit : [person?.alt || ""],person?.name);
@@ -648,9 +649,9 @@ function relChip(id){
   return `<button class="relchip" data-id="${id}">${escapeHtml(p.name)} ${yr}</button>`;
 }
 function siblingIds(id){
-  const p = PEOPLE[id]; if(!p?.parents?.length) return [];
-  const ids = new Set();
-  p.parents.forEach(parentId=>{
+  const p = PEOPLE[id]; if(!p) return [];
+  const ids = new Set((p.siblings || []).filter(siblingId=>siblingId !== id && PEOPLE[siblingId]));
+  (p.parents || []).forEach(parentId=>{
     (PEOPLE[parentId]?.children || []).forEach(childId=>{
       if(childId !== id && PEOPLE[childId]) ids.add(childId);
     });
@@ -2457,31 +2458,60 @@ function initAccessibilityControls(){
     saveAccessibilityPrefs(prefs);
   });
 }
+function registerUnitBranch(unit){
+  const lane = unit.lane || unit.fatherLane || "";
+  if(unit.branch === "mother"){
+    MOTHER_UNITS.add(unit.id);
+    if(lane === "mother-mother" || lane === "mother-karin") MOTHER_MOTHER_UNITS.add(unit.id);
+    if(lane === "mother-father" || lane === "mother-harry") MOTHER_FATHER_UNITS.add(unit.id);
+  }
+  if(unit.branch === "father"){
+    FATHER_UNITS.add(unit.id);
+    if(lane === "father-mother") FATHER_MOTHER_UNITS.add(unit.id);
+    if(lane === "father-father") FATHER_FATHER_UNITS.add(unit.id);
+  }
+  if(unit.direct || unit.heir) DIRECT_UNITS.add(unit.id);
+}
+function rebuildUnitIndexes(){
+  Object.keys(UNIT_BY_ID).forEach(id=>delete UNIT_BY_ID[id]);
+  Object.keys(PERSON_TO_UNIT).forEach(id=>delete PERSON_TO_UNIT[id]);
+  Object.keys(PARTNER).forEach(id=>delete PARTNER[id]);
+  EDGES.splice(0,EDGES.length);
+  UNITS.forEach(unit=>{
+    UNIT_BY_ID[unit.id] = unit;
+    registerUnitBranch(unit);
+    (unit.persons || []).forEach(personId=>{ if(!PERSON_TO_UNIT[personId]) PERSON_TO_UNIT[personId] = unit.id; });
+    if((unit.persons || []).length === 2){
+      PARTNER[unit.persons[0]] = unit.persons[1];
+      PARTNER[unit.persons[1]] = unit.persons[0];
+    }
+    (unit.children || []).forEach(childId=>EDGES.push({from:unit.id,to:childId}));
+  });
+  EDGES.forEach(edge=>{
+    if(DIRECT_UNITS.has(edge.from) && DIRECT_UNITS.has(edge.to)) DIRECT_EDGES.add(`${edge.from}>${edge.to}`);
+  });
+}
 function applyManualUnit(unit){
   if(UNIT_BY_ID[unit.id]) return;
   const normalized = {
+    ...unit,
     id:unit.id,
     gen:Number.isFinite(unit.gen) ? unit.gen : 8,
-    persons:unit.persons || [],
-    children:unit.children || []
+    persons:[...(unit.persons || [])],
+    children:[...(unit.children || [])]
   };
   if(unit.direct) normalized.heir = true;
   UNITS.push(normalized);
   UNIT_BY_ID[normalized.id] = normalized;
   normalized.persons.forEach(pid=>{ if(!PERSON_TO_UNIT[pid]) PERSON_TO_UNIT[pid] = normalized.id; });
-  if(unit.branch === "mother") MOTHER_UNITS.add(normalized.id);
-  if(unit.branch === "father"){
-    FATHER_UNITS.add(normalized.id);
-    if(unit.fatherLane === "father-mother") FATHER_MOTHER_UNITS.add(normalized.id);
-    else FATHER_FATHER_UNITS.add(normalized.id);
-  }
-  if(unit.direct) DIRECT_UNITS.add(normalized.id);
-  if(unit.parentUnitId && UNIT_BY_ID[unit.parentUnitId]){
-    const parent = UNIT_BY_ID[unit.parentUnitId];
+  registerUnitBranch(normalized);
+  uniqueIds([unit.parentUnitId,...(unit.parentUnitIds || [])]).forEach(parentUnitId=>{
+    if(!UNIT_BY_ID[parentUnitId]) return;
+    const parent = UNIT_BY_ID[parentUnitId];
     if(!parent.children.includes(normalized.id)) parent.children.push(normalized.id);
-    if(!EDGES.some(edge=>edge.from===unit.parentUnitId && edge.to===normalized.id)) EDGES.push({from:unit.parentUnitId,to:normalized.id});
-    if(unit.direct) DIRECT_EDGES.add(`${unit.parentUnitId}>${normalized.id}`);
-  }
+    if(!EDGES.some(edge=>edge.from===parentUnitId && edge.to===normalized.id)) EDGES.push({from:parentUnitId,to:normalized.id});
+    if(unit.direct) DIRECT_EDGES.add(`${parentUnitId}>${normalized.id}`);
+  });
 }
 function applyManualPerson(id, person){
   if(PEOPLE[id]) return;
@@ -2507,10 +2537,18 @@ function applyManualPerson(id, person){
     PARTNER[person.partner] = id;
   }
 }
-function removePersonRelationLinks(id, beforeParents, beforePartner){
+function removePersonRelationLinks(id, beforeParents, beforePartner, beforeChildren=[], beforeSiblings=[]){
   beforeParents.forEach(parentId=>{
     const parent = PEOPLE[parentId];
     if(parent?.children) parent.children = parent.children.filter(childId=>childId !== id);
+  });
+  beforeChildren.forEach(childId=>{
+    const child = PEOPLE[childId];
+    if(child?.parents) child.parents = child.parents.filter(parentId=>parentId !== id);
+  });
+  beforeSiblings.forEach(siblingId=>{
+    const sibling = PEOPLE[siblingId];
+    if(sibling?.siblings) sibling.siblings = sibling.siblings.filter(otherId=>otherId !== id);
   });
   if(beforePartner && PARTNER[beforePartner] === id) delete PARTNER[beforePartner];
   delete PARTNER[id];
@@ -2522,6 +2560,18 @@ function addPersonRelationLinks(id, person){
     if(!parent.children) parent.children = [];
     if(!parent.children.includes(id)) parent.children.push(id);
   });
+  (person.children || []).forEach(childId=>{
+    const child = PEOPLE[childId];
+    if(!child) return;
+    if(!child.parents) child.parents = [];
+    if(!child.parents.includes(id)) child.parents.push(id);
+  });
+  (person.siblings || []).forEach(siblingId=>{
+    const sibling = PEOPLE[siblingId];
+    if(!sibling) return;
+    if(!sibling.siblings) sibling.siblings = [];
+    if(!sibling.siblings.includes(id)) sibling.siblings.push(id);
+  });
   if(person.partner && PEOPLE[person.partner]){
     PARTNER[id] = person.partner;
     PARTNER[person.partner] = id;
@@ -2531,8 +2581,10 @@ function applyManualPersonEdit(id, edit){
   const person = PEOPLE[id]; if(!person) return;
   invalidateEntityReferenceCache();
   const beforeParents = [...(person.parents || [])];
+  const beforeChildren = [...(person.children || [])];
+  const beforeSiblings = [...(person.siblings || [])];
   const beforePartner = PARTNER[id] || person.partner || "";
-  removePersonRelationLinks(id, beforeParents, beforePartner);
+  removePersonRelationLinks(id, beforeParents, beforePartner, beforeChildren, beforeSiblings);
   ["name","alt","aliases","formerNames","role","born","died","status","place","photo"].forEach(key=>{
     person[key] = edit[key] || "";
   });
@@ -2544,6 +2596,8 @@ function applyManualPersonEdit(id, edit){
   person.sources = edit.sources || [];
   person.uncertainties = edit.uncertainties || [];
   person.parents = edit.parents || [];
+  person.children = edit.children || person.children || [];
+  person.siblings = edit.siblings || person.siblings || [];
   person.partner = edit.partner || "";
   person.direct = !!edit.direct;
   addPersonRelationLinks(id, person);
@@ -2628,8 +2682,11 @@ function applySharedSnapshot(snapshot){
     // record until migration 005 has been applied so it cannot recreate a duplicate.
     if(id === "nils_johan_bengtsson" && PEOPLE.nils_johan_bengtsson_1869) return;
     normalizePersonNames(person);
-    if(PEOPLE[id]) Object.assign(PEOPLE[id], person);
-    else applyManualPerson(id, person);
+    if(PEOPLE[id]){
+      const current=PEOPLE[id];
+      removePersonRelationLinks(id,[...(current.parents||[])],PARTNER[id]||current.partner||"",[...(current.children||[])],[...(current.siblings||[])]);
+      Object.assign(current,person);
+    }else applyManualPerson(id, person);
     if(person.direct) DIRECT_HEIRS.add(id);
   });
   (snapshot.units || []).forEach(unit=>{
@@ -2656,6 +2713,8 @@ function applySharedSnapshot(snapshot){
   Object.entries(manualData.edits).forEach(([id,edit])=>{
     if(!sharedPeopleIds.has(id)) applyManualPersonEdit(id,edit);
   });
+  rebuildUnitIndexes();
+  Object.entries(PEOPLE).forEach(([id,person])=>addPersonRelationLinks(id,person));
   invalidateEntityReferenceCache();
   const mode=activePageMode();
   if(["personarkiv","gardarkiv","emigrantarkiv"].includes(mode)) refreshArchiveFilterOptions();
@@ -3344,7 +3403,7 @@ function scheduleSharedArchive(){
   const load=async()=>{
     try{
       await loadExternalScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2");
-      await loadExternalScript(appAssetUrl("shared-data.js?v=20260906a"));
+      await loadExternalScript(appAssetUrl("shared-data.js?v=20260910d"));
     }catch(error){
       document.dispatchEvent(new CustomEvent('family-data-status',{detail:{mode:'error',message:'Kunde inte ansluta familjearkivet',error}}));
     }
