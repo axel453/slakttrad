@@ -24,10 +24,11 @@
 
   async function loadSnapshot(){
     if(!state.client) return null;
-    const [peopleResult, placesResult, unitsResult] = await Promise.all([
+    const [peopleResult, placesResult, unitsResult, tombstonesResult] = await Promise.all([
       state.client.from('people').select('id,name,slug,alt_name,branch,is_direct,is_living,visibility,content'),
       state.client.from('places').select('id,name,slug,area,latitude,longitude,visibility,content'),
-      state.client.from('family_units').select('id,generation,branch,person_ids,child_unit_ids,content')
+      state.client.from('family_units').select('id,generation,branch,person_ids,child_unit_ids,content'),
+      state.client.from('archive_tombstones').select('entity_type,entity_id')
     ]);
     const error = peopleResult.error || placesResult.error || unitsResult.error;
     if(error) throw error;
@@ -47,7 +48,12 @@
       units:(unitsResult.data || []).map(row=>({
         ...(row.content || {}), id:row.id, gen:row.generation, branch:row.branch,
         persons:row.person_ids || [], children:row.child_unit_ids || []
-      }))
+      })),
+      deleted:{
+        people:(tombstonesResult.data || []).filter(row=>row.entity_type === 'person').map(row=>row.entity_id),
+        places:(tombstonesResult.data || []).filter(row=>row.entity_type === 'place').map(row=>row.entity_id)
+      },
+      deletionSupported:!tombstonesResult.error
     };
   }
 
@@ -235,10 +241,7 @@
     if(loadError) throw loadError;
     if(statusValue === 'approved'){
       if(request.operation === 'delete'){
-        const table = request.entity_type === 'person' ? 'people' : request.entity_type === 'place' ? 'places' : null;
-        if(!table) throw new Error('Den här typen av radering stöds inte ännu.');
-        const {error:deleteError} = await state.client.from(table).delete().eq('id',request.entity_id);
-        if(deleteError) throw deleteError;
+        await deleteArchiveEntity(request.entity_type,request.entity_id,request.proposed_data || {});
       }else{
         await submitChange(request.entity_type,request.entity_id,request.proposed_data,request.operation);
       }
@@ -328,8 +331,33 @@
     }
   }
 
+  async function deleteArchiveEntity(entityType,entityId,payload={}){
+    if(!state.client || !state.user) throw new Error('Du behöver logga in först.');
+    if(!['person','place'].includes(entityType)) throw new Error('Den här typen av radering stöds inte.');
+    const role = state.profile?.role || 'contributor';
+    if(role !== 'editor' && role !== 'admin'){
+      const {error} = await state.client.from('change_requests').insert({
+        entity_type:entityType,entity_id:entityId,operation:'delete',proposed_data:payload,
+        submitted_by:state.user.id
+      });
+      if(error) throw error;
+      return {mode:'pending'};
+    }
+    const {error} = await state.client.rpc('delete_archive_entity',{
+      p_entity_type:entityType,p_entity_id:entityId,p_record_name:payload.name || null
+    });
+    if(error){
+      if(['PGRST202','42883'].includes(error.code) || /delete_archive_entity|archive_tombstones/i.test(error.message || '')){
+        throw new Error('Radering behöver först aktiveras i Supabase med databasuppdatering 007.');
+      }
+      throw error;
+    }
+    return {mode:'published'};
+  }
+
   async function submitChange(entityType, entityId, payload, operation='update'){
     if(!state.client || !state.user) return {mode:'local'};
+    if(operation === 'delete') return deleteArchiveEntity(entityType,entityId,payload || {});
     const role = state.profile?.role || 'contributor';
     if(role === 'editor' || role === 'admin'){
       if(entityType === 'person'){
@@ -363,7 +391,7 @@
     return {mode:'pending'};
   }
 
-  window.FamilyData = {init,status,loadSnapshot,refreshSnapshot,loadAdminOverview,signInWithPassword,sendPasswordReset,updatePassword,sendMagicLink,signOut,uploadPublicImage,submitChange,reviewChange,updateMemberRole};
+  window.FamilyData = {init,status,loadSnapshot,refreshSnapshot,loadAdminOverview,signInWithPassword,sendPasswordReset,updatePassword,sendMagicLink,signOut,uploadPublicImage,submitChange,deleteArchiveEntity,reviewChange,updateMemberRole};
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded',init,{once:true});
   else init();
 })();

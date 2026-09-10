@@ -292,12 +292,18 @@
     ui.loading.hidden=false;
     try{
       const [snapshot,overview]=await Promise.all([window.FamilyData.loadSnapshot(),window.FamilyData.loadAdminOverview()]);
-      state.people={...fallbackPeople,...(snapshot?.people||{})};
+      const deletedPeople=new Set(snapshot?.deleted?.people||[]);
+      const deletedPlaces=new Set(snapshot?.deleted?.places||[]);
+      state.people=Object.fromEntries(Object.entries({...fallbackPeople,...(snapshot?.people||{})}).filter(([id])=>!deletedPeople.has(id)));
       const places=new Map(fallbackPlaces.map(item=>[item.id,item]));
       (snapshot?.places||[]).forEach(item=>places.set(item.id,{...(places.get(item.id)||{}),...item}));
       const units=new Map(fallbackUnits.map(item=>[item.id,item]));
       (snapshot?.units||[]).forEach(item=>units.set(item.id,{...(units.get(item.id)||{}),...item}));
-      state.places=[...places.values()]; state.units=[...units.values()]; state.overview=overview; state.ready=true;
+      state.places=[...places.values()].filter(item=>!deletedPlaces.has(item.id));
+      const visibleUnits=[...units.values()].map(unit=>({...unit,persons:(unit.persons||[]).filter(id=>!deletedPeople.has(id))})).filter(unit=>unit.persons.length);
+      const visibleUnitIds=new Set(visibleUnits.map(unit=>unit.id));
+      state.units=visibleUnits.map(unit=>({...unit,children:(unit.children||[]).filter(id=>visibleUnitIds.has(id))}));
+      state.overview=overview; state.ready=true;
       renderRoute(); if(showToast) toast('Familjearkivet är uppdaterat.');
     }catch(error){ toast(error.message||'Familjearkivet kunde inte hämtas.',true); }
     finally{ ui.loading.hidden=true; }
@@ -458,7 +464,7 @@
       <section class="editor-section"><h2>Relationer</h2><p>Sök på namn, sekundärt namn, födelseår eller plats. Relationerna sparas med personernas interna ID och påverkas därför inte av namnändringar. När du lägger till ett barn eller syskon kopplas relationen automatiskt åt båda håll.</p><div class="form-grid"><label class="field"><span>Förälder 1</span><select id="fParent1" data-person-picker>${personOptions(p.parents?.[0])}</select></label><label class="field"><span>Förälder 2</span><select id="fParent2" data-person-picker>${personOptions(p.parents?.[1])}</select></label><label class="field full"><span>Make eller maka</span><select id="fPartner" data-person-picker>${personOptions(p.partner||'')}</select></label><label class="field"><span>${isNew?'Befintligt barn':'Lägg till barn'}</span><select id="fChild" data-person-picker>${personOptions()}</select><small class="field-help">${p.children?.length?`${p.children.length} barn finns redan kopplade. `:''}Personen placeras som förälder ovanför barnets familjekort.</small></label><label class="field"><span>${isNew?'Befintligt syskon':'Lägg till syskon'}</span><select id="fSibling" data-person-picker>${personOptions()}</select><small class="field-help">${p.siblings?.length?`${p.siblings.length} syskon finns redan kopplade. `:''}Personen placeras bredvid syskonet och ärver dess kända föräldragren.</small></label></div></section>
       <section class="editor-section"><h2>Berättelse och källor</h2><p>En uppgift per rad. Datum i livslinjen skrivs som datum: notering.</p><div class="form-grid">${field('Livshistoria','fStory',(p.story||[]).join('\n'),true,'textarea')}${field('Livslinje','fTimeline',pairText(p.timeline),true,'textarea')}${field('Fakta','fFacts',pairText(p.facts),true,'textarea')}${field('Källor','fSources',(p.sources||[]).map(x=>typeof x==='string'?x:x.text||x.citation||'').filter(Boolean).join('\n'),true,'textarea')}${field('Osäkerheter och öppna spår','fUncertainties',(p.uncertainties||[]).join('\n'),true,'textarea')}</div></section>
       <section class="editor-section"><h2>Bilder</h2><p>Välj personens profilbild och samla porträtt, familjefoton och dokumentbilder i galleriet.</p>${profileImageEditor(id,p,isNew)}${galleryEditor('person',id,p,isNew)}</section></div>
-      <aside class="editor-side"><div class="save-card"><h3>Spara</h3><p class="save-note">${canReview()?'Ändringen publiceras direkt och registreras i historiken.':'Ändringen skickas till en redaktör för granskning innan den publiceras.'} Utkastet sparas automatiskt i den här fliken medan du arbetar.</p><button class="primary-button" type="submit">${canReview()?'Publicera ändring':'Skicka för granskning'}</button></div>${!isNew?`<div class="save-card"><h3>Publik sida</h3><a class="secondary-button" href="${esc(publicUrl('person',p))}">${icon('external-link')} Öppna personsida</a></div>`:''}</aside></form></div>`;
+      <aside class="editor-side"><div class="save-card"><h3>Spara</h3><p class="save-note">${canReview()?'Ändringen publiceras direkt och registreras i historiken.':'Ändringen skickas till en redaktör för granskning innan den publiceras.'} Utkastet sparas automatiskt i den här fliken medan du arbetar.</p><button class="primary-button" type="submit">${canReview()?'Publicera ändring':'Skicka för granskning'}</button></div>${!isNew?`<div class="save-card"><h3>Publik sida</h3><a class="secondary-button" href="${esc(publicUrl('person',p))}">${icon('external-link')} Öppna personsida</a></div><div class="save-card danger-zone"><h3>Ta bort person</h3><p class="save-note">${canReview()?'Personen tas bort från webbplatsen och alla familjekopplingar städas.':'En begäran skickas till en redaktör för godkännande.'}</p><button class="danger-button" type="button" data-delete-entity="person" data-entity-id="${esc(id)}" data-entity-name="${esc(p.name)}">${icon('trash-2')} Ta bort person</button></div>`:''}</aside></form></div>`;
     const form=document.getElementById('personForm');
     restoreEditorDraft(form,'person',id);
     refreshRestoredMedia(form);
@@ -485,7 +491,7 @@
       <section class="editor-section"><h2>Grunduppgifter</h2><p>Huvudnamnet används i rubriker, register och länkar. Tidigare huvudnamn bevaras automatiskt.</p><div class="form-grid">${field('Huvudnamn','fName',p.name)}${field('Område','fArea',p.area||'')}${field('Latitud','fLat',p.lat??'',false,'text')}${field('Longitud','fLng',p.lng??'',false,'text')}${field('Sekundära namn','fAliases',aliasText(p),true,'textarea','Ett namn per rad, exempelvis äldre stavning eller annan gårdsbeteckning.')}<label class="field full"><span>Synlighet</span><select id="fVisibility"><option value="public"${p.visibility==='public'?' selected':''}>Offentlig</option><option value="family"${p.visibility==='family'?' selected':''}>Endast inloggad familj</option><option value="private"${p.visibility==='private'?' selected':''}>Privat för redaktionen</option></select></label></div></section>
       <section class="editor-section"><h2>Platsens historia</h2><p>Sammanfatta platsen först och bygg därefter ut berättelse och tidslinje.</p><div class="form-grid">${field('Kort sammanfattning','fNote',p.note||'',true,'textarea')}${field('Historia','fStory',(p.story||[]).join('\n'),true,'textarea')}${field('Tidslinje','fTimeline',pairText(p.timeline),true,'textarea')}${field('Källor','fSources',(p.sources||[]).map(x=>typeof x==='string'?x:x.text||x.citation||'').filter(Boolean).join('\n'),true,'textarea')}${field('Osäkerheter och öppna spår','fUncertainties',(p.uncertainties||[]).join('\n'),true,'textarea')}</div></section>
       <section class="editor-section"><h2>Bilder och sidhuvud</h2><p>Samla gårdsbilder, kartor och dokument med tydliga bildtexter. En liggande galleribild kan användas som platsens omslag.</p>${coverImageEditor(id,p,isNew)}${galleryEditor('place',id,p,isNew)}</section></div>
-      <aside class="editor-side"><div class="save-card"><h3>Spara</h3><p class="save-note">${canReview()?'Platskortet publiceras direkt.':'Platskortet skickas för granskning.'} Utkastet sparas automatiskt i den här fliken medan du arbetar.</p><button class="primary-button" type="submit">${canReview()?'Publicera ändring':'Skicka för granskning'}</button></div>${!isNew?`<div class="save-card"><h3>Publik sida</h3><a class="secondary-button" href="${esc(publicUrl('place',p))}">${icon('external-link')} Öppna platssida</a></div>`:''}</aside></form></div>`;
+      <aside class="editor-side"><div class="save-card"><h3>Spara</h3><p class="save-note">${canReview()?'Platskortet publiceras direkt.':'Platskortet skickas för granskning.'} Utkastet sparas automatiskt i den här fliken medan du arbetar.</p><button class="primary-button" type="submit">${canReview()?'Publicera ändring':'Skicka för granskning'}</button></div>${!isNew?`<div class="save-card"><h3>Publik sida</h3><a class="secondary-button" href="${esc(publicUrl('place',p))}">${icon('external-link')} Öppna platssida</a></div><div class="save-card danger-zone"><h3>Ta bort plats</h3><p class="save-note">${canReview()?'Platsen tas bort från webbplatsen. Personernas historiska fritext bevaras.':'En begäran skickas till en redaktör för godkännande.'}</p><button class="danger-button" type="button" data-delete-entity="place" data-entity-id="${esc(id)}" data-entity-name="${esc(p.name)}">${icon('trash-2')} Ta bort plats</button></div>`:''}</aside></form></div>`;
     const form=document.getElementById('placeForm');
     restoreEditorDraft(form,'place',id);
     refreshRestoredMedia(form);
@@ -521,6 +527,22 @@
     try{await window.FamilyData.reviewChange(button.dataset.changeId,status);toast(status==='approved'?'Ändringen är godkänd och publicerad.':'Ändringen är avslagen.');await refreshData();}
     catch(error){toast(error.message||'Granskningen misslyckades.',true);}finally{button.disabled=false;}
   }
+  async function handleDelete(button){
+    const type=button.dataset.deleteEntity,id=button.dataset.entityId,name=button.dataset.entityName||'posten';
+    const noun=type==='person'?'personen':'platsen';
+    const consequence=canReview()
+      ? `Detta tar bort ${noun} från webbplatsen. Åtgärden kan inte ångras från adminpanelen.`
+      : `Detta skickar en begäran om att ta bort ${noun} till en redaktör.`;
+    if(!window.confirm(`Vill du ta bort ${name}?\n\n${consequence}`))return;
+    button.disabled=true;
+    try{
+      const result=await window.FamilyData.deleteArchiveEntity(type,id,{name});
+      clearEditorDraft(button.closest('form'));
+      navigate(type==='person'?'people':'places');
+      if(result.mode==='published')await refreshData();
+      toast(result.mode==='published'?`${name} är borttagen från webbplatsen.`:'Begäran om borttagning är skickad för granskning.');
+    }catch(error){toast(error.message||'Posten kunde inte tas bort.',true);button.disabled=false;}
+  }
   function bind(){
     document.getElementById('adminLoginForm').addEventListener('submit',async event=>{event.preventDefault();const message=document.getElementById('loginMessage'),button=event.submitter||event.currentTarget.querySelector('[type="submit"]');message.textContent='Loggar in...';button.disabled=true;try{await window.FamilyData.signInWithPassword(document.getElementById('adminEmail').value.trim(),document.getElementById('adminPassword').value);message.textContent='';}catch(error){message.textContent=error.message||'Inloggningen misslyckades.';}finally{button.disabled=false;}});
     document.getElementById('forgotPassword').addEventListener('click',async event=>{const email=document.getElementById('adminEmail').value.trim(),message=document.getElementById('loginMessage');if(!email){message.textContent='Fyll i din e-postadress först.';document.getElementById('adminEmail').focus();return;}event.currentTarget.disabled=true;message.textContent='Skickar återställningslänk...';try{await window.FamilyData.sendPasswordReset(email);message.textContent='Ett mejl har skickats. Följ länken för att välja lösenord.';}catch(error){message.textContent=error.message||'Länken kunde inte skickas.';}finally{event.currentTarget.disabled=false;}});
@@ -537,6 +559,7 @@
       const person=event.target.closest('[data-edit-person]');if(person){navigate('people',person.dataset.editPerson);return;}
       const place=event.target.closest('[data-edit-place]');if(place){navigate('places',place.dataset.editPlace);return;}
       const review=event.target.closest('[data-review]');if(review){handleReview(review);return;}
+      const deleteEntity=event.target.closest('[data-delete-entity]');if(deleteEntity){handleDelete(deleteEntity);return;}
       const removeImage=event.target.closest('[data-gallery-remove]');if(removeImage){const manager=removeImage.closest('[data-gallery-manager]'),source=manager.querySelector('[data-gallery-source]'),items=images(source.value),removed=items[Number(removeImage.dataset.galleryRemove)],cover=document.getElementById('fCoverImage');items.splice(Number(removeImage.dataset.galleryRemove),1);source.value=imageText(items);if(cover&&removed?.src===cover.value){cover.value='';setCoverPreview('');}refreshGalleryManager(manager);return;}
       const profileImage=event.target.closest('[data-gallery-profile]');if(profileImage){const manager=profileImage.closest('[data-gallery-manager]'),item=images(manager.querySelector('[data-gallery-source]').value)[Number(profileImage.dataset.galleryProfile)],field=document.getElementById('fPhoto'),profileManager=document.querySelector('[data-profile-manager]');if(item&&field){field.value=item.src;setProfilePreview(profileManager,item.src);toast('Bilden används som profilbild när du sparar posten.');}return;}
       const coverImage=event.target.closest('[data-gallery-cover]');if(coverImage){const manager=coverImage.closest('[data-gallery-manager]'),item=images(manager.querySelector('[data-gallery-source]').value)[Number(coverImage.dataset.galleryCover)],field=document.getElementById('fCoverImage');if(item&&field){field.value=item.src;setCoverPreview(item.src);refreshGalleryManager(manager);toast('Bilden används som omslag när du sparar platsen.');}return;}

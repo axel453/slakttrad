@@ -42,7 +42,7 @@ Kör generatorn igen efter ändringar i grunddatan. Den skapar en HTML-sida för
 Webbplatsen använder Supabase för inloggning, gemensamma poster, roller och ändringshistorik. `data.js` ligger kvar som publicerbar grunddata och reserv för den publika läsvyn.
 
 1. Skapa ett Supabase-projekt.
-2. Öppna SQL Editor och kör migreringarna i nummerordning. För bildgallerier behövs även `supabase/migrations/004_public_media_galleries.sql`.
+2. Öppna SQL Editor och kör migreringarna i nummerordning. För bildgallerier behövs `supabase/migrations/004_public_media_galleries.sql` och för säker borttagning av personer och platser behövs `supabase/migrations/007_archive_deletions.sql`.
 3. Skapa den aktuella importfilen:
 
    ```bash
@@ -78,6 +78,7 @@ Importen märker personer utan dödsdatum och med ett modernt födelseår som le
 
 - `supabase/migrations/001_family_archive.sql` - tabeller, roller, RLS och bildlagring.
 - `supabase/migrations/004_public_media_galleries.sql` - offentlig bildbehållare med skrivskydd för redaktörer.
+- `supabase/migrations/007_archive_deletions.sql` - säker borttagning, städning av släktrelationer och spärr mot att äldre grunddata återkommer.
 - `scripts/export-supabase-seed.mjs` - gör en importerbar ögonblicksbild av `data.js`.
 - `scripts/import-supabase.mjs` - importerar ögonblicksbilden till Supabase.
 - `shared-data.js` - läser gemensamma poster, sköter inloggning och skickar ändringar.

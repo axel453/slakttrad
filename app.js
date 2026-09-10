@@ -2673,10 +2673,43 @@ async function persistSharedEntity(type, id, payload, operation="update", showMe
     return {mode:"error",error};
   }
 }
+function applySharedDeletions(deleted={}){
+  const deletedPeople = new Set(deleted.people || []);
+  const deletedPlaces = new Set(deleted.places || []);
+
+  Object.values(PEOPLE).forEach(person=>{
+    if(person.parents) person.parents = person.parents.filter(id=>!deletedPeople.has(id));
+    if(person.children) person.children = person.children.filter(id=>!deletedPeople.has(id));
+    if(person.siblings) person.siblings = person.siblings.filter(id=>!deletedPeople.has(id));
+    if(deletedPeople.has(person.partner)) person.partner = "";
+  });
+  deletedPeople.forEach(id=>{
+    delete PEOPLE[id];
+    delete PARTNER[id];
+    DIRECT_HEIRS.delete(id);
+    delete manualData.drafts.people[id];
+  });
+
+  UNITS.forEach(unit=>{ unit.persons = (unit.persons || []).filter(id=>!deletedPeople.has(id)); });
+  const emptyUnitIds = new Set(UNITS.filter(unit=>!unit.persons.length).map(unit=>unit.id));
+  UNITS.splice(0,UNITS.length,...UNITS.filter(unit=>!emptyUnitIds.has(unit.id)).map(unit=>({
+    ...unit,children:(unit.children || []).filter(id=>!emptyUnitIds.has(id))
+  })));
+
+  deletedPlaces.forEach(id=>{
+    const index = PLACES.findIndex(place=>place.id === id);
+    if(index >= 0) PLACES.splice(index,1);
+    const marker = placeMarkers[id];
+    if(marker && placeMap) placeMap.removeLayer(marker);
+    delete placeMarkers[id];
+    delete manualData.drafts.places[id];
+    if(currentPlaceId === id) currentPlaceId = null;
+  });
+}
 function applySharedSnapshot(snapshot){
   if(!snapshot) return;
-  const sharedPeopleIds = new Set(Object.keys(snapshot.people || {}));
-  const sharedPlaceIds = new Set((snapshot.places || []).map(place=>place.id));
+  const sharedPeopleIds = new Set([...Object.keys(snapshot.people || {}),...(snapshot.deleted?.people || [])]);
+  const sharedPlaceIds = new Set([...(snapshot.places || []).map(place=>place.id),...(snapshot.deleted?.places || [])]);
   Object.entries(snapshot.people || {}).forEach(([id,person])=>{
     // Master 4 replaces the legacy Nils Johan row. Ignore that stale database
     // record until migration 005 has been applied so it cannot recreate a duplicate.
@@ -2713,6 +2746,7 @@ function applySharedSnapshot(snapshot){
   Object.entries(manualData.edits).forEach(([id,edit])=>{
     if(!sharedPeopleIds.has(id)) applyManualPersonEdit(id,edit);
   });
+  applySharedDeletions(snapshot.deleted);
   rebuildUnitIndexes();
   Object.entries(PEOPLE).forEach(([id,person])=>addPersonRelationLinks(id,person));
   invalidateEntityReferenceCache();
@@ -3409,7 +3443,7 @@ function scheduleSharedArchive(){
   const load=async()=>{
     try{
       await loadExternalScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2");
-      await loadExternalScript(appAssetUrl("shared-data.js?v=20260910d"));
+      await loadExternalScript(appAssetUrl("shared-data.js?v=20260910f"));
     }catch(error){
       document.dispatchEvent(new CustomEvent('family-data-status',{detail:{mode:'error',message:'Kunde inte ansluta familjearkivet',error}}));
     }
