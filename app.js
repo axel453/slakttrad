@@ -2827,9 +2827,15 @@ function enhancePersonPicker(select){
       choose(options[Math.max(activeIndex,0)]?.dataset.personPickerId);
     }
   });
+  results.addEventListener('pointerdown',event=>{
+    const option = event.target.closest('[data-person-picker-id]');
+    if(!option) return;
+    event.preventDefault();
+    choose(option.dataset.personPickerId);
+  });
   results.addEventListener('click',event=>{
     const option = event.target.closest('[data-person-picker-id]');
-    if(option) choose(option.dataset.personPickerId);
+    if(option && select.value !== option.dataset.personPickerId) choose(option.dataset.personPickerId);
   });
   clear.addEventListener('click',()=>{
     choose("");
@@ -2839,7 +2845,7 @@ function enhancePersonPicker(select){
   input.addEventListener('blur',()=>window.setTimeout(()=>{
     close();
     input.value = personPickerLabel(select.value);
-  },120));
+  },300));
   syncPersonPicker(select);
 }
 function refreshEditorSelects(){

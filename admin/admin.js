@@ -444,8 +444,9 @@
     input.addEventListener('focus',()=>{if(select.value&&input.value===personPickerLabel(select.value))input.select();show();});
     input.addEventListener('input',show);
     input.addEventListener('keydown',event=>{const options=[...results.querySelectorAll('.person-picker-option')];if(event.key==='Escape'){close();return;}if(event.key==='ArrowDown'||event.key==='ArrowUp'){event.preventDefault();if(results.hidden)show();if(!options.length)return;activeIndex=event.key==='ArrowDown'?Math.min(activeIndex+1,options.length-1):Math.max(activeIndex-1,0);options.forEach((option,index)=>option.classList.toggle('active',index===activeIndex));options[activeIndex]?.scrollIntoView({block:'nearest'});}else if(event.key==='Enter'&&options.length){event.preventDefault();choose(options[Math.max(activeIndex,0)]?.dataset.personPickerId);}});
-    results.addEventListener('click',event=>{const option=event.target.closest('[data-person-picker-id]');if(option)choose(option.dataset.personPickerId);});
-    picker.querySelector('.person-picker-clear').addEventListener('click',()=>{choose('');input.focus();show();});input.addEventListener('blur',()=>setTimeout(()=>{close();input.value=personPickerLabel(select.value);},120));
+    results.addEventListener('pointerdown',event=>{const option=event.target.closest('[data-person-picker-id]');if(!option)return;event.preventDefault();choose(option.dataset.personPickerId);});
+    results.addEventListener('click',event=>{const option=event.target.closest('[data-person-picker-id]');if(option&&select.value!==option.dataset.personPickerId)choose(option.dataset.personPickerId);});
+    picker.querySelector('.person-picker-clear').addEventListener('click',()=>{choose('');input.focus();show();});input.addEventListener('blur',()=>setTimeout(()=>{close();input.value=personPickerLabel(select.value);},300));
   }
   function enhancePersonPickers(excludeId=''){document.querySelectorAll('select[data-person-picker]').forEach(select=>enhancePersonPicker(select,excludeId));}
   function field(label,id,value='',wide=false,type='text',help=''){return `<label class="field${wide?' full':''}"><span>${esc(label)}</span>${type==='textarea'?`<textarea id="${id}">${esc(value)}</textarea>`:`<input id="${id}" type="${type}" value="${esc(value)}">`}${help?`<small class="field-help">${esc(help)}</small>`:''}</label>`;}
