@@ -280,6 +280,23 @@
 
   async function applyTreePlacement(personId, placement){
     if(!placement?.unitId) return;
+    for(const parentUnit of placement.parentUnitsToCreate || []){
+      const existingParentUnit = await loadFamilyUnit(parentUnit.id);
+      const {error} = await state.client.from('family_units').upsert({
+        id:parentUnit.id,
+        generation:existingParentUnit?.generation ?? parentUnit.generation ?? ((placement.generation ?? 8)-1),
+        branch:(existingParentUnit?.branch && existingParentUnit.branch !== 'shared') ? existingParentUnit.branch : (parentUnit.branch || placement.branch || 'shared'),
+        person_ids:uniqueIds([...(existingParentUnit?.person_ids || []),...(parentUnit.personIds || [])]),
+        child_unit_ids:uniqueIds([...(existingParentUnit?.child_unit_ids || []),...(parentUnit.childUnitIds || []),placement.unitId]),
+        content:{
+          ...(existingParentUnit?.content || {}),
+          ...(parentUnit.lane?{lane:parentUnit.lane}:{}),
+          direct:!!(existingParentUnit?.content?.direct || parentUnit.direct),
+          heir:!!(existingParentUnit?.content?.heir || parentUnit.direct)
+        }
+      });
+      if(error) throw error;
+    }
     for(const childUnit of placement.childUnitsToCreate || []){
       const existingChildUnit = await loadFamilyUnit(childUnit.id);
       if(existingChildUnit) continue;
@@ -312,7 +329,13 @@
       const parentUnit = await loadFamilyUnit(parentUnitId);
       if(!parentUnit) continue;
       const {error} = await state.client.from('family_units').update({
-        child_unit_ids:uniqueIds([...(parentUnit.child_unit_ids || []),placement.unitId])
+        child_unit_ids:uniqueIds([...(parentUnit.child_unit_ids || []),placement.unitId]),
+        content:{
+          ...(parentUnit.content || {}),
+          ...(placement.lane&&!parentUnit.content?.lane?{lane:placement.lane}:{}),
+          direct:!!(parentUnit.content?.direct || placement.direct),
+          heir:!!(parentUnit.content?.heir || placement.direct)
+        }
       }).eq('id',parentUnitId);
       if(error) throw error;
     }

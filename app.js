@@ -2706,8 +2706,59 @@ function applySharedDeletions(deleted={}){
     if(currentPlaceId === id) currentPlaceId = null;
   });
 }
+function clearRelationDerivedUnits(){
+  const derivedIds = new Set(UNITS.filter(unit=>unit.relationDerived).map(unit=>unit.id));
+  if(!derivedIds.size) return;
+  UNITS.splice(0,UNITS.length,...UNITS.filter(unit=>!derivedIds.has(unit.id)).map(unit=>({
+    ...unit,children:(unit.children || []).filter(id=>!derivedIds.has(id))
+  })));
+  [MOTHER_UNITS,MOTHER_MOTHER_UNITS,MOTHER_FATHER_UNITS,FATHER_UNITS,FATHER_MOTHER_UNITS,FATHER_FATHER_UNITS,DIRECT_UNITS].forEach(set=>{
+    derivedIds.forEach(id=>set.delete(id));
+  });
+  [...DIRECT_EDGES].forEach(edge=>{
+    const [from,to] = edge.split(">");
+    if(derivedIds.has(from) || derivedIds.has(to)) DIRECT_EDGES.delete(edge);
+  });
+}
+function ensureRelationUnits(){
+  Object.entries(PEOPLE).forEach(([childId,person])=>{
+    const parentIds = uniqueIds(person.parents || []).filter(id=>PEOPLE[id]);
+    const childUnit = UNIT_BY_ID[PERSON_TO_UNIT[childId]];
+    if(!parentIds.length || !childUnit) return;
+
+    const parentUnitIds = uniqueIds(parentIds.map(id=>PERSON_TO_UNIT[id]));
+    const unplacedParentIds = parentIds.filter(id=>!PERSON_TO_UNIT[id]);
+    const branch = unitBranch(childUnit);
+    const lane = branch === "mother" ? motherLane(childUnit) : branch === "father" ? fatherLane(childUnit) : "";
+    const direct = !!(childUnit.direct || childUnit.heir || DIRECT_UNITS.has(childUnit.id) || DIRECT_HEIRS.has(childId));
+    if(unplacedParentIds.length){
+      const parentUnit = {
+        id:`u_parents_${childId}`,gen:(Number.isFinite(childUnit.gen)?childUnit.gen:8)-1,
+        persons:unplacedParentIds,children:[childUnit.id],branch,lane,direct,heir:direct,relationDerived:true
+      };
+      UNITS.push(parentUnit);
+      UNIT_BY_ID[parentUnit.id] = parentUnit;
+      unplacedParentIds.forEach(id=>{ PERSON_TO_UNIT[id] = parentUnit.id; });
+      registerUnitBranch(parentUnit);
+      parentUnitIds.push(parentUnit.id);
+    }
+
+    uniqueIds(parentUnitIds).forEach(parentUnitId=>{
+      const parentUnit = UNIT_BY_ID[parentUnitId];
+      if(!parentUnit) return;
+      parentUnit.children ||= [];
+      if(!parentUnit.children.includes(childUnit.id)) parentUnit.children.push(childUnit.id);
+      if(direct){ parentUnit.direct = true; parentUnit.heir = true; }
+      if(!parentUnit.branch || parentUnit.branch === "shared") parentUnit.branch = branch;
+      if(!parentUnit.lane && lane) parentUnit.lane = lane;
+      registerUnitBranch(parentUnit);
+    });
+  });
+}
 function applySharedSnapshot(snapshot){
   if(!snapshot) return;
+  clearRelationDerivedUnits();
+  rebuildUnitIndexes();
   const sharedPeopleIds = new Set([...Object.keys(snapshot.people || {}),...(snapshot.deleted?.people || [])]);
   const sharedPlaceIds = new Set([...(snapshot.places || []).map(place=>place.id),...(snapshot.deleted?.places || [])]);
   Object.entries(snapshot.people || {}).forEach(([id,person])=>{
@@ -2723,7 +2774,8 @@ function applySharedSnapshot(snapshot){
     if(person.direct) DIRECT_HEIRS.add(id);
   });
   (snapshot.units || []).forEach(unit=>{
-    unit = {...unit,persons:(unit.persons || []).map(id=>id === "nils_johan_bengtsson" ? "nils_johan_bengtsson_1869" : id)};
+    unit = {...unit,persons:(unit.persons || []).map(id=>id === "nils_johan_bengtsson" ? "nils_johan_bengtsson_1869" : id).filter(id=>PEOPLE[id])};
+    if(!unit.persons.length) return;
     if(UNIT_BY_ID[unit.id]){
       Object.assign(UNIT_BY_ID[unit.id], unit);
       (unit.persons || []).forEach(personId=>{ PERSON_TO_UNIT[personId] = unit.id; });
@@ -2747,6 +2799,8 @@ function applySharedSnapshot(snapshot){
     if(!sharedPeopleIds.has(id)) applyManualPersonEdit(id,edit);
   });
   applySharedDeletions(snapshot.deleted);
+  rebuildUnitIndexes();
+  ensureRelationUnits();
   rebuildUnitIndexes();
   Object.entries(PEOPLE).forEach(([id,person])=>addPersonRelationLinks(id,person));
   invalidateEntityReferenceCache();
@@ -3443,7 +3497,7 @@ function scheduleSharedArchive(){
   const load=async()=>{
     try{
       await loadExternalScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2");
-      await loadExternalScript(appAssetUrl("shared-data.js?v=20260910f"));
+      await loadExternalScript(appAssetUrl("shared-data.js?v=20260911b"));
     }catch(error){
       document.dispatchEvent(new CustomEvent('family-data-status',{detail:{mode:'error',message:'Kunde inte ansluta familjearkivet',error}}));
     }
