@@ -1,6 +1,6 @@
 (function(){
   const config = window.FAMILY_ARCHIVE_CONFIG || {};
-  const state = {client:null,user:null,profile:null,connected:false,passwordRecovery:false,lastSnapshotAt:0,refreshPromise:null};
+  const state = {client:null,user:null,profile:null,connected:false,passwordRecovery:false,lastSnapshotAt:0,refreshPromise:null,authVersion:0,lastSnapshot:null};
 
   function configured(){
     return Boolean(config.supabaseUrl && config.supabasePublishableKey && window.supabase?.createClient);
@@ -24,6 +24,7 @@
 
   async function loadSnapshot(){
     if(!state.client) return null;
+    const authVersion = state.authVersion;
     const [peopleResult, placesResult, unitsResult, tombstonesResult] = await Promise.all([
       state.client.from('people').select('id,name,slug,alt_name,branch,is_direct,is_living,visibility,content'),
       state.client.from('places').select('id,name,slug,area,latitude,longitude,visibility,content'),
@@ -31,6 +32,7 @@
       state.client.from('archive_tombstones').select('entity_type,entity_id')
     ]);
     const error = peopleResult.error || placesResult.error || unitsResult.error;
+    if(authVersion !== state.authVersion) return null;
     if(error) throw error;
     return {
       people:Object.fromEntries((peopleResult.data || []).map(row=>{
@@ -42,7 +44,7 @@
       })),
       places:(placesResult.data || []).map(row=>({
         ...contentFromRow(row), id:row.id, area:row.area || row.content?.area || '',
-        ...(row.latitude == null ? {} : {lat:row.latitude}), ...(row.longitude == null ? {} : {lng:row.longitude}),
+        lat:row.latitude ?? null, lng:row.longitude ?? null,
         visibility:row.visibility
       })),
       units:(unitsResult.data || []).map(row=>({
@@ -60,12 +62,16 @@
   async function refreshSnapshot(){
     if(!state.client) return null;
     if(state.refreshPromise) return state.refreshPromise;
-    state.refreshPromise = loadSnapshot().then(snapshot=>{
+    const authVersion = state.authVersion;
+    const pending = loadSnapshot().then(snapshot=>{
+      if(!snapshot || authVersion !== state.authVersion) return null;
       state.connected = true;
       state.lastSnapshotAt = Date.now();
+      state.lastSnapshot = snapshot;
       emit('family-data-ready',snapshot);
       return snapshot;
-    }).finally(()=>{ state.refreshPromise = null; });
+    }).finally(()=>{ if(state.refreshPromise === pending) state.refreshPromise = null; });
+    state.refreshPromise = pending;
     return state.refreshPromise;
   }
 
@@ -78,8 +84,49 @@
 
   async function refreshProfile(){
     if(!state.user){ state.profile = null; return; }
-    const {data} = await state.client.from('profiles').select('display_name,role').eq('id',state.user.id).maybeSingle();
-    state.profile = data || {display_name:state.user.email,role:'contributor'};
+    const user = state.user, authVersion = state.authVersion;
+    const {data} = await state.client.from('profiles').select('display_name,role').eq('id',user.id).maybeSingle();
+    if(authVersion === state.authVersion) state.profile = data || {display_name:user.email,role:'contributor'};
+  }
+
+  function handleAuthChange(authEvent, session){
+    const nextUser = session?.user || null;
+    const changedUser = state.user?.id !== nextUser?.id || authEvent === 'SIGNED_OUT';
+    state.user = nextUser;
+    if(authEvent === 'PASSWORD_RECOVERY') state.passwordRecovery = true;
+    if(authEvent === 'SIGNED_OUT') state.passwordRecovery = false;
+    if(changedUser){
+      state.authVersion++;
+      state.profile = null;
+      state.refreshPromise = null;
+      state.lastSnapshotAt = 0;
+      const previous = state.lastSnapshot;
+      if(previous){
+        state.lastSnapshot = {
+          ...previous,
+          people:Object.fromEntries(Object.entries(previous.people).filter(([,person])=>person.visibility === 'public')),
+          places:previous.places.filter(place=>place.visibility === 'public'),
+          units:[]
+        };
+      }
+    }
+    const authVersion = state.authVersion;
+    // Supabase holds its auth lock during this callback. Defer all database work.
+    setTimeout(async ()=>{
+      if(authVersion !== state.authVersion) return;
+      if(changedUser){
+        emit('family-auth-change',status());
+        if(state.lastSnapshot) emit('family-data-ready',state.lastSnapshot);
+      }
+      try{
+        await refreshProfile();
+        if(authVersion !== state.authVersion) return;
+        emit('family-auth-change',status());
+        if(changedUser || ['SIGNED_IN','USER_UPDATED'].includes(authEvent)) await refreshSnapshot();
+      }catch(error){
+        emit('family-data-status',{mode:'error',message:'Kunde inte uppdatera familjearkivet',error});
+      }
+    },0);
   }
 
   async function init(){
@@ -91,16 +138,7 @@
     const {data:{session}} = await state.client.auth.getSession();
     state.user = session?.user || null;
     await refreshProfile();
-    state.client.auth.onAuthStateChange(async (authEvent, sessionValue)=>{
-      state.user = sessionValue?.user || null;
-      if(authEvent === 'PASSWORD_RECOVERY') state.passwordRecovery = true;
-      if(authEvent === 'SIGNED_OUT') state.passwordRecovery = false;
-      await refreshProfile();
-      if(authEvent === 'SIGNED_IN' || authEvent === 'USER_UPDATED'){
-        try{ await refreshSnapshot(); }catch{}
-      }
-      emit('family-auth-change',status());
-    });
+    state.client.auth.onAuthStateChange(handleAuthChange);
     try{
       await refreshSnapshot();
       emit('family-data-status',{mode:'shared',message:'Ansluten till familjearkivet'});
@@ -278,7 +316,7 @@
     if(error) throw error;
   }
 
-  async function applyTreePlacement(personId, placement){
+  async function applyTreePlacement(personId, placement, previous={}){
     if(!placement?.unitId) return;
     for(const parentUnit of placement.parentUnitsToCreate || []){
       const existingParentUnit = await loadFamilyUnit(parentUnit.id);
@@ -311,8 +349,8 @@
     const content = {
       ...(existing?.content || {}),
       ...(placement.lane ? {lane:placement.lane} : {}),
-      direct:!!(existing?.content?.direct || placement.direct),
-      heir:!!(existing?.content?.heir || placement.direct)
+      direct:!!placement.direct,
+      heir:!!placement.direct
     };
     const unitRow = {
       id:placement.unitId,
@@ -352,6 +390,22 @@
     for(const siblingId of uniqueIds(placement.siblingIds || [placement.siblingId])){
       await updatePersonRelations(siblingId,current=>({...current,siblings:uniqueIds([...(current.siblings || []),personId])}));
     }
+    for(const parentId of uniqueIds(previous.parents).filter(id=>!(placement.parentIds || []).includes(id))){
+      await updatePersonRelations(parentId,current=>({...current,children:(current.children || []).filter(id=>id!==personId)}));
+    }
+    for(const parentUnitId of uniqueIds(placement.parentUnitIdsToDisconnect)){
+      const parentUnit = await loadFamilyUnit(parentUnitId);
+      if(!parentUnit || !(parentUnit.child_unit_ids || []).includes(placement.unitId)) continue;
+      const {data:members,error:membersError} = await state.client.from('people').select('id,content').in('id',unitRow.person_ids);
+      if(membersError) throw membersError;
+      // A couple's card may still connect through the other spouse's parents.
+      const stillRelated = (members || []).some(member=>(member.content?.parents || []).some(id=>(parentUnit.person_ids || []).includes(id)));
+      if(stillRelated) continue;
+      const {error} = await state.client.from('family_units').update({
+        child_unit_ids:parentUnit.child_unit_ids.filter(id=>id!==placement.unitId)
+      }).eq('id',parentUnitId);
+      if(error) throw error;
+    }
   }
 
   async function deleteArchiveEntity(entityType,entityId,payload={}){
@@ -385,6 +439,12 @@
     if(role === 'editor' || role === 'admin'){
       if(entityType === 'person'){
         const {treePlacement,...personPayload} = payload;
+        let previous = treePlacement?.previousRelations || {};
+        if(treePlacement){
+          const {data,error} = await state.client.from('people').select('content').eq('id',entityId).maybeSingle();
+          if(error) throw error;
+          if(data) previous = data.content || {};
+        }
         const aliases = uniqueNames(personPayload.aliases || personPayload.alt || [],personPayload.name);
         const content = {...personPayload,aliases,alt:aliases.join(' / ')};
         const row = {
@@ -394,7 +454,7 @@
           updated_by:state.user.id
         };
         const {error} = await state.client.from('people').upsert(row); if(error) throw error;
-        if(treePlacement) await applyTreePlacement(entityId,treePlacement);
+        if(treePlacement) await applyTreePlacement(entityId,treePlacement,previous);
       }else if(entityType === 'place'){
         const content = {...payload,aliases:uniqueNames(payload.aliases || [],payload.name)};
         const row = {

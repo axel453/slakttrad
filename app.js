@@ -1,6 +1,10 @@
 // Axels släkt - app-logik
 // Renderar trädet, personrutor, sök och karta utifrån data.js.
 
+const archiveBase = JSON.parse(JSON.stringify({people:PEOPLE,places:PLACES,units:UNITS}));
+const archiveBaseSets = [MOTHER_UNITS,MOTHER_MOTHER_UNITS,MOTHER_FATHER_UNITS,FATHER_UNITS,FATHER_MOTHER_UNITS,FATHER_FATHER_UNITS,DIRECT_UNITS,DIRECT_HEIRS].map(set=>[...set]);
+const knownSharedIds = {people:new Set(),places:new Set()};
+
 function escapeHtml(value){
   return String(value ?? "").replace(/[&<>"']/g, ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
 }
@@ -2477,6 +2481,7 @@ function rebuildUnitIndexes(){
   Object.keys(PERSON_TO_UNIT).forEach(id=>delete PERSON_TO_UNIT[id]);
   Object.keys(PARTNER).forEach(id=>delete PARTNER[id]);
   EDGES.splice(0,EDGES.length);
+  DIRECT_EDGES.clear();
   UNITS.forEach(unit=>{
     UNIT_BY_ID[unit.id] = unit;
     registerUnitBranch(unit);
@@ -2706,31 +2711,37 @@ function applySharedDeletions(deleted={}){
     if(currentPlaceId === id) currentPlaceId = null;
   });
 }
-function clearRelationDerivedUnits(){
-  const derivedIds = new Set(UNITS.filter(unit=>unit.relationDerived).map(unit=>unit.id));
-  if(!derivedIds.size) return;
-  UNITS.splice(0,UNITS.length,...UNITS.filter(unit=>!derivedIds.has(unit.id)).map(unit=>({
-    ...unit,children:(unit.children || []).filter(id=>!derivedIds.has(id))
-  })));
-  [MOTHER_UNITS,MOTHER_MOTHER_UNITS,MOTHER_FATHER_UNITS,FATHER_UNITS,FATHER_MOTHER_UNITS,FATHER_FATHER_UNITS,DIRECT_UNITS].forEach(set=>{
-    derivedIds.forEach(id=>set.delete(id));
+function resetSharedView(){
+  const base = cloneRecord(archiveBase);
+  Object.keys(PEOPLE).forEach(id=>delete PEOPLE[id]);
+  Object.assign(PEOPLE,base.people);
+  PLACES.splice(0,PLACES.length,...base.places);
+  UNITS.splice(0,UNITS.length,...base.units);
+  [MOTHER_UNITS,MOTHER_MOTHER_UNITS,MOTHER_FATHER_UNITS,FATHER_UNITS,FATHER_MOTHER_UNITS,FATHER_FATHER_UNITS,DIRECT_UNITS,DIRECT_HEIRS].forEach((set,index)=>{
+    set.clear();
+    archiveBaseSets[index].forEach(id=>set.add(id));
   });
-  [...DIRECT_EDGES].forEach(edge=>{
-    const [from,to] = edge.split(">");
-    if(derivedIds.has(from) || derivedIds.has(to)) DIRECT_EDGES.delete(edge);
-  });
+  DIRECT_EDGES.clear();
+  rebuildUnitIndexes();
 }
 function ensureRelationUnits(){
-  Object.entries(PEOPLE).forEach(([childId,person])=>{
+  const queue = Object.keys(PEOPLE).filter(id=>PERSON_TO_UNIT[id]);
+  const processed = new Set();
+  for(let index=0;index<queue.length;index++){
+    const childId = queue[index], person = PEOPLE[childId];
+    if(!person) continue;
     const parentIds = uniqueIds(person.parents || []).filter(id=>PEOPLE[id]);
     const childUnit = UNIT_BY_ID[PERSON_TO_UNIT[childId]];
-    if(!parentIds.length || !childUnit) return;
+    if(!parentIds.length || !childUnit) continue;
 
     const parentUnitIds = uniqueIds(parentIds.map(id=>PERSON_TO_UNIT[id]));
     const unplacedParentIds = parentIds.filter(id=>!PERSON_TO_UNIT[id]);
     const branch = unitBranch(childUnit);
     const lane = branch === "mother" ? motherLane(childUnit) : branch === "father" ? fatherLane(childUnit) : "";
     const direct = !!(childUnit.direct || childUnit.heir || DIRECT_UNITS.has(childUnit.id) || DIRECT_HEIRS.has(childId));
+    const key = `${childId}:${childUnit.id}:${direct}`;
+    if(processed.has(key)) continue;
+    processed.add(key);
     if(unplacedParentIds.length){
       const parentUnit = {
         id:`u_parents_${childId}`,gen:(Number.isFinite(childUnit.gen)?childUnit.gen:8)-1,
@@ -2745,7 +2756,7 @@ function ensureRelationUnits(){
 
     uniqueIds(parentUnitIds).forEach(parentUnitId=>{
       const parentUnit = UNIT_BY_ID[parentUnitId];
-      if(!parentUnit) return;
+      if(!parentUnit || parentUnit.id === childUnit.id) return;
       parentUnit.children ||= [];
       if(!parentUnit.children.includes(childUnit.id)) parentUnit.children.push(childUnit.id);
       if(direct){ parentUnit.direct = true; parentUnit.heir = true; }
@@ -2753,29 +2764,47 @@ function ensureRelationUnits(){
       if(!parentUnit.lane && lane) parentUnit.lane = lane;
       registerUnitBranch(parentUnit);
     });
+    queue.push(...parentIds);
+  }
+}
+function clearUnavailableViews(){
+  closePanel();
+  closeLightbox();
+  currentPanelPersonId = null;
+  ['detailPage','personArchive','placeArchive','emigrantArchive','searchResults','pRole','pName','pDates','pStatus','pBranch','pFacts','pParents','pSpouse','pChildren','pSideBranches','pPlacePeople','pStory','pTimeline'].forEach(id=>{
+    document.getElementById(id)?.replaceChildren();
   });
+  const photo = document.getElementById('pPhoto');
+  if(photo){ photo.src = PERSON_PLACEHOLDER; photo.alt = ''; }
+  delete window.NILSSON_BENGTSSON_ARCHIVE;
 }
 function applySharedSnapshot(snapshot){
   if(!snapshot) return;
-  clearRelationDerivedUnits();
-  rebuildUnitIndexes();
+  const previousPeopleIds = new Set(Object.keys(PEOPLE));
+  const previousPlaceIds = new Set(PLACES.map(place=>place.id));
+  snapshot = cloneRecord(snapshot);
+  resetSharedView();
   const sharedPeopleIds = new Set([...Object.keys(snapshot.people || {}),...(snapshot.deleted?.people || [])]);
   const sharedPlaceIds = new Set([...(snapshot.places || []).map(place=>place.id),...(snapshot.deleted?.places || [])]);
+  sharedPeopleIds.forEach(id=>knownSharedIds.people.add(id));
+  sharedPlaceIds.forEach(id=>knownSharedIds.places.add(id));
+  const unavailable = {
+    people:[...knownSharedIds.people].filter(id=>!snapshot.people?.[id]),
+    places:[...knownSharedIds.places].filter(id=>!(snapshot.places || []).some(place=>place.id === id))
+  };
   Object.entries(snapshot.people || {}).forEach(([id,person])=>{
     // Master 4 replaces the legacy Nils Johan row. Ignore that stale database
     // record until migration 005 has been applied so it cannot recreate a duplicate.
     if(id === "nils_johan_bengtsson" && PEOPLE.nils_johan_bengtsson_1869) return;
     normalizePersonNames(person);
-    if(PEOPLE[id]){
-      const current=PEOPLE[id];
-      removePersonRelationLinks(id,[...(current.parents||[])],PARTNER[id]||current.partner||"",[...(current.children||[])],[...(current.siblings||[])]);
-      Object.assign(current,person);
-    }else applyManualPerson(id, person);
+    PEOPLE[id] = {...(PEOPLE[id] || {}),...person};
     if(person.direct) DIRECT_HEIRS.add(id);
+    else DIRECT_HEIRS.delete(id);
   });
   (snapshot.units || []).forEach(unit=>{
     unit = {...unit,persons:(unit.persons || []).map(id=>id === "nils_johan_bengtsson" ? "nils_johan_bengtsson_1869" : id).filter(id=>PEOPLE[id])};
     if(!unit.persons.length) return;
+    [MOTHER_UNITS,MOTHER_MOTHER_UNITS,MOTHER_FATHER_UNITS,FATHER_UNITS,FATHER_MOTHER_UNITS,FATHER_FATHER_UNITS,DIRECT_UNITS].forEach(set=>set.delete(unit.id));
     if(UNIT_BY_ID[unit.id]){
       Object.assign(UNIT_BY_ID[unit.id], unit);
       (unit.persons || []).forEach(personId=>{ PERSON_TO_UNIT[personId] = unit.id; });
@@ -2787,28 +2816,43 @@ function applySharedSnapshot(snapshot){
     if(current){ Object.assign(current, place); syncPlaceMarker(current); }
     else applyManualPlace(place);
   });
-  Object.entries(manualData.people).forEach(([id,person])=>applyManualPerson(id,person));
+  Object.entries(manualData.people).forEach(([id,person])=>{ if(!knownSharedIds.people.has(id)) applyManualPerson(id,cloneRecord(person)); });
   manualData.units.forEach(applyManualUnit);
-  manualData.places.forEach(applyManualPlace);
+  manualData.places.forEach(place=>{ if(!knownSharedIds.places.has(place.id)) applyManualPlace(cloneRecord(place)); });
   // A shared record is authoritative. Old browser-local edits must not hide a
   // newer version that was published from another phone or computer.
   Object.entries(manualData.placeEdits).forEach(([id,edit])=>{
-    if(!sharedPlaceIds.has(id)) applyManualPlaceEdit(id,edit);
+    if(!knownSharedIds.places.has(id)) applyManualPlaceEdit(id,edit);
   });
   Object.entries(manualData.edits).forEach(([id,edit])=>{
-    if(!sharedPeopleIds.has(id)) applyManualPersonEdit(id,edit);
+    if(!knownSharedIds.people.has(id)) applyManualPersonEdit(id,edit);
   });
+  applySharedDeletions(unavailable);
   applySharedDeletions(snapshot.deleted);
   rebuildUnitIndexes();
   ensureRelationUnits();
   rebuildUnitIndexes();
   Object.entries(PEOPLE).forEach(([id,person])=>addPersonRelationLinks(id,person));
+  PLACES.forEach(syncPlaceMarker);
   invalidateEntityReferenceCache();
   const mode=activePageMode();
+  if(unavailable.people.some(id=>previousPeopleIds.has(id)) || unavailable.places.some(id=>previousPlaceIds.has(id))){
+    clearUnavailableViews();
+    refreshArchiveFilterOptions();
+    refreshEditorSelects();
+    renderArchives();
+    renderPlaceList();
+    refreshSelectedPlace();
+    if(initializedFeatures.home && mode !== 'home') renderTree({preserveView:true});
+  }
   if(["personarkiv","gardarkiv","emigrantarkiv"].includes(mode)) refreshArchiveFilterOptions();
   if(mode === "home"){
     refreshEditorSelects();
     renderTree({preserveView:true});
+    renderPlaceList();
+    refreshSelectedPlace();
+    const search = document.getElementById('personSearch');
+    if(search) runSearch(search.value);
   }else if(mode === "personarkiv"){
     renderPersonArchive();
   }else if(mode === "gardarkiv"){
@@ -3497,7 +3541,7 @@ function scheduleSharedArchive(){
   const load=async()=>{
     try{
       await loadExternalScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2");
-      await loadExternalScript(appAssetUrl("shared-data.js?v=20260911b"));
+      await loadExternalScript(appAssetUrl("shared-data.js?v=20260914a"));
     }catch(error){
       document.dispatchEvent(new CustomEvent('family-data-status',{detail:{mode:'error',message:'Kunde inte ansluta familjearkivet',error}}));
     }

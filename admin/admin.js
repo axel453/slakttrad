@@ -288,10 +288,12 @@
 
   async function refreshData(showToast=false){
     if(!state.status?.user) return;
+    const userId=state.status.user.id;
     saveActiveEditorDraft();
     ui.loading.hidden=false;
     try{
       const [snapshot,overview]=await Promise.all([window.FamilyData.loadSnapshot(),window.FamilyData.loadAdminOverview()]);
+      if(!snapshot || state.status?.user?.id!==userId) return;
       const deletedPeople=new Set(snapshot?.deleted?.people||[]);
       const deletedPlaces=new Set(snapshot?.deleted?.places||[]);
       state.people=Object.fromEntries(Object.entries({...fallbackPeople,...(snapshot?.people||{})}).filter(([id])=>!deletedPeople.has(id)));
@@ -310,6 +312,12 @@
   }
 
   function showAuth(status){
+    if(state.status?.user?.id!==status?.user?.id){
+      saveActiveEditorDraft();
+      ui.content.innerHTML='';
+      state.people=clone(fallbackPeople);state.places=clone(fallbackPlaces);state.units=clone(fallbackUnits);
+      state.overview={changes:[],revisions:[],profiles:[]};state.ready=false;
+    }
     state.status=status;
     const signedIn=!!status?.user;
     const recovering=!!status?.passwordRecovery;
@@ -360,7 +368,7 @@
     const filter=()=>{const q=normalizeSearch(document.getElementById('adminSearch').value);const map=document.getElementById('mapFilter').value;document.querySelectorAll('#placeRows tr').forEach(row=>row.hidden=!(row.dataset.search.includes(q)&&(!map||row.dataset.map===map)));};
     bindArchiveFilter(document.getElementById('adminSearch'),filter); document.getElementById('mapFilter').addEventListener('change',filter);
   }
-  function placeRow(p){const mapped=Number.isFinite(Number(p.lat))&&Number.isFinite(Number(p.lng)),aliases=uniqueNames(p.aliases||[],p.name);const hay=normalizeSearch([p.name,...aliases,...(p.formerNames||[]),p.area].join(' '));const imageCount=(p.images||[]).length;return `<tr data-search="${esc(hay)}" data-map="${mapped?'mapped':'unmapped'}"><td><div class="entity-cell"><span class="entity-avatar entity-icon">${icon('landmark')}</span><span><strong>${esc(p.name)}</strong><small>${esc(p.note||'Platskort')}${imageCount?` · ${imageCount} ${imageCount===1?'bild':'bilder'}`:''}</small></span></div></td><td data-label="Område">${esc(p.area||'Ej angivet')}</td><td data-label="Sekundära namn">${esc(aliases.slice(0,3).join(', ')||'Saknas')}</td><td data-label="Karta"><span class="badge ${mapped?'green':'amber'}">${mapped?'Kartlagd':'Saknas'}</span></td><td class="table-action"><button class="row-action" data-edit-place="${esc(p.id)}">Redigera</button></td></tr>`;}
+  function placeRow(p){const mapped=Number.isFinite(p.lat)&&Number.isFinite(p.lng),aliases=uniqueNames(p.aliases||[],p.name);const hay=normalizeSearch([p.name,...aliases,...(p.formerNames||[]),p.area].join(' '));const imageCount=(p.images||[]).length;return `<tr data-search="${esc(hay)}" data-map="${mapped?'mapped':'unmapped'}"><td><div class="entity-cell"><span class="entity-avatar entity-icon">${icon('landmark')}</span><span><strong>${esc(p.name)}</strong><small>${esc(p.note||'Platskort')}${imageCount?` · ${imageCount} ${imageCount===1?'bild':'bilder'}`:''}</small></span></div></td><td data-label="Område">${esc(p.area||'Ej angivet')}</td><td data-label="Sekundära namn">${esc(aliases.slice(0,3).join(', ')||'Saknas')}</td><td data-label="Karta"><span class="badge ${mapped?'green':'amber'}">${mapped?'Kartlagd':'Saknas'}</span></td><td class="table-action"><button class="row-action" data-edit-place="${esc(p.id)}">Redigera</button></td></tr>`;}
 
   function personOptions(selected=''){ return `<option value="">Ingen vald</option>`+Object.entries(state.people).sort((a,b)=>a[1].name.localeCompare(b[1].name,'sv')).map(([id,p])=>`<option value="${esc(id)}"${id===selected?' selected':''}>${esc(p.name)}${p.born?` (${esc(p.born)})`:''}</option>`).join(''); }
   function personPickerLabel(id){const p=state.people[id];if(!p)return '';const meta=[p.born,p.role].filter(Boolean).join(' · ');return `${p.name}${meta?` (${meta})`:''}`;}
@@ -428,7 +436,9 @@
     const parentGenerations=parentUnitIds.map(id=>state.units.find(unit=>unit.id===id)?.gen).filter(Number.isFinite);
     const generation=currentUnit?.gen??relations.partnerUnit?.gen??(parentGenerations.length?Math.max(...parentGenerations)+1:relations.siblingUnit?.gen??(Number.isFinite(childUnit?.gen)?childUnit.gen-1:8));
     const unitId=currentUnit?.id||relations.partnerUnit?.id||`u_${personId}`;
-    const branchDirect=!!(direct||currentUnit?.direct||currentUnit?.heir||relations.siblingUnit?.direct||relations.siblingUnit?.heir);
+    const branchDirect=!!(direct||(currentUnit||relations.partnerUnit)?.persons?.some(id=>id!==personId&&(state.people[id]?.direct??(typeof DIRECT_HEIRS!=='undefined'&&DIRECT_HEIRS.has(id)))));
+    const previous=state.people[personId]||{};
+    const parentUnitIdsToDisconnect=uniqueIds((previous.parents||[]).filter(id=>!relations.parentIds.includes(id)).map(id=>unitForPerson(id)?.id));
     const parentUnitsToCreate=unplacedParentIds.length?[{
       id:`u_parents_${personId}`,personIds:unplacedParentIds,generation:generation-1,
       branch:relations.branch,lane:unitLane(referenceUnit),direct:branchDirect,childUnitIds:[unitId]
@@ -436,7 +446,8 @@
     parentUnitsToCreate.forEach(unit=>parentUnitIds.push(unit.id));
     return {
       unitId,generation,branch:relations.branch,lane:unitLane(referenceUnit),direct:branchDirect,
-      parentUnitIds:uniqueIds(parentUnitIds),parentUnitsToCreate,
+      parentUnitIds:uniqueIds(parentUnitIds),parentUnitsToCreate,parentUnitIdsToDisconnect,
+      previousRelations:{parents:previous.parents||[],children:previous.children||[],siblings:previous.siblings||[],partner:previous.partner||''},
       childUnitIds:[...childUnits.map(unit=>unit.id),...unplacedChildIds.map(id=>`u_${id}`)],
       childUnitsToCreate:unplacedChildIds.map(id=>{const branch=personBranch(id);return {id:`u_${id}`,personId:id,generation:generation+1,branch:branch==='shared'?relations.branch:branch,lane:unitLane(referenceUnit),direct:!!state.people[id]?.direct};}),
       parentIds:relations.parentIds,childIds:relations.childIds,
@@ -490,7 +501,7 @@
     const aliases=editedAliases(val('fAliases'),name,current);const direct=val('fDirect')==='yes';const payload={...clone(current),name,slug:current.slug||uniqueSlug('person',name),aliases,alt:aliases.join(' / '),formerNames:formerNames(current,name),role:val('fRole'),place:val('fPlace'),born:val('fBorn'),died:val('fDied'),branch:relations.branch,status:val('fStatus'),direct,isLiving:val('fLiving')==='yes',visibility:val('fVisibility'),parents:relations.parentIds,children:relations.childIds,siblings:relations.siblingIds,partner:relations.partnerId,story:rows(val('fStory')),timeline:pairs(val('fTimeline')),facts:pairs(val('fFacts')),sources:rows(val('fSources')),uncertainties:rows(val('fUncertainties')),photo:val('fPhoto'),photoCrop:profileCropValue(),images:images(val('fImages'))};
     const currentUnit=unitForPerson(finalId);
     const missingParentPlacement=relations.parentIds.some(parentId=>{const parentUnit=unitForPerson(parentId);return !currentUnit||!parentUnit||!(parentUnit.children||[]).includes(currentUnit.id);});
-    const hasNewTreeRelation=isNew||relations.childId||relations.siblingId||missingParentPlacement||relations.parentIds.some(parentId=>!(current.parents||[]).includes(parentId))||(relations.partnerId&&relations.partnerId!==current.partner);
+    const hasNewTreeRelation=isNew||relations.childId||relations.siblingId||missingParentPlacement||relations.parentIds.some(parentId=>!(current.parents||[]).includes(parentId))||(current.parents||[]).some(parentId=>!relations.parentIds.includes(parentId))||relations.partnerId!==(current.partner||'')||direct!==!!current.direct;
     if(hasNewTreeRelation)payload.treePlacement=personTreePlacement(finalId,relations,direct);
     try{const result=await window.FamilyData.submitChange('person',finalId,payload,isNew?'create':'update');clearEditorDraft(event.currentTarget);toast(result.mode==='published'?publishedMessage('Personen',payload.visibility):'Ändringen är skickad för granskning.');await refreshData();navigate('people',result.mode==='published'?finalId:null);}catch(error){toast(error.message||'Ändringen kunde inte sparas.',true);}finally{button.disabled=false;}
   }
