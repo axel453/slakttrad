@@ -1108,7 +1108,7 @@ function detailEvidenceHTML(items, kind="source"){
   const content = item=>kind === "source" ? escapeHtml(item).replace(/https?:\/\/[^\s<]+/g, url=>`<a href="${url}" target="_blank" rel="noopener">Visa originalkälla</a>`) : linkPersonNames(item);
   return `<ul class="evidence-list">${items.map(item=>`<li class="evidence-item${kind === "uncertain" ? " uncertain" : ""}">${content(item)}</li>`).join("")}</ul>`;
 }
-const IMAGE_CATEGORY_LABELS = {person:"Personbild",document:"Dokument",object:"Föremål",place:"Gård eller plats"};
+const IMAGE_CATEGORY_LABELS = {person:"Personporträtt",document:"Dokument",object:"Föremål",place:"Gård eller plats"};
 function normalizeImageCategory(value, fallback=""){
   const category = String(value || "").trim().toLowerCase();
   return Object.prototype.hasOwnProperty.call(IMAGE_CATEGORY_LABELS,category) ? category : fallback;

@@ -338,10 +338,11 @@
   .detail-media img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--surface-2);transition:transform .2s ease}
   .detail-media-button:hover img{transform:scale(1.025)}
   .detail-media figcaption{padding:9px 11px;font-size:12px;line-height:1.45;color:var(--ink-soft)}
-  .media-lightbox{position:fixed;inset:0;z-index:120;display:grid;grid-template-columns:56px minmax(0,1fr) 56px;grid-template-rows:56px minmax(0,1fr) auto;background:rgba(10,18,14,.94);color:#fff;padding:16px}
+  .media-lightbox{position:fixed;inset:0;z-index:12000;display:grid;grid-template-columns:56px minmax(0,1fr) 56px;grid-template-rows:56px minmax(0,1fr) auto;background:rgba(10,18,14,.94);color:#fff;padding:16px}
   .media-lightbox[hidden]{display:none}
   .media-lightbox-close,.media-lightbox-nav{border:0;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;display:grid;place-items:center;border-radius:6px;font-size:30px;line-height:1}
-  .media-lightbox-close{grid-column:3;grid-row:1;width:44px;height:44px;justify-self:end}
+  .media-lightbox-close{position:absolute;top:max(14px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));z-index:4;width:48px;height:48px;border:1px solid rgba(255,255,255,.42);background:rgba(8,16,12,.82);box-shadow:0 8px 24px rgba(0,0,0,.32);font-size:34px;touch-action:manipulation}
+  .media-lightbox-close:hover,.media-lightbox-close:focus-visible{background:#fff;color:#101814;border-color:#fff}
   .media-lightbox-nav{grid-row:2;width:44px;height:54px;align-self:center}
   .media-lightbox-prev{grid-column:1}.media-lightbox-next{grid-column:3}
   .media-lightbox-figure{grid-column:2;grid-row:1/4;min-width:0;min-height:0;margin:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:14px;align-items:center}
@@ -471,7 +472,7 @@
     .detail-page,body.page-detail .detail-page{margin:16px 0 36px;border-radius:12px;scroll-margin-top:72px}.detail-hero,.detail-layout{grid-template-columns:1fr}.detail-hero{padding:20px;gap:20px}.detail-hero.has-cover{min-height:460px}.detail-hero.has-cover::before{background:linear-gradient(0deg,rgba(8,20,13,.92) 0%,rgba(8,20,13,.66) 70%,rgba(8,20,13,.42) 100%)}.detail-main,.detail-side{padding:18px}.detail-title{font-size:2rem;overflow-wrap:anywhere}.detail-summary{font-size:1rem}.detail-hero-side{justify-items:start;gap:14px}.detail-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));justify-content:stretch}.detail-actions .btn{justify-content:center;min-height:44px}.share-feedback{grid-column:1/-1;text-align:left}.detail-photo{width:112px;height:112px;border-width:4px}.detail-side{border-left:0;border-top:1px solid var(--rule)}.detail-timeline li{grid-template-columns:1fr;gap:4px}.place-edit-grid{grid-template-columns:1fr}.detail-generation-nav{grid-template-columns:1fr}.detail-generation-nav .detail-link-card:last-child{text-align:left}.detail-media-grid{grid-template-columns:1fr}
     .archive-filters,.archive-filters.emigrant-filters,.gallery-archive-filters,.archive-grid,.leads{grid-template-columns:minmax(0,1fr)}.gallery-archive-grid{grid-template-columns:minmax(0,1fr);gap:12px}.archive-toolbar .branch-filters{width:100%}.archive-group{padding:14px}.step{padding:16px;gap:12px}.emigrant-tree-shell{padding:14px 10px}.emigrant-family-couple{display:grid;grid-template-columns:minmax(0,1fr)}.emigrant-family-and{padding-left:4px}.emigrant-family-children{padding-left:14px}.emigrant-family-children>li::before{left:-14px;width:12px}.emigrant-family-more{margin-left:4px}
     .contact-page{padding:38px 0 48px}.contact-title{font-size:2.35rem}.contact-layout{grid-template-columns:1fr;gap:26px;margin-top:30px;padding-top:28px}.contact-topics{grid-template-columns:1fr}.contact-details{padding:18px}
-    .media-lightbox{grid-template-columns:44px minmax(0,1fr) 44px;grid-template-rows:52px minmax(0,1fr) auto;padding:8px}.media-lightbox-figure{grid-column:1/-1;grid-row:1/4;padding:52px 0 62px}.media-lightbox-close,.media-lightbox-nav{position:relative;z-index:1}.media-lightbox-image{max-height:calc(100vh - 130px)}
+    .media-lightbox{grid-template-columns:48px minmax(0,1fr) 48px;grid-template-rows:58px minmax(0,1fr) auto;padding:8px}.media-lightbox-figure{grid-column:1/-1;grid-row:1/4;padding:64px 0 62px}.media-lightbox-close{top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));width:52px;height:52px;font-size:38px}.media-lightbox-nav{position:relative;z-index:1;width:46px;height:58px}.media-lightbox-image{max-height:calc(100vh - 142px)}
   }
   @media print{
     .site-header,.panel,.scrim,.detail-actions,.access-panel,footer{display:none !important}
@@ -708,7 +709,7 @@
     </div>
     <div class="archive-filters gallery-archive-filters" aria-label="Filtrera galleriarkivet">
       <label class="archive-filter">Sök i galleriet<input id="galleryArchiveSearch" type="search" enterkeyhint="search" spellcheck="false" placeholder="Bildtext, person eller gård"></label>
-      <label class="archive-filter">Innehåll<select id="galleryArchiveCategory"><option value="">Allt bildmaterial</option><option value="person">Personbilder</option><option value="document">Dokument</option><option value="object">Föremål</option><option value="place">Gårdar och platser</option></select></label>
+      <label class="archive-filter">Innehåll<select id="galleryArchiveCategory"><option value="">Allt bildmaterial</option><option value="person">Personporträtt</option><option value="document">Dokument</option><option value="object">Föremål</option><option value="place">Gårdar och platser</option></select></label>
       <label class="archive-filter">Tillhör<select id="galleryArchiveOwner"><option value="">Personer och gårdar</option><option value="person">Personer</option><option value="place">Gårdar och platser</option></select></label>
     </div>
     <div id="galleryArchive" class="gallery-archive-grid"></div>
@@ -848,6 +849,6 @@
 <script src="emigrants.js?v=20260904c"></script>
 <script src="supabase-config.js?v=20260903"></script>
 <script id="structuredData" type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Jane S. Sholeen Copeland","birthDate":"1935-10-22","deathDate":"2025-09-17","description":"Kyrkligt engagerad familjeperson vars obituary dokumenterar en stor Copeland-gren.","url":"https://axels-slakt.vercel.app/emigranter/nils-johan-bengtsson/personer/jane-sholeen-copeland/"}</script>
-<script src="app.js?v=20260915a"></script>
+<script src="app.js?v=20260915c"></script>
 </body>
 </html>

@@ -151,7 +151,7 @@ test('a couple keeps its direct marker when the other spouse is direct',()=>{
 
 test('gallery image metadata keeps captions and categories intact',()=>{
   const ctx=vm.createContext({});
-  vm.runInContext("const imageCategories={person:'Personbild',document:'Dokument',object:'Föremål',place:'Gård eller plats'};",ctx);
+  vm.runInContext("const imageCategories={person:'Personporträtt',document:'Dokument',object:'Föremål',place:'Gård eller plats'};",ctx);
   ctx.rows=value=>String(value||'').split(/\n+/).map(row=>row.trim()).filter(Boolean);
   loadFunctions(ctx,admin,['imageCategory','inferImageCategory','imageText','images'],'  ');
   const original=[{src:'https://example.test/kyrkbok.jpg',caption:'Kyrkbok | sida 14',category:'document'}];
@@ -168,7 +168,7 @@ test('gallery archive rows point back to their person and place',()=>{
     routePersonUrl:id=>`/personer/${id}/`,routePlaceUrl:id=>`/gardar/${id}/`
   });
   ctx.visiblePlaces=()=>ctx.PLACES;
-  vm.runInContext("const IMAGE_CATEGORY_LABELS={person:'Personbild',document:'Dokument',object:'Föremål',place:'Gård eller plats'};",ctx);
+  vm.runInContext("const IMAGE_CATEGORY_LABELS={person:'Personporträtt',document:'Dokument',object:'Föremål',place:'Gård eller plats'};",ctx);
   loadFunctions(ctx,app,['normalizeImageCategory','inferImageCategory','parseImageValue','normalizedImages','galleryArchiveRows']);
   const rows=copy(ctx.galleryArchiveRows());
   assert.equal(rows.length,3);
@@ -179,7 +179,7 @@ test('gallery archive rows point back to their person and place',()=>{
 
 test('legacy document captions are classified without rewriting their source data',()=>{
   const ctx=vm.createContext({});
-  vm.runInContext("const IMAGE_CATEGORY_LABELS={person:'Personbild',document:'Dokument',object:'Föremål',place:'Gård eller plats'};",ctx);
+  vm.runInContext("const IMAGE_CATEGORY_LABELS={person:'Personporträtt',document:'Dokument',object:'Föremål',place:'Gård eller plats'};",ctx);
   loadFunctions(ctx,app,['normalizeImageCategory','inferImageCategory','parseImageValue']);
   assert.equal(ctx.parseImageValue({src:'/school.jpg',caption:'Anna Brittas skolbetyg'},'person').category,'document');
   assert.equal(ctx.parseImageValue({src:'/portrait.jpg',caption:'Porträtt av Anna'},'person').category,'person');

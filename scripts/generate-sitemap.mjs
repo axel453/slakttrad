@@ -125,7 +125,7 @@ function evidenceList(items, uncertain=false){
   if(!items?.length) return '<p class="detail-empty">Inga uppgifter inlagda ännu.</p>';
   return `<ul class="evidence-list">${items.map(item=>`<li class="evidence-item${uncertain ? " uncertain" : ""}">${linkEntities(item)}</li>`).join("")}</ul>`;
 }
-const IMAGE_CATEGORY_LABELS={person:"Personbild",document:"Dokument",object:"Föremål",place:"Gård eller plats"};
+const IMAGE_CATEGORY_LABELS={person:"Personporträtt",document:"Dokument",object:"Föremål",place:"Gård eller plats"};
 function normalizeImageCategory(value,fallback=""){
   const category=String(value||"").trim().toLowerCase();
   return Object.prototype.hasOwnProperty.call(IMAGE_CATEGORY_LABELS,category)?category:fallback;
