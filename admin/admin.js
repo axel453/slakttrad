@@ -94,8 +94,12 @@
   }
   function pairs(value){ return rows(value).map(row=>{const at=row.indexOf(':');return at<0?['Notering',row]:[row.slice(0,at).trim()||'Notering',row.slice(at+1).trim()];}); }
   function pairText(value){ return (value||[]).map(row=>Array.isArray(row)?`${row[0]}: ${row[1]}`:String(row)).join('\n'); }
-  function imageText(value){ return (value||[]).map(row=>typeof row==='string'?row:`${row.src||row.url||''}${row.caption?` | ${row.caption}`:''}`).filter(Boolean).join('\n'); }
-  function images(value){ return rows(value).map(row=>{const [src,...caption]=row.split('|');return {src:src.trim(),caption:caption.join('|').trim()};}).filter(row=>row.src); }
+  const imageCategories={person:'Personbild',document:'Dokument',object:'Föremål',place:'Gård eller plats'};
+  function imageCategory(value,fallback=''){const key=String(value||'').trim().toLowerCase();return imageCategories[key]?key:fallback;}
+  function inferImageCategory(caption,src,fallback=''){const text=`${caption||''} ${src||''}`.toLocaleLowerCase('sv');if(/dokument|kyrkbok|bouppteck|betyg|signatur|attest|intyg|kontrakt|lagfart|mantals|husförhör|födelsenotis|dödnotis|vigselnotis|census|obituary|passagerarlista|tidningsurklipp/.test(text))return 'document';if(/föremål|smycke|ring|medalj|verktyg|redskap|möbel|bibel|postilla/.test(text))return 'object';return fallback;}
+  function imageText(value){ return (value||[]).map(row=>{if(typeof row==='string')return row;const category=imageCategory(row.category||row.type);return `${row.src||row.url||''}${row.caption?` | ${row.caption}`:''}${category?` | ${category}`:''}`;}).filter(Boolean).join('\n'); }
+  function images(value){ return rows(value).map(row=>{const parts=row.split('|').map(part=>part.trim()),src=parts.shift()||'',explicit=imageCategory(parts.at(-1));if(explicit)parts.pop();const caption=parts.join(' | ').trim();return {src,caption,category:explicit||inferImageCategory(caption,src)};}).filter(row=>row.src); }
+  function imageCategoryOptions(selected,fallback){const current=imageCategory(selected,fallback);return Object.entries(imageCategories).map(([value,label])=>`<option value="${value}"${current===value?' selected':''}>${label}</option>`).join('');}
   function profileCrop(record={}){
     const crop=record.photoCrop||{};
     const clamp=(value,min,max,fallback)=>{const number=Number(value);return Number.isFinite(number)?Math.min(max,Math.max(min,number)):fallback;};
@@ -108,13 +112,14 @@
   }
   function galleryPreview(items,type='place',coverImage=''){
     if(!items.length) return `<div class="gallery-empty">${icon('images')}<span>Inga bilder i galleriet ännu.</span></div>`;
-    return items.map((item,index)=>{const src=item.src||item.url,selected=type==='place'&&src===coverImage;return `<article class="gallery-admin-item${selected?' cover-selected':''}" data-gallery-index="${index}"><img src="${esc(src)}" alt="" loading="lazy" onerror="this.closest('article').classList.add('image-error')"><div><label><span>Bildtext</span><input type="text" value="${esc(item.caption||'')}" data-gallery-caption="${index}" placeholder="Vilka, var och när?"></label><div class="gallery-item-actions">${type==='person'?`<button class="gallery-profile" type="button" data-gallery-profile="${index}">${icon('user-round')} Använd som profilbild</button>`:''}${type==='place'?`<button class="gallery-cover" type="button" data-gallery-cover="${index}">${icon(selected?'check':'image')} ${selected?'Vald som omslag':'Använd som omslag'}</button>`:''}<button class="gallery-remove" type="button" data-gallery-remove="${index}">${icon('trash-2')} Ta bort från galleriet</button></div></div></article>`;}).join('');
+    return items.map((item,index)=>{const src=item.src||item.url,selected=type==='place'&&src===coverImage,fallback=type==='person'?'person':'place';return `<article class="gallery-admin-item${selected?' cover-selected':''}" data-gallery-index="${index}"><img src="${esc(src)}" alt="" loading="lazy" onerror="this.closest('article').classList.add('image-error')"><div><label><span>Bildtext</span><input type="text" value="${esc(item.caption||'')}" data-gallery-caption="${index}" placeholder="Vilka, var och när?"></label><label><span>Kategori</span><select data-gallery-category="${index}">${imageCategoryOptions(item.category,fallback)}</select></label><div class="gallery-item-actions">${type==='person'?`<button class="gallery-profile" type="button" data-gallery-profile="${index}">${icon('user-round')} Använd som profilbild</button>`:''}${type==='place'?`<button class="gallery-cover" type="button" data-gallery-cover="${index}">${icon(selected?'check':'image')} ${selected?'Vald som omslag':'Använd som omslag'}</button>`:''}<button class="gallery-remove" type="button" data-gallery-remove="${index}">${icon('trash-2')} Ta bort från galleriet</button></div></div></article>`;}).join('');
   }
   function galleryEditor(type,id,record,isNew){
     const items=images(imageText(record.images));
     const uploadAllowed=!isNew&&canReview();
     const uploadCopy=isNew?'Spara posten först. Därefter kan du ladda upp bilder.':uploadAllowed?'Välj en eller flera bilder i JPG, PNG eller WebP, högst 15 MB per bild. Bilderna blir offentliga när posten sparas.':'Du kan lägga till bildlänkar. En redaktör hanterar filuppladdning och publicering.';
-    return `<div class="gallery-manager" data-gallery-manager data-entity-type="${type}" data-entity-id="${esc(id)}"><div class="gallery-admin-grid" data-gallery-preview>${galleryPreview(items,type,record.coverImage||'')}</div><div class="gallery-upload-card"><div><strong>Ladda upp bilder</strong><p>${esc(uploadCopy)}</p></div><div class="gallery-upload-fields"><label class="field"><span>Bildfiler</span><input type="file" accept="image/jpeg,image/png,image/webp" data-gallery-file multiple${uploadAllowed?'':' disabled'}><small class="field-help" data-gallery-file-summary>Inga bilder valda</small></label><label class="field"><span>Gemensam bildtext (valfri)</span><input type="text" data-gallery-upload-caption placeholder="Personer, plats och ungefärligt år"${uploadAllowed?'':' disabled'}></label><button class="secondary-button" type="button" data-gallery-upload${uploadAllowed?'':' disabled'}>${icon('upload')} Ladda upp bilder</button></div><p class="gallery-upload-state" data-gallery-upload-state aria-live="polite"></p></div><details class="gallery-link-entry"><summary>Lägg till eller kontrollera bildadress</summary><label class="field"><span>En bild per rad</span><textarea id="fImages" data-gallery-source placeholder="https://…/bild.jpg | Bildtext">${esc(imageText(record.images))}</textarea><small class="field-help">Format: bildadress | bildtext. Befintliga länkar fortsätter fungera.</small></label></details></div>`;
+    const fallback=type==='person'?'person':'place';
+    return `<div class="gallery-manager" data-gallery-manager data-entity-type="${type}" data-entity-id="${esc(id)}"><div class="gallery-admin-grid" data-gallery-preview>${galleryPreview(items,type,record.coverImage||'')}</div><div class="gallery-upload-card"><div><strong>Ladda upp bilder</strong><p>${esc(uploadCopy)}</p></div><div class="gallery-upload-fields"><label class="field"><span>Bildfiler</span><input type="file" accept="image/jpeg,image/png,image/webp" data-gallery-file multiple${uploadAllowed?'':' disabled'}><small class="field-help" data-gallery-file-summary>Inga bilder valda</small></label><label class="field"><span>Gemensam bildtext (valfri)</span><input type="text" data-gallery-upload-caption placeholder="Personer, plats och ungefärligt år"${uploadAllowed?'':' disabled'}></label><label class="field"><span>Kategori</span><select data-gallery-upload-category${uploadAllowed?'':' disabled'}>${imageCategoryOptions('',fallback)}</select></label><button class="secondary-button" type="button" data-gallery-upload${uploadAllowed?'':' disabled'}>${icon('upload')} Ladda upp bilder</button></div><p class="gallery-upload-state" data-gallery-upload-state aria-live="polite"></p></div><details class="gallery-link-entry"><summary>Lägg till eller kontrollera bildadress</summary><label class="field"><span>En bild per rad</span><textarea id="fImages" data-gallery-source placeholder="https://…/bild.jpg | Bildtext | person">${esc(imageText(record.images))}</textarea><small class="field-help">Format: bildadress | bildtext | kategori. Kategorier: person, document, object eller place.</small></label></details></div>`;
   }
   function coverImageEditor(id,record,isNew){
     const cover=record.coverImage||'';
@@ -153,7 +158,7 @@
     button.disabled=true;button.innerHTML=`<span class="spinner small"></span> Laddar upp`;if(stateEl)stateEl.textContent='Laddar upp bilden…';
     try{
       const name=document.getElementById('fName')?.value.trim()||'platsen';
-      const item=await window.FamilyData.uploadPublicImage(file,'place',manager.dataset.placeId,`Omslagsbild för ${name}`);
+      const item=await window.FamilyData.uploadPublicImage(file,'place',manager.dataset.placeId,`Omslagsbild för ${name}`);item.category='place';
       const coverField=document.getElementById('fCoverImage');if(coverField)coverField.value=item.src;
       setCoverPreview(item.src);
       const gallery=document.querySelector('[data-gallery-manager][data-entity-type="place"]');
@@ -171,6 +176,13 @@
     if(!items[index])return;
     items[index].caption=input.value.trim();source.value=imageText(items);
   }
+  function updateGalleryCategory(select){
+    const manager=select.closest('[data-gallery-manager]'),source=manager?.querySelector('[data-gallery-source]');
+    if(!source)return;
+    const items=images(source.value),index=Number(select.dataset.galleryCategory);
+    if(!items[index])return;
+    items[index].category=imageCategory(select.value,manager.dataset.entityType==='person'?'person':'place');source.value=imageText(items);
+  }
   function updateGalleryFileSummary(input){
     const count=input.files?.length||0;
     const summary=input.closest('.field')?.querySelector('[data-gallery-file-summary]');
@@ -180,11 +192,13 @@
     const manager=button.closest('[data-gallery-manager]');
     const fileInput=manager?.querySelector('[data-gallery-file]');
     const captionInput=manager?.querySelector('[data-gallery-upload-caption]');
+    const categoryInput=manager?.querySelector('[data-gallery-upload-category]');
     const source=manager?.querySelector('[data-gallery-source]');
     const state=manager?.querySelector('[data-gallery-upload-state]');
     const files=Array.from(fileInput?.files||[]);
     if(!files.length){toast('Välj minst en bildfil först.',true);return;}
     const caption=captionInput.value.trim();
+    const category=imageCategory(categoryInput?.value,manager.dataset.entityType==='person'?'person':'place');
     const items=images(source.value),failures=[];
     button.disabled=true;
     for(let index=0;index<files.length;index+=1){
@@ -192,7 +206,7 @@
       button.innerHTML=`<span class="spinner small"></span> ${index+1} av ${files.length}`;
       if(state)state.textContent=`Laddar upp ${index+1} av ${files.length}: ${file.name}`;
       try{
-        const item=await window.FamilyData.uploadPublicImage(file,manager.dataset.entityType,manager.dataset.entityId,caption);
+        const item=await window.FamilyData.uploadPublicImage(file,manager.dataset.entityType,manager.dataset.entityId,caption);item.category=category;
         if(!items.some(row=>row.src===item.src))items.push(item);
         source.value=imageText(items);refreshGalleryManager(manager);
       }catch(error){failures.push({file,error});}
@@ -248,7 +262,7 @@
     button.disabled=true;button.innerHTML=`<span class="spinner small"></span> Laddar upp`;if(stateEl)stateEl.textContent='Laddar upp bilden…';
     try{
       const name=document.getElementById('fName')?.value.trim()||'personen';
-      const item=await window.FamilyData.uploadPublicImage(file,'person',manager.dataset.personId,`Porträtt av ${name}`,{maxDimension:960,quality:.84});
+      const item=await window.FamilyData.uploadPublicImage(file,'person',manager.dataset.personId,`Porträtt av ${name}`,{maxDimension:960,quality:.84});item.category='person';
       const photoField=document.getElementById('fPhoto');if(photoField)photoField.value=item.src;
       setProfilePreview(manager,item.src);
       const gallery=document.querySelector('[data-gallery-manager][data-entity-type="person"]');
@@ -592,7 +606,7 @@
       const removeCover=event.target.closest('[data-cover-remove]');if(removeCover){const field=document.getElementById('fCoverImage'),gallery=document.querySelector('[data-gallery-manager][data-entity-type="place"]');if(field)field.value='';setCoverPreview('');if(gallery)refreshGalleryManager(gallery);return;}
     });
     document.addEventListener('input',event=>{if(event.target.matches('[data-gallery-caption]'))updateGalleryCaption(event.target);else if(event.target.matches('[data-gallery-source]'))refreshGalleryManager(event.target.closest('[data-gallery-manager]'));else if(event.target.matches('[data-profile-url]'))setProfilePreview(event.target.closest('[data-profile-manager]'),event.target.value.trim());else if(event.target.matches('[data-profile-crop]'))updateProfileCrop(event.target.closest('[data-profile-manager]'));else if(event.target.matches('[data-cover-url]')){setCoverPreview(event.target.value.trim());const gallery=document.querySelector('[data-gallery-manager][data-entity-type="place"]');if(gallery)refreshGalleryManager(gallery);}if(event.target.closest('#personForm,#placeForm'))scheduleEditorDraft();});
-    document.addEventListener('change',event=>{if(event.target.matches('[data-profile-file]'))previewProfileFile(event.target);else if(event.target.matches('[data-cover-file]'))previewCoverFile(event.target);else if(event.target.matches('[data-gallery-file]'))updateGalleryFileSummary(event.target);if(event.target.closest('#personForm,#placeForm'))scheduleEditorDraft();});
+    document.addEventListener('change',event=>{if(event.target.matches('[data-profile-file]'))previewProfileFile(event.target);else if(event.target.matches('[data-cover-file]'))previewCoverFile(event.target);else if(event.target.matches('[data-gallery-file]'))updateGalleryFileSummary(event.target);else if(event.target.matches('[data-gallery-category]'))updateGalleryCategory(event.target);if(event.target.closest('#personForm,#placeForm'))scheduleEditorDraft();});
     document.addEventListener('change',async event=>{const select=event.target.closest('[data-member-role]');if(!select)return;select.disabled=true;try{await window.FamilyData.updateMemberRole(select.dataset.memberRole,select.value);toast('Användarens roll är uppdaterad.');await refreshData();}catch(error){toast(error.message||'Rollen kunde inte ändras.',true);}finally{select.disabled=false;}});
     addEventListener('popstate',renderRoute);addEventListener('hashchange',renderRoute);addEventListener('pagehide',saveActiveEditorDraft);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')saveActiveEditorDraft();});
     document.addEventListener('family-auth-change',event=>showAuth(event.detail));

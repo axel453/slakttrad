@@ -1039,6 +1039,15 @@ function resetMetaForPage(mode){
     );
     return;
   }
+  if(mode === "galleriarkiv"){
+    setMeta(
+      "Galleriarkiv - Nilsson/Bengtsson släktträd",
+      "Fotografier, dokument och föremål som hör till personer och gårdar i Nilsson/Bengtsson-släktens familjearkiv.",
+      "/galleri/",
+      {"@context":"https://schema.org","@type":"CollectionPage","name":"Galleriarkiv","url":absoluteUrl('/galleri/')}
+    );
+    return;
+  }
   if(mode === "contact"){
     setMeta(
       "Kontakt - Nilsson/Bengtsson släktträd",
@@ -1099,24 +1108,49 @@ function detailEvidenceHTML(items, kind="source"){
   const content = item=>kind === "source" ? escapeHtml(item).replace(/https?:\/\/[^\s<]+/g, url=>`<a href="${url}" target="_blank" rel="noopener">Visa originalkälla</a>`) : linkPersonNames(item);
   return `<ul class="evidence-list">${items.map(item=>`<li class="evidence-item${kind === "uncertain" ? " uncertain" : ""}">${content(item)}</li>`).join("")}</ul>`;
 }
+const IMAGE_CATEGORY_LABELS = {person:"Personbild",document:"Dokument",object:"Föremål",place:"Gård eller plats"};
+function normalizeImageCategory(value, fallback=""){
+  const category = String(value || "").trim().toLowerCase();
+  return Object.prototype.hasOwnProperty.call(IMAGE_CATEGORY_LABELS,category) ? category : fallback;
+}
+function inferImageCategory(caption, src, fallback=""){
+  const text = `${caption || ""} ${src || ""}`.toLocaleLowerCase("sv");
+  if(/dokument|kyrkbok|bouppteck|betyg|signatur|attest|intyg|kontrakt|lagfart|mantals|husförhör|födelsenotis|dödnotis|vigselnotis|census|obituary|passagerarlista|tidningsurklipp/.test(text)) return "document";
+  if(/föremål|smycke|ring|medalj|verktyg|redskap|möbel|bibel|postilla/.test(text)) return "object";
+  return fallback;
+}
+function parseImageValue(item, fallbackCategory=""){
+  if(typeof item === "string"){
+    const parts = item.split("|").map(part=>part.trim());
+    const src = parts.shift() || "";
+    const explicitCategory = normalizeImageCategory(parts.at(-1));
+    if(explicitCategory) parts.pop();
+    const caption = parts.join(" | ").trim();
+    return {src,caption,category:explicitCategory || inferImageCategory(caption,src,fallbackCategory)};
+  }
+  const src = item?.src || item?.url || "";
+  const caption = item?.caption || item?.alt || "";
+  return {
+    src,
+    caption,
+    category:normalizeImageCategory(item?.category || item?.type) || inferImageCategory(caption,src,fallbackCategory)
+  };
+}
 function normalizedImages(record, includeProfile=false){
+  const fallbackCategory = includeProfile ? "person" : "place";
   const rows = [];
   (record.images || []).forEach(item=>{
-    if(typeof item === "string"){
-      const [src,...caption] = item.split("|");
-      if(src.trim()) rows.push({src:src.trim(),caption:caption.join("|").trim()});
-    }else if(item?.src || item?.url){
-      rows.push({src:item.src || item.url,caption:item.caption || item.alt || ""});
-    }
+    const image = parseImageValue(item,fallbackCategory);
+    if(image.src) rows.push(image);
   });
   const profile = record.photo || record.image;
-  if(includeProfile && profile && profile !== PERSON_PLACEHOLDER && !rows.some(row=>row.src === profile)) rows.unshift({src:profile,caption:`Porträtt av ${record.name || "personen"}`});
+  if(includeProfile && profile && profile !== PERSON_PLACEHOLDER && !rows.some(row=>row.src === profile)) rows.unshift({src:profile,caption:`Porträtt av ${record.name || "personen"}`,category:"person"});
   return rows;
 }
 function detailImagesHTML(record, includeProfile=false){
   const images = normalizedImages(record, includeProfile);
   if(!images.length) return '<p class="detail-empty">Inga bilder är inlagda ännu.</p>';
-  return `<p class="detail-media-summary">${images.length} ${images.length === 1 ? "bild" : "bilder"} i galleriet</p><div class="detail-media-grid">${images.map((item,index)=>`<figure class="detail-media"><button class="detail-media-button" type="button" data-gallery-item data-gallery-index="${index}" data-gallery-src="${escapeHtml(item.src)}" data-gallery-caption="${escapeHtml(item.caption || "Bild ur familjearkivet")}" aria-label="Öppna bild ${index + 1} av ${images.length}"><img src="${escapeHtml(item.src)}" alt="${escapeHtml(item.caption || record.name || "Arkivbild")}" loading="lazy" onerror="this.closest('figure').style.display='none'"><figcaption>${escapeHtml(item.caption || "Bild ur familjearkivet")}</figcaption></button></figure>`).join("")}</div>`;
+  return `<p class="detail-media-summary">${images.length} ${images.length === 1 ? "bild" : "bilder"} i galleriet</p><div class="detail-media-grid">${images.map((item,index)=>`<figure class="detail-media"><button class="detail-media-button" type="button" data-gallery-item data-gallery-index="${index}" data-gallery-src="${escapeHtml(item.src)}" data-gallery-caption="${escapeHtml(item.caption || "Bild ur familjearkivet")}" aria-label="Öppna bild ${index + 1} av ${images.length}"><img src="${escapeHtml(item.src)}" alt="${escapeHtml(item.caption || record.name || "Arkivbild")}" loading="lazy" onerror="this.closest('figure').style.display='none'"><figcaption>${escapeHtml(item.caption || "Bild ur familjearkivet")}<br><span class="gallery-category">${escapeHtml(IMAGE_CATEGORY_LABELS[item.category] || "Bild")}</span></figcaption></button></figure>`).join("")}</div>`;
 }
 let activeGallery = [];
 let activeGalleryIndex = 0;
@@ -1134,7 +1168,7 @@ function updateLightbox(){
   lightbox.querySelector('[data-gallery-next]').hidden = activeGallery.length < 2;
 }
 function openLightbox(button){
-  const grid = button.closest('.detail-media-grid');
+  const grid = button.closest('.detail-media-grid, .gallery-archive-grid');
   const buttons = [...(grid?.querySelectorAll('[data-gallery-item]') || [])];
   activeGallery = buttons.map(item=>({src:item.dataset.gallerySrc,caption:item.dataset.galleryCaption}));
   activeGalleryIndex = Math.max(0, buttons.indexOf(button));
@@ -1582,7 +1616,7 @@ function renderEmigrantPersonDetail(branchId,personId){
   detail.classList.add('open'); refreshPageIcons(); detail.scrollIntoView({behavior:'smooth',block:'start'}); return true;
 }
 function setPageMode(mode){
-  document.body.classList.remove("page-home","page-personarkiv","page-gardarkiv","page-emigrantarkiv","page-contact","page-detail");
+  document.body.classList.remove("page-home","page-personarkiv","page-gardarkiv","page-emigrantarkiv","page-galleriarkiv","page-contact","page-detail");
   document.body.classList.add(`page-${mode}`);
   if(mode !== "detail") resetMetaForPage(mode);
   if(mode === "home") refreshPlaceMapLayout();
@@ -1597,14 +1631,15 @@ function currentRoute(){
   if(rawHash === "personarkiv") return "/personarkiv/";
   if(rawHash === "gardarkiv") return "/gardar/";
   if(rawHash === "emigrantarkiv") return "/emigranter/";
+  if(rawHash === "galleriarkiv") return "/galleri/";
   if(rawHash === "kontakt") return "/kontakt/";
   if(rawHash.startsWith("person/")) return `/personer/${rawHash.slice(7)}/`;
   if(rawHash.startsWith("plats/")) return `/gardar/${rawHash.slice(6)}/`;
   return location.pathname || "/";
 }
-const initializedFeatures = {home:false,branchFilters:false,archiveFilters:false,personarkiv:false,gardarkiv:false,emigrantarkiv:false,placeMapScheduled:false,placeMapStarted:false};
+const initializedFeatures = {home:false,branchFilters:false,archiveFilters:false,personarkiv:false,gardarkiv:false,emigrantarkiv:false,galleriarkiv:false,placeMapScheduled:false,placeMapStarted:false};
 function activePageMode(){
-  return ["home","personarkiv","gardarkiv","emigrantarkiv","contact","detail"].find(mode=>document.body.classList.contains(`page-${mode}`)) || "home";
+  return ["home","personarkiv","gardarkiv","emigrantarkiv","galleriarkiv","contact","detail"].find(mode=>document.body.classList.contains(`page-${mode}`)) || "home";
 }
 function scheduleHomePlaceMap(){
   if(initializedFeatures.placeMapScheduled) return;
@@ -1631,7 +1666,7 @@ function ensurePageFeatures(mode){
     initBranchFilters();
     initializedFeatures.branchFilters=true;
   }
-  if(["personarkiv","gardarkiv","emigrantarkiv"].includes(mode) && !initializedFeatures.archiveFilters){
+  if(["personarkiv","gardarkiv","emigrantarkiv","galleriarkiv"].includes(mode) && !initializedFeatures.archiveFilters){
     initArchiveFilters();
     initializedFeatures.archiveFilters=true;
   }
@@ -1662,6 +1697,10 @@ function ensurePageFeatures(mode){
     renderEmigrantArchive();
     initializedFeatures.emigrantarkiv=true;
   }
+  if(mode === "galleriarkiv"){
+    renderGalleryArchive();
+    initializedFeatures.galleriarkiv=true;
+  }
 }
 function renderCurrentRoute(){
   updateActiveNav();
@@ -1690,6 +1729,12 @@ function renderCurrentRoute(){
     setPageMode("emigrantarkiv");
     ensurePageFeatures("emigrantarkiv");
     document.getElementById('emigrantarkiv')?.scrollIntoView({behavior:'auto',block:'start'});
+    return;
+  }
+  if(parts[0] === "galleri" && parts.length === 1){
+    setPageMode("galleriarkiv");
+    ensurePageFeatures("galleriarkiv");
+    document.getElementById('galleriarkiv')?.scrollIntoView({behavior:'auto',block:'start'});
     return;
   }
   if(parts[0] === "kontakt" && parts.length === 1){
@@ -2056,6 +2101,45 @@ function renderPlaceArchive(){
   }).join("") || '<p class="detail-empty">Inga platser matchar valt filter.</p>';
   refreshPageIcons();
 }
+function galleryArchiveRows(){
+  const rows = [];
+  Object.entries(PEOPLE).forEach(([ownerId,person])=>{
+    normalizedImages(person,true).forEach((image,index)=>rows.push({
+      ...image,id:`person:${ownerId}:image:${index}`,ownerType:"person",ownerId,
+      ownerName:person.name,ownerUrl:routePersonUrl(ownerId)
+    }));
+  });
+  visiblePlaces().forEach(place=>{
+    normalizedImages(place).forEach((image,index)=>rows.push({
+      ...image,id:`place:${place.id}:image:${index}`,ownerType:"place",ownerId:place.id,
+      ownerName:place.name,ownerUrl:routePlaceUrl(place.id)
+    }));
+  });
+  return rows.sort((a,b)=>a.ownerName.localeCompare(b.ownerName,'sv') || (a.caption || "").localeCompare(b.caption || "",'sv'));
+}
+function renderGalleryArchive(){
+  const el = document.getElementById('galleryArchive');
+  const count = document.getElementById('galleryArchiveCount');
+  if(!el) return;
+  const query = normalizeSearchText(archiveValue('galleryArchiveSearch'));
+  const category = archiveValue('galleryArchiveCategory');
+  const ownerType = archiveValue('galleryArchiveOwner');
+  const rows = galleryArchiveRows().filter(item=>{
+    if(category && item.category !== category) return false;
+    if(ownerType && item.ownerType !== ownerType) return false;
+    return !query || normalizeSearchText([item.caption,item.ownerName,IMAGE_CATEGORY_LABELS[item.category]].filter(Boolean).join(" ")).includes(query);
+  });
+  if(count) count.textContent = `${rows.length} ${rows.length === 1 ? "post" : "poster"} i aktivt filter`;
+  el.innerHTML = rows.map((item,index)=>`<article class="gallery-archive-card category-${escapeHtml(item.category || "place")}">
+    <button class="gallery-archive-button" type="button" data-gallery-item data-gallery-index="${index}" data-gallery-src="${escapeHtml(item.src)}" data-gallery-caption="${escapeHtml(item.caption || `Bild kopplad till ${item.ownerName}`)}" aria-label="Öppna ${escapeHtml(item.caption || `bild kopplad till ${item.ownerName}`)}">
+      <img class="gallery-archive-image" src="${escapeHtml(item.src)}" alt="${escapeHtml(item.caption || `Bild kopplad till ${item.ownerName}`)}" loading="lazy" onerror="this.closest('article').style.display='none'">
+    </button>
+    <div class="gallery-archive-body">
+      <p class="gallery-archive-caption">${escapeHtml(item.caption || "Bild ur familjearkivet")}</p>
+      <div class="gallery-archive-meta"><span class="gallery-category">${escapeHtml(IMAGE_CATEGORY_LABELS[item.category] || "Bild")}</span><a class="gallery-owner-link" href="${escapeHtml(item.ownerUrl)}" ${item.ownerType === "person" ? `data-open-person="${escapeHtml(item.ownerId)}"` : `data-open-place="${escapeHtml(item.ownerId)}"`}>${escapeHtml(item.ownerName)}</a></div>
+    </div>
+  </article>`).join("") || '<p class="detail-empty">Inget bildmaterial matchar valt filter.</p>';
+}
 function emigrantSearchText(branch){
   const person = PEOPLE[branch.rootPersonId] || {};
   const branchPeople = Object.values(branch.people || {}).flatMap(item=>[item.name,...(item.aliases || []),item.relation,item.born,item.died,item.location,item.summary,...(item.story || []),...(item.facts || []).flat()]);
@@ -2096,6 +2180,7 @@ function renderArchives(){
   renderPersonArchive();
   renderPlaceArchive();
   renderEmigrantArchive();
+  renderGalleryArchive();
   refreshStructuredArchive();
 }
 function buildStructuredArchive(){
@@ -2141,12 +2226,14 @@ function initArchiveFilters(){
   const liveSearches = {
     personArchiveSearch: renderPersonArchive,
     placeArchiveSearch: renderPlaceArchive,
-    emigrantArchiveSearch: renderEmigrantArchive
+    emigrantArchiveSearch: renderEmigrantArchive,
+    galleryArchiveSearch: renderGalleryArchive
   };
   Object.entries(liveSearches).forEach(([id,render])=>bindLiveSearch(document.getElementById(id),render));
   ['personArchiveCentury','personArchivePlace','personArchiveStatus'].forEach(id=>document.getElementById(id)?.addEventListener('change',renderPersonArchive));
   ['placeArchiveType','placeArchiveMap'].forEach(id=>document.getElementById(id)?.addEventListener('change',renderPlaceArchive));
   ['emigrantArchiveDestination','emigrantArchiveStatus'].forEach(id=>document.getElementById(id)?.addEventListener('change',renderEmigrantArchive));
+  ['galleryArchiveCategory','galleryArchiveOwner'].forEach(id=>document.getElementById(id)?.addEventListener('change',renderGalleryArchive));
 }
 function placeIdFromCurrentRoute(){
   const parts = currentRoute().replace(/^\/+|\/+$/g,"").split("/").filter(Boolean);
@@ -2160,7 +2247,7 @@ function initSiteNavigation(){
     const nav = e.target.closest('[data-nav]');
     if(!nav) return;
     e.preventDefault();
-    const target = nav.dataset.nav === "personarkiv" ? "/personarkiv/" : nav.dataset.nav === "gardarkiv" ? "/gardar/" : nav.dataset.nav === "emigrantarkiv" ? "/emigranter/" : nav.dataset.nav === "contact" ? "/kontakt/" : "/";
+    const target = nav.dataset.nav === "personarkiv" ? "/personarkiv/" : nav.dataset.nav === "gardarkiv" ? "/gardar/" : nav.dataset.nav === "galleriarkiv" ? "/galleri/" : nav.dataset.nav === "emigrantarkiv" ? "/emigranter/" : nav.dataset.nav === "contact" ? "/kontakt/" : "/";
     closePanel();
     navigatePath(target);
   });
@@ -2196,7 +2283,7 @@ function updateActiveNav(){
   const route = currentRoute();
   document.querySelectorAll('[data-nav]').forEach(link=>{
     const key = link.dataset.nav;
-    const active = (key === "home" && route === "/") || (key === "personarkiv" && route.startsWith("/personarkiv")) || (key === "gardarkiv" && route.startsWith("/gardar")) || (key === "emigrantarkiv" && route.startsWith("/emigranter")) || (key === "contact" && route.startsWith("/kontakt"));
+    const active = (key === "home" && route === "/") || (key === "personarkiv" && route.startsWith("/personarkiv")) || (key === "gardarkiv" && route.startsWith("/gardar")) || (key === "galleriarkiv" && route.startsWith("/galleri")) || (key === "emigrantarkiv" && route.startsWith("/emigranter")) || (key === "contact" && route.startsWith("/kontakt"));
     link.classList.toggle('active', active);
   });
 }
@@ -2845,7 +2932,7 @@ function applySharedSnapshot(snapshot){
     refreshSelectedPlace();
     if(initializedFeatures.home && mode !== 'home') renderTree({preserveView:true});
   }
-  if(["personarkiv","gardarkiv","emigrantarkiv"].includes(mode)) refreshArchiveFilterOptions();
+  if(["personarkiv","gardarkiv","emigrantarkiv","galleriarkiv"].includes(mode)) refreshArchiveFilterOptions();
   if(mode === "home"){
     refreshEditorSelects();
     renderTree({preserveView:true});
@@ -2862,6 +2949,8 @@ function applySharedSnapshot(snapshot){
     refreshSelectedPlace();
   }else if(mode === "emigrantarkiv"){
     renderEmigrantArchive();
+  }else if(mode === "galleriarkiv"){
+    renderGalleryArchive();
   }else if(mode === "detail"){
     renderCurrentRoute();
   }
@@ -3031,14 +3120,12 @@ function textToStory(text){
 function imagesToText(images){
   return (images || []).map(item=>{
     if(typeof item === "string") return item;
-    return `${item.src || item.url || ""}${item.caption ? ` | ${item.caption}` : ""}`;
+    const category = normalizeImageCategory(item.category || item.type);
+    return `${item.src || item.url || ""}${item.caption ? ` | ${item.caption}` : ""}${category ? ` | ${category}` : ""}`;
   }).filter(Boolean).join("\n");
 }
 function textToImages(text){
-  return String(text || "").split(/\n+/).map(row=>row.trim()).filter(Boolean).map(row=>{
-    const [src,...caption] = row.split("|");
-    return {src:src.trim(),caption:caption.join("|").trim()};
-  }).filter(item=>item.src);
+  return String(text || "").split(/\n+/).map(row=>row.trim()).filter(Boolean).map(row=>parseImageValue(row)).filter(item=>item.src);
 }
 function cloneRecord(value){
   return JSON.parse(JSON.stringify(value || {}));

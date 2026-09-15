@@ -149,6 +149,42 @@ test('a couple keeps its direct marker when the other spouse is direct',()=>{
   assert.equal(result.direct,true);
 });
 
+test('gallery image metadata keeps captions and categories intact',()=>{
+  const ctx=vm.createContext({});
+  vm.runInContext("const imageCategories={person:'Personbild',document:'Dokument',object:'Föremål',place:'Gård eller plats'};",ctx);
+  ctx.rows=value=>String(value||'').split(/\n+/).map(row=>row.trim()).filter(Boolean);
+  loadFunctions(ctx,admin,['imageCategory','inferImageCategory','imageText','images'],'  ');
+  const original=[{src:'https://example.test/kyrkbok.jpg',caption:'Kyrkbok | sida 14',category:'document'}];
+  const serialized=ctx.imageText(original);
+  assert.equal(serialized,'https://example.test/kyrkbok.jpg | Kyrkbok | sida 14 | document');
+  assert.deepEqual(copy(ctx.images(serialized)),original);
+});
+
+test('gallery archive rows point back to their person and place',()=>{
+  const ctx=vm.createContext({
+    PEOPLE:{person_1:{name:'Anna Andersson',photo:'/anna.jpg',images:[{src:'/brev.jpg',caption:'Ett brev',category:'document'}]}},
+    PLACES:[{id:'farm_1',name:'Valagården',images:[{src:'/garden.jpg',caption:'Gården'}]}],
+    PERSON_PLACEHOLDER:'/assets/person-placeholder.svg',
+    routePersonUrl:id=>`/personer/${id}/`,routePlaceUrl:id=>`/gardar/${id}/`
+  });
+  ctx.visiblePlaces=()=>ctx.PLACES;
+  vm.runInContext("const IMAGE_CATEGORY_LABELS={person:'Personbild',document:'Dokument',object:'Föremål',place:'Gård eller plats'};",ctx);
+  loadFunctions(ctx,app,['normalizeImageCategory','inferImageCategory','parseImageValue','normalizedImages','galleryArchiveRows']);
+  const rows=copy(ctx.galleryArchiveRows());
+  assert.equal(rows.length,3);
+  assert.ok(rows.some(row=>row.ownerName==='Anna Andersson'&&row.category==='person'&&row.ownerUrl==='/personer/person_1/'));
+  assert.ok(rows.some(row=>row.caption==='Ett brev'&&row.category==='document'));
+  assert.ok(rows.some(row=>row.ownerName==='Valagården'&&row.category==='place'&&row.ownerUrl==='/gardar/farm_1/'));
+});
+
+test('legacy document captions are classified without rewriting their source data',()=>{
+  const ctx=vm.createContext({});
+  vm.runInContext("const IMAGE_CATEGORY_LABELS={person:'Personbild',document:'Dokument',object:'Föremål',place:'Gård eller plats'};",ctx);
+  loadFunctions(ctx,app,['normalizeImageCategory','inferImageCategory','parseImageValue']);
+  assert.equal(ctx.parseImageValue({src:'/school.jpg',caption:'Anna Brittas skolbetyg'},'person').category,'document');
+  assert.equal(ctx.parseImageValue({src:'/portrait.jpg',caption:'Porträtt av Anna'},'person').category,'person');
+});
+
 test('all new ancestor generations appear regardless of input order',()=>{
   for(const order of [['grandparent','parent','child'],['child','parent','grandparent']]){
     const people={grandparent:{},parent:{parents:['grandparent']},child:{parents:['parent']}};

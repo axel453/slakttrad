@@ -125,22 +125,38 @@ function evidenceList(items, uncertain=false){
   if(!items?.length) return '<p class="detail-empty">Inga uppgifter inlagda ännu.</p>';
   return `<ul class="evidence-list">${items.map(item=>`<li class="evidence-item${uncertain ? " uncertain" : ""}">${linkEntities(item)}</li>`).join("")}</ul>`;
 }
+const IMAGE_CATEGORY_LABELS={person:"Personbild",document:"Dokument",object:"Föremål",place:"Gård eller plats"};
+function normalizeImageCategory(value,fallback=""){
+  const category=String(value||"").trim().toLowerCase();
+  return Object.prototype.hasOwnProperty.call(IMAGE_CATEGORY_LABELS,category)?category:fallback;
+}
+function inferImageCategory(caption,src,fallback=""){
+  const text=`${caption||""} ${src||""}`.toLocaleLowerCase("sv");
+  if(/dokument|kyrkbok|bouppteck|betyg|signatur|attest|intyg|kontrakt|lagfart|mantals|husförhör|födelsenotis|dödnotis|vigselnotis|census|obituary|passagerarlista|tidningsurklipp/.test(text))return "document";
+  if(/föremål|smycke|ring|medalj|verktyg|redskap|möbel|bibel|postilla/.test(text))return "object";
+  return fallback;
+}
+function parseImageValue(item,fallback=""){
+  if(typeof item === "string"){
+    const parts=item.split("|").map(part=>part.trim()),src=parts.shift()||"",category=normalizeImageCategory(parts.at(-1));
+    if(category)parts.pop();
+    const caption=parts.join(" | ").trim();
+    return {src,caption,category:category||inferImageCategory(caption,src,fallback)};
+  }
+  const src=item?.src||item?.url||"",caption=item?.caption||item?.alt||"";
+  return {src,caption,category:normalizeImageCategory(item?.category||item?.type)||inferImageCategory(caption,src,fallback)};
+}
 function galleryImages(record, includeProfile=false){
-  const items=(record.images||[]).map(item=>{
-    if(typeof item === "string"){
-      const [src,...caption]=item.split("|");
-      return {src:src.trim(),caption:caption.join("|").trim()};
-    }
-    return {src:item?.src||item?.url||"",caption:item?.caption||item?.alt||""};
-  }).filter(item=>item.src);
+  const fallback=includeProfile?"person":"place";
+  const items=(record.images||[]).map(item=>parseImageValue(item,fallback)).filter(item=>item.src);
   const profile=record.photo||record.image;
-  if(includeProfile&&profile&&!/person-placeholder\.svg$/i.test(profile)&&!items.some(item=>item.src===profile)) items.unshift({src:profile,caption:`Porträtt av ${record.name||"personen"}`});
+  if(includeProfile&&profile&&!/person-placeholder\.svg$/i.test(profile)&&!items.some(item=>item.src===profile)) items.unshift({src:profile,caption:`Porträtt av ${record.name||"personen"}`,category:"person"});
   return items;
 }
 function gallerySection(record, includeProfile=false){
   const items=galleryImages(record,includeProfile);
   if(!items.length) return '<p class="detail-empty">Inga bilder är inlagda ännu.</p>';
-  return `<p class="detail-media-summary">${items.length} ${items.length===1?'bild':'bilder'} i galleriet</p><div class="detail-media-grid">${items.map((item,index)=>`<figure class="detail-media"><button class="detail-media-button" type="button" data-gallery-item data-gallery-index="${index}" data-gallery-src="${escapeHtml(item.src)}" data-gallery-caption="${escapeHtml(item.caption||'Bild ur familjearkivet')}" aria-label="Öppna bild ${index+1} av ${items.length}"><img src="${escapeHtml(item.src)}" alt="${escapeHtml(item.caption||record.name||'Arkivbild')}" loading="lazy"><figcaption>${escapeHtml(item.caption||'Bild ur familjearkivet')}</figcaption></button></figure>`).join('')}</div>`;
+  return `<p class="detail-media-summary">${items.length} ${items.length===1?'bild':'bilder'} i galleriet</p><div class="detail-media-grid">${items.map((item,index)=>`<figure class="detail-media"><button class="detail-media-button" type="button" data-gallery-item data-gallery-index="${index}" data-gallery-src="${escapeHtml(item.src)}" data-gallery-caption="${escapeHtml(item.caption||'Bild ur familjearkivet')}" aria-label="Öppna bild ${index+1} av ${items.length}"><img src="${escapeHtml(item.src)}" alt="${escapeHtml(item.caption||record.name||'Arkivbild')}" loading="lazy"><figcaption>${escapeHtml(item.caption||'Bild ur familjearkivet')}<br><span class="gallery-category">${escapeHtml(IMAGE_CATEGORY_LABELS[item.category]||'Bild')}</span></figcaption></button></figure>`).join('')}</div>`;
 }
 function researchStatus(status){return {confirmed:"Bekräftat",strong:"Starkt stöd",hypothesis:"Hypotes",excluded:"Avförd"}[status]||"Öppet spår";}
 function portraitHTML(person,className="detail-photo"){
@@ -243,6 +259,21 @@ function emigrantArchivePage(){
   }).join("");
   return html.replace('<div id="emigrantArchive" class="archive-grid"></div>', `<div id="emigrantArchive" class="archive-grid">${links}</div>`);
 }
+function galleryArchiveItems(){
+  const items=[];
+  Object.entries(PEOPLE).forEach(([ownerId,person])=>galleryImages(person,true).forEach((image,index)=>items.push({...image,id:`person:${ownerId}:image:${index}`,ownerType:"person",ownerId,ownerName:person.name,ownerUrl:personUrl(ownerId)})));
+  PLACES.forEach(place=>galleryImages(place).forEach((image,index)=>items.push({...image,id:`place:${place.id}:image:${index}`,ownerType:"place",ownerId:place.id,ownerName:place.name,ownerUrl:placeUrl(place)})));
+  return items.sort((a,b)=>a.ownerName.localeCompare(b.ownerName,"sv")||(a.caption||"").localeCompare(b.caption||"","sv"));
+}
+function galleryArchivePage(){
+  const title="Galleriarkiv - Nilsson/Bengtsson släktträd";
+  const description="Fotografier, dokument och föremål som hör till personer och gårdar i Nilsson/Bengtsson-släktens familjearkiv.";
+  let html=setHead(template,{title,description,path:"/galleri/",jsonLd:{"@context":"https://schema.org","@type":"CollectionPage","name":"Galleriarkiv","description":description,"url":`${SITE_URL}/galleri/`}})
+    .replace('<body class="page-home">','<body class="page-galleriarkiv">');
+  const items=galleryArchiveItems();
+  const cards=items.map((item,index)=>`<article class="gallery-archive-card category-${escapeHtml(item.category||"place")}"><button class="gallery-archive-button" type="button" data-gallery-item data-gallery-index="${index}" data-gallery-src="${escapeHtml(item.src)}" data-gallery-caption="${escapeHtml(item.caption||`Bild kopplad till ${item.ownerName}`)}" aria-label="Öppna ${escapeHtml(item.caption||`bild kopplad till ${item.ownerName}`)}"><img class="gallery-archive-image" src="${escapeHtml(item.src)}" alt="${escapeHtml(item.caption||`Bild kopplad till ${item.ownerName}`)}" loading="lazy"></button><div class="gallery-archive-body"><p class="gallery-archive-caption">${escapeHtml(item.caption||"Bild ur familjearkivet")}</p><div class="gallery-archive-meta"><span class="gallery-category">${escapeHtml(IMAGE_CATEGORY_LABELS[item.category]||"Bild")}</span><a class="gallery-owner-link" href="${item.ownerUrl}">${escapeHtml(item.ownerName)}</a></div></div></article>`).join("")||'<p class="detail-empty">Inget bildmaterial är publicerat ännu.</p>';
+  return html.replace('<span class="archive-count" id="galleryArchiveCount"></span>',`<span class="archive-count" id="galleryArchiveCount">${items.length} ${items.length===1?"post":"poster"} i arkivet</span>`).replace('<div id="galleryArchive" class="gallery-archive-grid"></div>',`<div id="galleryArchive" class="gallery-archive-grid">${cards}</div>`);
+}
 function contactPage(){
   const title = "Kontakt - Nilsson/Bengtsson släktträd";
   const description = "Kontakta Axel Nilsson med fotografier, berättelser, källor och rättelser till Nilsson/Bengtsson släktträd.";
@@ -256,9 +287,10 @@ function writePage(path, html){
 }
 
 const emigrantPersonPaths=Object.entries(EMIGRANT_BRANCHES).flatMap(([branchId,branch])=>Object.keys(branch.people||{}).map(personId=>emigrantPersonUrl(branchId,personId)));
-const paths = ["/","/personarkiv/","/gardar/","/emigranter/","/kontakt/",...Object.keys(PEOPLE).map(personUrl),...PLACES.map(placeUrl),...Object.keys(EMIGRANT_BRANCHES).map(emigrantUrl),...emigrantPersonPaths];
+const paths = ["/","/personarkiv/","/gardar/","/galleri/","/emigranter/","/kontakt/",...Object.keys(PEOPLE).map(personUrl),...PLACES.map(placeUrl),...Object.keys(EMIGRANT_BRANCHES).map(emigrantUrl),...emigrantPersonPaths];
 writePage("personarkiv/index.html", archivePage("personarkiv"));
 writePage("gardar/index.html", archivePage("gardarkiv"));
+writePage("galleri/index.html", galleryArchivePage());
 writePage("emigranter/index.html", emigrantArchivePage());
 writePage("kontakt/index.html", contactPage());
 Object.keys(PEOPLE).forEach(id=>{

@@ -13,12 +13,14 @@ En interaktiv släktträdssida för Nilsson/Bengtsson-släkten, byggd för att s
 - `vercel.json` – gör att rena URL:er som `/personer/.../` och `/gardar/.../` fungerar på Vercel
 - `sitemap.xml` och `robots.txt` – grund för indexering i sökmotorer
 - `scripts/generate-sitemap.mjs` – bygger statiska HTML-sidor och sitemap när personer och gårdar ändras
-- `personer/`, `gardar/`, `personarkiv/` och `emigranter/` – förhandsrenderade sidor som kan läsas direkt av sökmotorer
+- `personer/`, `gardar/`, `personarkiv/`, `galleri/` och `emigranter/` – förhandsrenderade sidor som kan läsas direkt av sökmotorer
 - `admin/` – skyddat Familjearkiv för personer, gårdar, ändringar och användare
 
 ## Arkivsidor och administration
 
 Person- och gårdssidorna har separata avsnitt för berättelse, tidslinje, relationer, bilder, källor och osäkerheter. Personarkivet kan filtreras på söktext, århundrade, plats, släktled och bevisstatus. Gårdsarkivet kan filtreras på söktext, typ och kartstatus.
+
+Galleriarkivet på `/galleri/` samlar allt publicerat bildmaterial från person- och gårdskorten. Materialet kan filtreras som personbild, dokument, föremål eller gårds-/platsbild och varje post länkar tillbaka till personen eller platsen den tillhör. Bildkategori och bildtext redigeras tillsammans med galleriet i Familjearkivet.
 
 Personer och platser har ett huvudnamn i `name` och flera sekundära namn i `aliases`. Namnändringar behåller postens stabila ID och slug. Det tidigare huvudnamnet sparas i `formerNames`, så äldre länkar, sökningar och automatiskt länkad löptext fortsätter hitta rätt post.
 
